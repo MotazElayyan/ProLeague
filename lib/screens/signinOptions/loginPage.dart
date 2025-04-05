@@ -90,6 +90,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: TextFormField(
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
+                      fillColor: Theme.of(context).colorScheme.primaryContainer,
                       hintText: 'Example@gmail.com',
                       contentPadding: EdgeInsets.symmetric(
                         vertical: 2,
@@ -126,6 +127,7 @@ class _LoginPageState extends State<LoginPage> {
                   child: TextFormField(
                     keyboardType: TextInputType.emailAddress,
                     decoration: InputDecoration(
+                      fillColor: Theme.of(context).colorScheme.primaryContainer,
                       hintText: '*********',
                       contentPadding: EdgeInsets.symmetric(
                         vertical: 2,
@@ -176,7 +178,6 @@ class _LoginPageState extends State<LoginPage> {
                   style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 10),
-
                 Text(
                   'Log In with...',
                   style: Theme.of(context).textTheme.bodyMedium,

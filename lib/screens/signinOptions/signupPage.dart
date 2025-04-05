@@ -106,7 +106,6 @@ class _SignupPageState extends State<SignupPage> {
                           myController: lastname,
                         ),
                         const SizedBox(height: 10),
-
                         Text(
                           'Email',
                           style: Theme.of(context).textTheme.bodyMedium,
@@ -115,6 +114,7 @@ class _SignupPageState extends State<SignupPage> {
                         TextFormField(
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
+                            fillColor: Theme.of(context).colorScheme.primaryContainer,
                             hintText: 'Example@gmail.com',
                             contentPadding: EdgeInsets.symmetric(
                               vertical: 2,
@@ -151,6 +151,7 @@ class _SignupPageState extends State<SignupPage> {
                         TextFormField(
                           keyboardType: TextInputType.visiblePassword,
                           decoration: InputDecoration(
+                            fillColor: Theme.of(context).colorScheme.primaryContainer,
                             prefixIcon: Icon(Icons.key),
                             hintText: '*********',
                             contentPadding: EdgeInsets.symmetric(

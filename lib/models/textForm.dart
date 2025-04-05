@@ -17,6 +17,7 @@ class CustomTextForm extends StatelessWidget {
     return TextFormField(
       controller: myController,
       decoration: InputDecoration(
+        fillColor: Theme.of(context).colorScheme.primaryContainer,
         hintText: hintText,
         contentPadding: EdgeInsets.symmetric(vertical: 2, horizontal: 15),
         filled: true,
