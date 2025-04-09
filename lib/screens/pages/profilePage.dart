@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:grad_project/widgets/imageInput.dart';
 
@@ -43,9 +44,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 'Mode (Dark/Light)',
                 style: Theme.of(
                   context,
-                ).textTheme.bodyLarge!.copyWith(fontSize: 15),
+                ).textTheme.bodyLarge!.copyWith(fontSize: 17),
               ),
-              Icon(Icons.sunny)
+              Icon(Icons.sunny),
             ],
           ),
           const SizedBox(height: 15),
@@ -57,7 +58,7 @@ class _ProfilePageState extends State<ProfilePage> {
                 'Change Password',
                 style: Theme.of(
                   context,
-                ).textTheme.bodyLarge!.copyWith(fontSize: 15),
+                ).textTheme.bodyLarge!.copyWith(fontSize: 17),
               ),
               Icon(Icons.arrow_forward_ios),
             ],
@@ -83,40 +84,73 @@ class _ProfilePageState extends State<ProfilePage> {
             children: [
               Icon(Icons.phone_iphone),
               Text(
-                'About App',
+                '    About App    ',
                 style: Theme.of(
                   context,
-                ).textTheme.bodyLarge!.copyWith(fontSize: 15),
+                ).textTheme.bodyLarge!.copyWith(fontSize: 17),
               ),
-              Icon(Icons.arrow_forward_ios)
+              Icon(Icons.arrow_forward_ios),
             ],
           ),
-          const SizedBox(height: 15,),
+          const SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Icon(Icons.privacy_tip_rounded),
               Text(
-                'Privacy Policy',
+                '  Privacy Policy  ',
                 style: Theme.of(
                   context,
-                ).textTheme.bodyLarge!.copyWith(fontSize: 15),
+                ).textTheme.bodyLarge!.copyWith(fontSize: 17),
               ),
               Icon(Icons.arrow_forward_ios),
             ],
           ),
-          const SizedBox(height: 15,),
+          const SizedBox(height: 15),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
               Icon(Icons.share),
               Text(
-                'Share This App',
+                '  Share This App  ',
                 style: Theme.of(
                   context,
-                ).textTheme.bodyLarge!.copyWith(fontSize: 15),
+                ).textTheme.bodyLarge!.copyWith(fontSize: 17),
               ),
               Icon(Icons.arrow_forward_ios),
+            ],
+          ),
+          const SizedBox(height: 15),
+          Container(
+            width: double.infinity,
+            height: 37,
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primaryContainer,
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Text(
+                'Account Settings',
+                style: Theme.of(context).textTheme.bodyMedium,
+              ),
+            ),
+          ),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            children: [
+              Icon(Icons.exit_to_app),
+              Text(
+                '     Log out     ',
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge!.copyWith(fontSize: 17),
+              ),
+              IconButton(
+                onPressed: () {
+                  FirebaseAuth.instance.signOut();
+                },
+                icon: Icon(Icons.arrow_forward_ios),
+              ),
             ],
           ),
         ],

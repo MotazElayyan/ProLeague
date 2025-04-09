@@ -189,7 +189,6 @@ class _SignupPageState extends State<SignupPage> {
                     ),
                   ),
                 ),
-
                 InkWell(
                   onTap: () {
                     Navigator.of(
