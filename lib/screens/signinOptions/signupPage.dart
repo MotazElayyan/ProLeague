@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -18,6 +21,9 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
+  File? _pickedImage;
+  var enteredFirstName = '';
+  var enteredLastName = '';
 
   TextEditingController firstname = TextEditingController();
   TextEditingController lastname = TextEditingController();
@@ -27,7 +33,7 @@ class _SignupPageState extends State<SignupPage> {
   void _signup() async {
     final isValid = _formKey.currentState!.validate();
 
-    if (!isValid) {
+    if (!isValid || _pickedImage == null) {
       return;
     }
 
@@ -35,12 +41,34 @@ class _SignupPageState extends State<SignupPage> {
     String passwordValue = password.text;
 
     _formKey.currentState!.save();
+
     try {
-      await firebase.createUserWithEmailAndPassword(
+      final userCredential = await firebase.createUserWithEmailAndPassword(
         email: emailValue,
         password: passwordValue,
       );
-      Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => ChooseFavTeam()));
+
+      /*final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('users_images')
+          .child('${userCredential.user!.uid}.jpg');
+
+      storageRef.putFile(_pickedImage!);
+      final imageUrl = await storageRef.getDownloadURL();*/
+
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+            'username': 'usernameValue',
+            'email': emailValue,
+            //'image_url': imageUrl,
+          });
+
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (ctx) => ChooseFavTeam()),
+        (route) => false,
+      );
     } on FirebaseAuthException catch (error) {
       if (error.code == 'email-already-in-use') {
         ScaffoldMessenger.of(context).clearSnackBars();
@@ -83,7 +111,13 @@ class _SignupPageState extends State<SignupPage> {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Center(child: ImageInput()),
+                        Center(
+                          child: ImageInput(
+                            onImagePick: (pickedImage) {
+                              _pickedImage = pickedImage;
+                            },
+                          ),
+                        ),
                         const SizedBox(height: 15),
                         Text(
                           'First Name',
@@ -95,7 +129,6 @@ class _SignupPageState extends State<SignupPage> {
                           myController: firstname,
                         ),
                         const SizedBox(height: 10),
-
                         Text(
                           'Last Name',
                           style: Theme.of(context).textTheme.bodyMedium,
@@ -114,7 +147,8 @@ class _SignupPageState extends State<SignupPage> {
                         TextFormField(
                           keyboardType: TextInputType.emailAddress,
                           decoration: InputDecoration(
-                            fillColor: Theme.of(context).colorScheme.primaryContainer,
+                            fillColor:
+                                Theme.of(context).colorScheme.primaryContainer,
                             hintText: 'Example@gmail.com',
                             contentPadding: EdgeInsets.symmetric(
                               vertical: 2,
@@ -151,7 +185,8 @@ class _SignupPageState extends State<SignupPage> {
                         TextFormField(
                           keyboardType: TextInputType.visiblePassword,
                           decoration: InputDecoration(
-                            fillColor: Theme.of(context).colorScheme.primaryContainer,
+                            fillColor:
+                                Theme.of(context).colorScheme.primaryContainer,
                             prefixIcon: Icon(Icons.key),
                             hintText: '*********',
                             contentPadding: EdgeInsets.symmetric(
@@ -216,17 +251,6 @@ class _SignupPageState extends State<SignupPage> {
                   ),
                 ),
               ],
-            ),
-            Opacity(
-              opacity: 0.3,
-              child: Align(
-                alignment: AlignmentDirectional(10, 3),
-                child: Icon(
-                  Icons.sports_soccer,
-                  color: Color(0xFF363272),
-                  size: 500,
-                ),
-              ),
             ),
           ],
         ),

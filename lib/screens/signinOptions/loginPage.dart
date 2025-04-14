@@ -30,7 +30,10 @@ class _LoginPageState extends State<LoginPage> {
           email: emailValue,
           password: passwordValue,
         );
-        Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => Tabs()));
+        Navigator.of(context).pushAndRemoveUntil(
+          MaterialPageRoute(builder: (ctx) => Tabs()),
+          (route) => false,
+        );
       } on FirebaseAuthException catch (error) {
         if (error.code == 'user-not-found') {
           ScaffoldMessenger.of(context).clearSnackBars();

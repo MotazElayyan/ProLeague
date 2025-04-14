@@ -6,11 +6,13 @@ class CustomTextForm extends StatelessWidget {
     required this.hintText,
     required this.myController,
     this.icon,
+    this.onSaved,
   });
 
   final String hintText;
   final TextEditingController myController;
   final Icon? icon;
+  final Function()? onSaved;
 
   @override
   Widget build(BuildContext context) {

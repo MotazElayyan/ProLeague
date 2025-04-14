@@ -65,4 +65,5 @@ class DefaultFirebaseOptions {
     storageBucket: 'grad-project-2cd2d.firebasestorage.app',
     iosBundleId: 'com.example.gradProject',
   );
+
 }

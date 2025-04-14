@@ -3,7 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 
 class ImageInput extends StatefulWidget {
-  const ImageInput({super.key});
+  const ImageInput({super.key, required this.onImagePick});
+
+  final void Function(File pickedImage) onImagePick;
 
   @override
   State<ImageInput> createState() {
@@ -12,14 +14,15 @@ class ImageInput extends StatefulWidget {
 }
 
 class _ImageInputState extends State<ImageInput> {
-  File? _selectedImage;
+  File? _selectedImageFile;
 
   void _selectImage() async {
     final imagePicker = ImagePicker();
     final pickedImage = await imagePicker.pickImage(
-      source: ImageSource.gallery,
-      maxHeight: 500,
-      maxWidth: 500,
+      source: ImageSource.camera,
+      maxHeight: 200,
+      maxWidth: 200,
+      imageQuality: 50,
     );
 
     if (pickedImage == null) {
@@ -27,35 +30,36 @@ class _ImageInputState extends State<ImageInput> {
     }
 
     setState(() {
-      _selectedImage = File(pickedImage.path);
+      _selectedImageFile = File(pickedImage.path);
     });
+
+    widget.onImagePick(_selectedImageFile!);
   }
 
   @override
   Widget build(BuildContext context) {
-    Widget content = IconButton(
-      onPressed: _selectImage,
-      icon: const Icon(Icons.person),
-      iconSize: 160,
-    );
-
-    if (_selectedImage != null) {
-      content = GestureDetector(
-        onTap: _selectImage,
-        child: Image.file(
-          _selectedImage!,
-          fit: BoxFit.cover,
-          width: double.infinity,
-          height: double.infinity,
+    return Column(
+      children: [
+        CircleAvatar(
+          radius: 100,
+          backgroundColor: Colors.grey,
+          foregroundImage:
+              _selectedImageFile != null
+                  ? FileImage(_selectedImageFile!)
+                  : null,
         ),
-      );
-    }
-
-    return Container(
-      height: 160,
-      width: 160,
-      alignment: Alignment.center,
-      child: content,
+        TextButton.icon(
+          onPressed: _selectImage,
+          label: Text(
+            'Add Image',
+            style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+          ),
+          icon: Icon(
+            Icons.image,
+            color: Theme.of(context).colorScheme.onPrimary,
+          ),
+        ),
+      ],
     );
   }
 }

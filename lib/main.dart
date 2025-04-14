@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:grad_project/test/playersTest.dart';
 import 'firebase_options.dart';
 
 import 'package:grad_project/screens/pages/homePage.dart';
@@ -78,7 +79,7 @@ class App extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.system,
-      home: HomePage(),
+      home: PlayersTest(),
     );
   }
 }
