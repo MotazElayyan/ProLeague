@@ -1,21 +1,23 @@
-import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter/material.dart';
-import 'package:grad_project/screens/pages/FavTeams.dart';
+import 'package:curved_navigation_bar/curved_navigation_bar.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:grad_project/screens/pages/FavTeams.dart';
 import 'package:grad_project/screens/pages/newsPage.dart';
 import 'package:grad_project/screens/pages/profilePage.dart';
 import 'package:grad_project/screens/pages/statsPage.dart';
+import 'package:grad_project/providers/favoritesProvider.dart';
 
-class Tabs extends StatefulWidget {
+class Tabs extends ConsumerStatefulWidget {
   const Tabs({super.key});
 
   @override
-  State<Tabs> createState() {
+  ConsumerState<Tabs> createState() {
     return _TabsState();
   }
 }
 
-class _TabsState extends State<Tabs> {
+class _TabsState extends ConsumerState<Tabs> {
   int _selectedPageIndex = 0;
 
   void _selectPage(int index) {
@@ -24,13 +26,30 @@ class _TabsState extends State<Tabs> {
     });
   }
 
+  Set<String> selectedTeams = {};
+
+  // void _toggleSelection(String team) {
+  //   ref.read(favoriteTeamsProvider.notifier).toggleTeam(team);
+  //   setState(() {
+  //     if (selectedTeams.contains(team)) {
+  //       selectedTeams.remove(team);
+  //     } else {
+  //       selectedTeams.add(team);
+  //     }
+  //   });
+  // }
+
   @override
   Widget build(BuildContext context) {
+    final selectedTeams = ref.watch(
+      favoriteTeamsProvider,
+    ); 
+
     Widget activePage = const NewsPage();
     var activePageTitle = 'News';
 
     if (_selectedPageIndex == 1) {
-      activePage = const FavTeams();
+      activePage = FavTeamsScreen(selectedTeams: selectedTeams.toList());
       activePageTitle = 'Favourites';
     }
 
@@ -38,11 +57,6 @@ class _TabsState extends State<Tabs> {
       activePage = const StatsPage();
       activePageTitle = 'Statistics';
     }
-
-    /*if (_selectedPageIndex == 3) {
-      activePage = const ProfilePage();
-      activePageTitle = 'Profile';
-    }*/
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
@@ -58,9 +72,9 @@ class _TabsState extends State<Tabs> {
               leading: Icon(Icons.person),
               title: Text('Profile'),
               onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (ctx) => ProfilePage()),
-                );
+                Navigator.of(
+                  context,
+                ).push(MaterialPageRoute(builder: (ctx) => ProfilePage()));
               },
             ),
           ],
@@ -82,38 +96,3 @@ class _TabsState extends State<Tabs> {
     );
   }
 }
-
-      /*bottomNavigationBar: BottomNavigationBar(
-        showUnselectedLabels: false,
-        type: BottomNavigationBarType.fixed,
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        onTap: _selectPage,
-        currentIndex: _selectedPageIndex,
-        items: [
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.newspaper,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            label: 'News',
-          ),
-          BottomNavigationBarItem(
-            icon: Image.asset('assets/images/logo1.png', width: 30, height: 30),
-            label: 'Favourites',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.bar_chart,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            label: 'Statistics',
-          ),
-          BottomNavigationBarItem(
-            icon: Icon(
-              Icons.person,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
-            label: 'Profile',
-          ),
-        ],
-      ),*/

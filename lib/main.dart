@@ -1,8 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:grad_project/screens/pages/homePage.dart';
+import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
 import 'firebase_options.dart';
 
-import 'package:grad_project/screens/pages/homePage.dart';
+import 'package:grad_project/widgets/tabs.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.light,
@@ -66,7 +69,7 @@ final darkTheme = ThemeData.dark().copyWith(
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  runApp(App());
+  runApp(ProviderScope(child: App()));
 }
 
 class App extends StatelessWidget {

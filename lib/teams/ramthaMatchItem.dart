@@ -1,14 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/link.dart';
 
-class MatchItem extends StatefulWidget {
-  const MatchItem({super.key});
+class RamthaMatchItem extends StatefulWidget {
+  final String teamName;
+  const RamthaMatchItem({super.key, required this.teamName});
 
   @override
-  State<MatchItem> createState() => _MatchItemState();
+  State<RamthaMatchItem> createState() => _MatchItemState();
 }
 
-class _MatchItemState extends State<MatchItem> {
+class _MatchItemState extends State<RamthaMatchItem> {
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -34,12 +35,12 @@ class _MatchItemState extends State<MatchItem> {
                         Row(
                           children: [
                             Text(
-                              'Jaz',
+                              'Ram',
                               style: Theme.of(context).textTheme.bodyMedium,
                             ),
                             const SizedBox(width: 5),
                             Image.asset(
-                              'assets/images/AlJazeera.png',
+                              'assets/images/Ramtha.png',
                               width: 40,
                               height: 40,
                             ),

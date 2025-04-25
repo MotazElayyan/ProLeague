@@ -1,5 +1,4 @@
-/*import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 class PlayersTest extends StatefulWidget {
@@ -10,43 +9,60 @@ class PlayersTest extends StatefulWidget {
 }
 
 class _PlayersTestState extends State<PlayersTest> {
-  void _getTeams() async {
-    final user = FirebaseAuth.instance.currentUser!;
-    final TeamsData =
-        await FirebaseFirestore.instance
-            .collection('Al Hussein')
-            .doc(user.uid)
-            .get();
+  Map<String, dynamic>? teamData;
+
+  Future<void> getData() async {
+    try {
+      DocumentSnapshot documentSnapshot =
+          await FirebaseFirestore.instance
+              .collection('Teams')
+              .doc('Al Ahli')
+              .get();
+
+      if (documentSnapshot.exists) {
+        setState(() {
+          teamData = documentSnapshot.data() as Map<String, dynamic>?;
+        });
+      } else {
+        print("Document does not exist.");
+      }
+    } catch (e) {
+      print("Error fetching document: $e");
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
   }
 
   @override
   Widget build(BuildContext context) {
+    final teamMembers = teamData?['Team members'] as List<dynamic>?;
+
     return Scaffold(
       appBar: AppBar(title: const Text('Players Test')),
-      body: Center(
-        child: StreamBuilder(
-          stream:
-              FirebaseFirestore.instance.collection('Al Hussein').snapshots(),
-          builder: (ctx, chatSnapshots) {
-            if (chatSnapshots.connectionState == ConnectionState.waiting) {
-              return const CircularProgressIndicator();
-            }
-            if (!chatSnapshots.hasData || chatSnapshots.data!.docs.isEmpty) {
-              return const Text('No data');
-            }
-            if (chatSnapshots.hasError) {
-              return Text('Error: ${chatSnapshots.error}');
-            }
-            final loadedMessages = chatSnapshots.data!.docs;
-            return ListView.builder(
-              itemCount: loadedMessages.length,
-              itemBuilder:
-                  (ctx, index) =>
-                      Text(loadedMessages[index].data()['Team members'][0].toString()),
-            );
-          },
-        ),
-      ),
+      body:
+          teamMembers == null
+              ? const Center(child: CircularProgressIndicator())
+              : ListView.builder(
+                itemCount: teamMembers.length,
+                itemBuilder: (ctx, index) {
+                  final member = teamMembers[index] as Map<String, dynamic>;
+                  return Card(
+                    child: Padding(
+                      padding: const EdgeInsets.all(10.0),
+                      child: Column(
+                        children: [
+                          Image.asset('assets/images/logo1.png', height: 100),
+                          Text(member['Name'] ?? 'No name'),
+                        ],
+                      ),
+                    ),
+                  );
+                },
+              ),
     );
   }
-}*/
+}
