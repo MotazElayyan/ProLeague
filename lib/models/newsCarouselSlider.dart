@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:url_launcher/link.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:grad_project/models/newsItem.dart';
 
@@ -14,11 +15,31 @@ class CustomCarouselSlider extends StatefulWidget {
 class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
   final CarouselSliderController _controller = CarouselSliderController();
   int _current = 0;
+  List<NewsItem> _news = [];
+  bool _isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    fetchNews();
+  }
+
+  Future<void> fetchNews() async {
+    final snapshot = await FirebaseFirestore.instance.collection('News').get();
+    final newsList = snapshot.docs.map((doc) => NewsItem.fromFirestore(doc.data())).toList();
+    setState(() {
+      _news = newsList;
+      _isLoading = false;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    if (_isLoading) {
+      return Center(child: CircularProgressIndicator());
+    }
     final List<Widget> imageSliders =
-        News.map(
+        _news.map(
           (item) => Container(
             margin: const EdgeInsets.all(5.0),
             decoration: BoxDecoration(
@@ -127,7 +148,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
         Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children:
-              News.asMap().entries.map((entry) {
+              _news.asMap().entries.map((entry) {
                 return GestureDetector(
                   onTap: () => _controller.animateToPage(entry.key),
                   child: Container(

@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
-Widget buildStatCard(String title, String value) {
+Widget buildStatCard(String title, String value, String imgUrl) {
   return InkWell(
     onTap: () {},
     child: Container(
       width: 160,
-      height: 100,
+      height: 140,
       decoration: BoxDecoration(
         color: Colors.grey[800],
         borderRadius: BorderRadius.circular(12),
@@ -14,6 +14,7 @@ Widget buildStatCard(String title, String value) {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
+          Image.asset(imgUrl, width: 40, height: 40),
           Text(title, style: TextStyle(color: Colors.white, fontSize: 16)),
           SizedBox(height: 4),
           Text(

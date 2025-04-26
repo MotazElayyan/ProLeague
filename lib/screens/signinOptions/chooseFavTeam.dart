@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+
 
 import 'package:grad_project/models/elevatedButton.dart';
 import 'package:grad_project/models/customTeamsRow.dart';
@@ -30,6 +33,27 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
       }
     });
   }
+
+  Future<void> saveFavorites() async {
+  final user = FirebaseAuth.instance.currentUser;
+  if (user == null) {
+    print("User not logged in");
+    return;
+  }
+
+  final userId = user.uid;
+
+  try {
+    await FirebaseFirestore.instance.collection('favorite teams').doc(userId).set({
+      'teams': selectedTeams.toList(),
+      'timestamp': FieldValue.serverTimestamp(),
+    });
+    print("Favorites saved successfully");
+  } catch (e) {
+    print("Failed to save favorites: $e");
+  }
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +139,8 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
                   SizedBox(height: 10),
                   CustomElevatedButton(
                     title: 'Continue >',
-                    onPressed: () {
+                    onPressed: () async {
+                      await saveFavorites();
                       Navigator.of(context).push(
                         MaterialPageRoute(
                           builder:

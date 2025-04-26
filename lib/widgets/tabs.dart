@@ -28,17 +28,6 @@ class _TabsState extends ConsumerState<Tabs> {
 
   Set<String> selectedTeams = {};
 
-  // void _toggleSelection(String team) {
-  //   ref.read(favoriteTeamsProvider.notifier).toggleTeam(team);
-  //   setState(() {
-  //     if (selectedTeams.contains(team)) {
-  //       selectedTeams.remove(team);
-  //     } else {
-  //       selectedTeams.add(team);
-  //     }
-  //   });
-  // }
-
   @override
   Widget build(BuildContext context) {
     final selectedTeams = ref.watch(

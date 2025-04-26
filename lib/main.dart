@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:grad_project/screens/pages/homePage.dart';
-import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
+import 'package:grad_project/screens/pages/newsPage.dart';
 import 'firebase_options.dart';
 
-import 'package:grad_project/widgets/tabs.dart';
+import 'package:grad_project/screens/pages/homePage.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.light,
@@ -81,7 +80,7 @@ class App extends StatelessWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: ThemeMode.system,
-      home: HomePage(),
+      home: NewsPage(),
     );
   }
 }

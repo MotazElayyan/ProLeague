@@ -62,7 +62,7 @@ class _NewsPageState extends State<NewsPage> {
                 ],
               ),
               const SizedBox(height: 8),
-              ...News.map(
+              ...news.map(
                 (NewsItem) => Padding(
                   padding: const EdgeInsets.only(bottom: 16),
                   child: RecommendationNewsItem(newsItem: NewsItem),
