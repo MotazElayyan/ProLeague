@@ -22,12 +22,10 @@ class RecommendationNewsItem extends StatelessWidget {
                 children: [
                   ClipRRect(
                     borderRadius: BorderRadius.circular(16),
-                    child: Expanded(
-                      child: Image.network(
-                        newsItem.ImgUrl,
-                        height: 100,
-                        fit: BoxFit.cover,
-                      ),
+                    child: Image.network(
+                      newsItem.imgUrl,
+                      height: 100,
+                      fit: BoxFit.cover,
                     ),
                   ),
                   const SizedBox(width: 8),
@@ -36,18 +34,20 @@ class RecommendationNewsItem extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          newsItem.Category,
+                          newsItem.category,
                           style: Theme.of(
                             context,
-                          ).textTheme.bodyLarge!.copyWith(color: Colors.grey),
+                          ).textTheme.bodyLarge!.copyWith(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
                         ),
                         const SizedBox(height: 8),
                         Text(
-                          newsItem.Title,
+                          newsItem.title,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                         const SizedBox(height: 8),
-                        Text('${newsItem.author} • ${newsItem.Time}'),
+                        Text(newsItem.time),
                       ],
                     ),
                   ),

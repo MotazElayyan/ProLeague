@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:carousel_slider/carousel_slider.dart';
 
 import 'package:grad_project/teams/faisalyMatchItem.dart';
 import 'package:grad_project/teams/ahliMatchItem.dart';
@@ -14,19 +15,23 @@ import 'package:grad_project/teams/sarhanMatchItem.dart';
 import 'package:grad_project/teams/shababjMatchItem.dart';
 import 'package:grad_project/teams/wehdatMatchItem.dart';
 
-final Map<String, Widget> teamMatchWidgets = {
-  'Al Jazeera': JazeeraMatchItem(teamName: 'Al Jazeera'),
-  'Al Wehdat': WehdatMatchItem(teamName: 'Al Wehdat'),
-  'Al Faisaly': FaisalyMatchItem(teamName: 'Al Faisaly'),
-  'Al Ramtha': RamthaMatchItem(teamName: 'Al Ramtha'),
-  'Al Ahli': AhliMatchItem(teamName: 'Al Ahli'),
-  'Al Salt': SaltMatchItem(teamName: 'Al Salt'),
-  'Shabab AL Aqaba': AqabaMatchItem(teamName: 'Shabab AL Aqaba'),
-  'Al Hussein': HusseinMatchItem(teamName: 'Al Hussein'),
-  'Maan': MaanMatchItem(teamName: 'Maan'),
-  'Al Sareeh': SareehMatchItem(teamName: 'Al Sareeh'),
-  'Moghayer AL Sarhan': SarhanMatchItem(teamName: 'Moghayer AL Sarhan'),
-  'Shabab Al Ordon': ShababMatchItem(teamName: 'Shabab Al Ordon'),
+final Map<String, List<Widget>> teamMatchWidgets = {
+  'Al Jazeera': [
+    JazeeraMatchItem(teamName: 'Al Jazeera'),
+    JazeeraMatchItem(teamName: 'Al Jazeera'),
+    JazeeraMatchItem(teamName: 'Al Jazeera'),
+  ],
+  'Al Wehdat': [WehdatMatchItem(teamName: 'Al Wehdat')],
+  'Al Faisaly': [FaisalyMatchItem(teamName: 'Al Faisaly')],
+  'Al Ramtha': [RamthaMatchItem(teamName: 'Al Ramtha')],
+  'Al Ahli': [AhliMatchItem(teamName: 'Al Ahli')],
+  'Al Salt': [SaltMatchItem(teamName: 'Al Salt')],
+  'Shabab AL Aqaba': [AqabaMatchItem(teamName: 'Shabab AL Aqaba')],
+  'Al Hussein': [HusseinMatchItem(teamName: 'Al Hussein')],
+  'Maan': [MaanMatchItem(teamName: 'Maan')],
+  'Al Sareeh': [SareehMatchItem(teamName: 'Al Sareeh')],
+  'Moghayer AL Sarhan': [SarhanMatchItem(teamName: 'Moghayer AL Sarhan')],
+  'Shabab Al Ordon': [ShababMatchItem(teamName: 'Shabab Al Ordon')],
 };
 
 class FavTeamsScreen extends ConsumerStatefulWidget {
@@ -47,11 +52,12 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
                 children: [
                   Text('Pro', style: Theme.of(context).textTheme.titleLarge),
-                  Image.asset('assets/images/logo1.png', width: 50, height: 50,),
+                  Image.asset('assets/images/logo1.png', width: 50, height: 50),
                   Text('League', style: Theme.of(context).textTheme.titleLarge),
                 ],
               ),
@@ -65,7 +71,34 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
                     if (matchWidget == null) {
                       return Text('No match data for $teamName');
                     }
-                    return matchWidget;
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Padding(
+                          padding: const EdgeInsets.symmetric(
+                            horizontal: 8.0,
+                            vertical: 8,
+                          ),
+                          child: Text(
+                            teamName,
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ),
+                        CarouselSlider(
+                          options: CarouselOptions(
+                            height: 200,
+                            enlargeCenterPage: true,
+                            enableInfiniteScroll: false,
+                            autoPlay: false,
+                          ),
+                          items:
+                              matchWidget
+                                  .map((matchWidget) => matchWidget)
+                                  .toList(),
+                        ),
+                        const SizedBox(height: 24),
+                      ],
+                    );
                   },
                 ),
               ),

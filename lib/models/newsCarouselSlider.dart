@@ -56,7 +56,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                         (context, followLink) => InkWell(
                           onTap: followLink,
                           child: Image.network(
-                            item.ImgUrl,
+                            item.imgUrl,
                             fit: BoxFit.cover,
                             width: 1000.0,
                           ),
@@ -73,7 +73,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                       child: Padding(
                         padding: const EdgeInsets.all(8.0),
                         child: Text(
-                          item.Category,
+                          item.category,
                           style: Theme.of(context).textTheme.bodyMedium,
                         ),
                       ),
@@ -89,7 +89,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                         Padding(
                           padding: const EdgeInsets.symmetric(horizontal: 20.0),
                           child: Text(
-                            '${item.author} • ${item.Time}',
+                            '${item.author} • ${item.time}',
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 10.0,
@@ -113,7 +113,7 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                             horizontal: 20.0,
                           ),
                           child: Text(
-                            item.Title,
+                            item.title,
                             style: TextStyle(
                               color: Colors.white,
                               fontSize: 17.0,

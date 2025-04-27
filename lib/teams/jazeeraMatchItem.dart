@@ -34,39 +34,49 @@ class _MatchItemState extends State<JazeeraMatchItem> {
                         const SizedBox(height: 13),
                         Row(
                           children: [
-                            Text(
-                              'Jaz',
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                            const SizedBox(width: 5),
-                            Image.asset(
-                              'assets/images/AlJazeera.png',
-                              width: 40,
-                              height: 40,
-                            ),
-                            const SizedBox(width: 5),
-                            Container(
-                              decoration: BoxDecoration(
-                                color:
-                                    Theme.of(
-                                      context,
-                                    ).colorScheme.primaryContainer,
-                              ),
+                            Expanded(
                               child: Text(
-                                '16:00',
+                                'Jaz',
                                 style: Theme.of(context).textTheme.bodyMedium,
                               ),
                             ),
                             const SizedBox(width: 5),
-                            Image.asset(
-                              'assets/images/Salt.png',
-                              width: 40,
-                              height: 40,
+                            Expanded(
+                              child: Image.asset(
+                                'assets/images/AlJazeera.png',
+                                width: 40,
+                                height: 40,
+                              ),
                             ),
                             const SizedBox(width: 5),
-                            Text(
-                              'Sal',
-                              style: Theme.of(context).textTheme.bodyMedium,
+                            Expanded(
+                              child: Container(
+                                decoration: BoxDecoration(
+                                  color:
+                                      Theme.of(
+                                        context,
+                                      ).colorScheme.primaryContainer,
+                                ),
+                                child: Text(
+                                  '16:00',
+                                  style: Theme.of(context).textTheme.bodyMedium,
+                                ),
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Expanded(
+                              child: Image.asset(
+                                'assets/images/Salt.png',
+                                width: 40,
+                                height: 40,
+                              ),
+                            ),
+                            const SizedBox(width: 5),
+                            Expanded(
+                              child: Text(
+                                'Sal',
+                                style: Theme.of(context).textTheme.bodyMedium,
+                              ),
                             ),
                           ],
                         ),

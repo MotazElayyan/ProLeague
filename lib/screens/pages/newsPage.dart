@@ -11,12 +11,20 @@ class NewsPage extends StatefulWidget {
 }
 
 class _NewsPageState extends State<NewsPage> {
+  late Future<List<NewsItem>> _newsFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _newsFuture = getNews();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      body: SingleChildScrollView(
-        child: SafeArea(
+      body: SafeArea(
+        child: SingleChildScrollView(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.start,
             children: [
@@ -40,8 +48,8 @@ class _NewsPageState extends State<NewsPage> {
                 ],
               ),
               const SizedBox(height: 8),
-              CustomCarouselSlider(),
-              const SizedBox(height: 8),
+              const CustomCarouselSlider(),
+              const SizedBox(height: 16),
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
@@ -62,12 +70,52 @@ class _NewsPageState extends State<NewsPage> {
                 ],
               ),
               const SizedBox(height: 8),
-              ...news.map(
-                (NewsItem) => Padding(
-                  padding: const EdgeInsets.only(bottom: 16),
-                  child: RecommendationNewsItem(newsItem: NewsItem),
-                ),
-              ).toList(),
+              FutureBuilder<List<NewsItem>>(
+                future: _newsFuture,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Padding(
+                      padding: const EdgeInsets.all(16),
+                      child: Text('Error loading news: ${snapshot.error}'),
+                    );
+                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                    return const Padding(
+                      padding: EdgeInsets.all(16),
+                      child: Text('No news available.'),
+                    );
+                  } else {
+                    final newsList = snapshot.data!;
+                    final othersNews =
+                        newsList
+                            .where((news) => news.category == "others")
+                            .toList();
+                    if (othersNews.isEmpty) {
+                      return const Padding(
+                        padding: EdgeInsets.all(16),
+                        child: Text('No recommended news available.'),
+                      );
+                    }
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: othersNews.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 16),
+                          child: RecommendationNewsItem(
+                            newsItem: othersNews[index],
+                          ),
+                        );
+                      },
+                    );
+                  }
+                },
+              ),
             ],
           ),
         ),

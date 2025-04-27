@@ -1,11 +1,10 @@
 import 'dart:io';
-
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:grad_project/models/elevatedButton.dart';
-import 'package:grad_project/models/textForm.dart';
 import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
 import 'package:grad_project/screens/signinOptions/loginPage.dart';
 import 'package:grad_project/widgets/imageInput.dart';
@@ -21,239 +20,281 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
+  final TextEditingController username = TextEditingController();
+  final TextEditingController email = TextEditingController();
+  final TextEditingController password = TextEditingController();
+
   File? _pickedImage;
-  var enteredFirstName = '';
-  var enteredLastName = '';
+  bool _isLoading = false;
+  bool _showPassword = false;
+  AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
 
-  TextEditingController firstname = TextEditingController();
-  TextEditingController lastname = TextEditingController();
-  TextEditingController email = TextEditingController();
-  TextEditingController password = TextEditingController();
-
-  void _signup() async {
+  Future<void> _signup() async {
     final isValid = _formKey.currentState!.validate();
+    FocusScope.of(context).unfocus();
 
     if (!isValid || _pickedImage == null) {
+      setState(() {
+        _autovalidateMode = AutovalidateMode.onUserInteraction;
+      });
       return;
     }
 
-    String emailValue = email.text;
-    String passwordValue = password.text;
-
-    _formKey.currentState!.save();
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       final userCredential = await firebase.createUserWithEmailAndPassword(
-        email: emailValue,
-        password: passwordValue,
+        email: email.text.trim(),
+        password: password.text.trim(),
       );
 
-      /*final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('users_images')
-          .child('${userCredential.user!.uid}.jpg');
+      // final storageRef = FirebaseStorage.instance
+      //     .ref()
+      //     .child('user_images')
+      //     .child('${userCredential.user!.uid}.jpg');
 
-      storageRef.putFile(_pickedImage!);
-      final imageUrl = await storageRef.getDownloadURL();*/
+      // await storageRef.putFile(_pickedImage!);
+      // final imageUrl = await storageRef.getDownloadURL();
 
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userCredential.user!.uid)
-          .set({
-            'username': 'usernameValue',
-            'email': emailValue,
-            //'image_url': imageUrl,
-          });
+      // await FirebaseFirestore.instance
+      //     .collection('users')
+      //     .doc(userCredential.user!.uid)
+      //     .set({
+      //       'username': username.text.trim(),
+      //       'email': email.text.trim(),
+      //       'image_url': imageUrl,
+      //     });
+
+      if (!mounted) return;
 
       Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (ctx) => ChooseFavTeam()),
+        MaterialPageRoute(builder: (ctx) => const ChooseFavTeam()),
         (route) => false,
       );
     } on FirebaseAuthException catch (error) {
+      String message = 'Authentication failed. Please try again.';
       if (error.code == 'email-already-in-use') {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error.message ?? 'Authentication failed')),
-        );
+        message = 'This email address is already in use.';
+      } else if (error.code == 'weak-password') {
+        message = 'The password is too weak.';
+      } else if (error.code == 'invalid-email') {
+        message = 'The email address is invalid.';
+      }
+      print('FirebaseAuthException Code: ${error.code}');
+      print('FirebaseAuthException Message: ${error.message}');
+
+      if (mounted) {
+        ScaffoldMessenger.of(
+          context,
+        ).showSnackBar(SnackBar(content: Text(message)));
+      }
+    } catch (error) {
+      print('Signup error: $error');
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
       }
     }
   }
 
   @override
+  void dispose() {
+    username.dispose();
+    email.dispose();
+    password.dispose();
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final theme = Theme.of(context);
+
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: theme.colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: theme.colorScheme.primary,
         title: const Text('Signup'),
       ),
       body: SafeArea(
-        top: true,
         child: Stack(
           children: [
-            Opacity(
-              opacity: 0.3,
-              child: Align(
-                alignment: AlignmentDirectional(0, -1.98),
+            Positioned.fill(
+              child: Opacity(
+                opacity: 0.3,
                 child: Icon(
                   Icons.sports_soccer,
-                  color: Color(0xFF363272),
+                  color: const Color(0xFF363272),
                   size: 500,
                 ),
               ),
             ),
-            Column(
-              children: [
-                Form(
+            Center(
+              child: SingleChildScrollView(
+                padding: const EdgeInsets.all(16),
+                child: Form(
                   key: _formKey,
-                  child: Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Center(
-                          child: ImageInput(
-                            onImagePick: (pickedImage) {
-                              _pickedImage = pickedImage;
-                            },
-                          ),
-                        ),
-                        const SizedBox(height: 15),
-                        Text(
-                          'First Name',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(height: 5),
-                        CustomTextForm(
-                          hintText: 'First Name',
-                          myController: firstname,
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Last Name',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(height: 5),
-                        CustomTextForm(
-                          hintText: 'Last Name',
-                          myController: lastname,
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Email',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(height: 5),
-                        TextFormField(
-                          keyboardType: TextInputType.emailAddress,
-                          decoration: InputDecoration(
-                            fillColor:
-                                Theme.of(context).colorScheme.primaryContainer,
-                            hintText: 'Example@gmail.com',
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: 2,
-                              horizontal: 15,
-                            ),
-                            filled: true,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            prefixIcon: Icon(Icons.email),
-                          ),
-                          controller: email,
-                          autovalidateMode: AutovalidateMode.onUserInteraction,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your email';
-                            } else if (RegExp(
-                              r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                            ).hasMatch(value)) {
-                              return null;
-                            }
-                            return 'Please enter a valid email';
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        Text(
-                          'Password',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                        const SizedBox(height: 10),
-                        TextFormField(
-                          keyboardType: TextInputType.visiblePassword,
-                          decoration: InputDecoration(
-                            fillColor:
-                                Theme.of(context).colorScheme.primaryContainer,
-                            prefixIcon: Icon(Icons.key),
-                            hintText: '*********',
-                            contentPadding: EdgeInsets.symmetric(
-                              vertical: 2,
-                              horizontal: 15,
-                            ),
-                            filled: true,
-                            border: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                            enabledBorder: OutlineInputBorder(
-                              borderRadius: BorderRadius.circular(30),
-                            ),
-                          ),
-                          controller: password,
-                          validator: (value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your password';
-                            } else if (RegExp(
-                              r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$',
-                            ).hasMatch(value)) {
-                              return null;
-                            }
-                            return 'Please enter a valid Password';
-                          },
-                        ),
-                        const SizedBox(height: 10),
-                        Center(
-                          child: CustomElevatedButton(
-                            onPressed: _signup,
-                            title: 'Signup',
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(
-                      context,
-                    ).push(MaterialPageRoute(builder: (ctx) => LoginPage()));
-                  },
-                  child: Center(
-                    child: Text.rich(
-                      TextSpan(
-                        children: [
-                          TextSpan(text: "Already Have An Account ? "),
-                          TextSpan(
-                            text: "Login",
-                            style: TextStyle(
-                              color:
-                                  Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimaryContainer,
-                              fontWeight: FontWeight.bold,
-                            ),
-                          ),
-                        ],
+                  autovalidateMode: _autovalidateMode,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      ImageInput(
+                        onImagePick: (pickedImage) {
+                          setState(() {
+                            _pickedImage = pickedImage;
+                          });
+                        },
                       ),
-                    ),
+                      const SizedBox(height: 20),
+                      _buildTextField(
+                        controller: username,
+                        hintText: 'Username',
+                        label: 'Full Name',
+                        prefixIcon: Icons.person_3_outlined,
+                        validator: (value) {
+                          if (value == null || value.trim().length < 4) {
+                            return 'Please enter at least 4 characters';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTextField(
+                        controller: email,
+                        hintText: 'Example@gmail.com',
+                        label: 'Email',
+                        prefixIcon: Icons.email,
+                        keyboardType: TextInputType.emailAddress,
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your email';
+                          } else if (!RegExp(
+                            r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                          ).hasMatch(value)) {
+                            return 'Invalid email address';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTextField(
+                        controller: password,
+                        hintText: '********',
+                        label: 'Password',
+                        prefixIcon: Icons.lock,
+                        obscureText: !_showPassword,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _showPassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _showPassword = !_showPassword;
+                            });
+                          },
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please enter your password';
+                          } else if (!RegExp(
+                            r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$',
+                          ).hasMatch(value)) {
+                            return 'Password must be at least 8 characters\nwith upper, lower case and a number';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 24),
+                      if (_isLoading)
+                        CircularProgressIndicator(
+                          color: theme.colorScheme.secondary,
+                        )
+                      else
+                        CustomElevatedButton(
+                          title: 'Signup',
+                          onPressed: _signup,
+                        ),
+                      const SizedBox(height: 16),
+                      _buildLoginLink(),
+                    ],
                   ),
                 ),
-              ],
+              ),
             ),
           ],
         ),
+      ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    required String label,
+    required IconData prefixIcon,
+    Widget? suffixIcon,
+    required FormFieldValidator<String> validator,
+    TextInputType keyboardType = TextInputType.text,
+    bool obscureText = false,
+  }) {
+    final theme = Theme.of(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(label, style: theme.textTheme.bodyMedium),
+        const SizedBox(height: 5),
+        TextFormField(
+          controller: controller,
+          keyboardType: keyboardType,
+          obscureText: obscureText,
+          validator: validator,
+          decoration: InputDecoration(
+            hintText: hintText,
+            filled: true,
+            fillColor: theme.colorScheme.primaryContainer,
+            contentPadding: const EdgeInsets.symmetric(
+              vertical: 2,
+              horizontal: 15,
+            ),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(30),
+            ),
+            prefixIcon: Icon(prefixIcon),
+            suffixIcon: suffixIcon,
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildLoginLink() {
+    final theme = Theme.of(context);
+    return InkWell(
+      onTap: () {
+        Navigator.of(context).pushReplacement(
+          MaterialPageRoute(builder: (context) => const LoginPage()),
+        );
+      },
+      child: Text.rich(
+        TextSpan(
+          children: [
+            const TextSpan(text: "Already have an account? "),
+            TextSpan(
+              text: "Login",
+              style: TextStyle(
+                color: theme.colorScheme.onPrimaryContainer,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ],
+        ),
+        textAlign: TextAlign.center,
       ),
     );
   }

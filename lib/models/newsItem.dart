@@ -1,32 +1,32 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 class NewsItem {
-  final String Id;
-  final String Title;
-  final String ImgUrl;
-  final String Category;
+  final String id;
+  final String title;
+  final String imgUrl;
+  final String category;
   final String author;
-  final String Time;
+  final String time;
   final String link;
 
   NewsItem({
-    required this.Id,
-    required this.Title,
-    required this.ImgUrl,
-    required this.Category,
+    required this.id,
+    required this.title,
+    required this.imgUrl,
+    required this.category,
     required this.author,
-    required this.Time,
+    required this.time,
     required this.link,
   });
 
   factory NewsItem.fromFirestore(Map<String, dynamic> data) {
     return NewsItem(
-      Id: data['id'] ?? '',
-      Title: data['title'] ?? '',
-      ImgUrl: data['imageUrl'] ?? '',
-      Category: data['category'] ?? '',
+      id: data['id'] ?? '',
+      title: data['title'] ?? '',
+      imgUrl: data['imageUrl'] ?? '',
+      category: data['category'] ?? '',
       author: data['team'] ?? '',
-      Time: data['Time'] ?? '',
+      time: data['Time'] ?? '',
       link: data['content'] ?? '',
     );
   }
@@ -34,16 +34,19 @@ class NewsItem {
 
 List<NewsItem> news = [];
 
-Future<void> getNews() async {
-  final snapshot = await FirebaseFirestore.instance.collection('news').get();
+Future<List<NewsItem>> getNews() async {
+  try {
+    final snapshot = await FirebaseFirestore.instance.collection('News').get();
 
-  news = snapshot.docs.map((doc) {
-    return NewsItem.fromFirestore(doc.data());
-  }).toList();
+    final newsList = snapshot.docs.map((doc) {
+      return NewsItem.fromFirestore(doc.data());
+    }).toList();
+
+    return newsList;
+  } catch (e) {
+    throw Exception('Failed to load news: $e');
+  }
 }
-
-
-
 
 // List<NewsItem> News = [
 //   NewsItem(
