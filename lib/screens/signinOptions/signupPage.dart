@@ -50,22 +50,24 @@ class _SignupPageState extends State<SignupPage> {
         password: password.text.trim(),
       );
 
-      // final storageRef = FirebaseStorage.instance
-      //     .ref()
-      //     .child('user_images')
-      //     .child('${userCredential.user!.uid}.jpg');
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('user_images')
+          .child('${userCredential.user!.uid}.jpg');
 
-      // await storageRef.putFile(_pickedImage!);
-      // final imageUrl = await storageRef.getDownloadURL();
+      await storageRef.putFile(_pickedImage!);
+      final imageUrl = await storageRef.getDownloadURL();
 
-      // await FirebaseFirestore.instance
-      //     .collection('users')
-      //     .doc(userCredential.user!.uid)
-      //     .set({
-      //       'username': username.text.trim(),
-      //       'email': email.text.trim(),
-      //       'image_url': imageUrl,
-      //     });
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+            'username': username.text.trim(),
+            'email': email.text.trim(),
+            'image_url': imageUrl,
+          });
+
+      await userCredential.user!.updateDisplayName(username.text.trim());
 
       if (!mounted) return;
 
@@ -242,13 +244,13 @@ class _SignupPageState extends State<SignupPage> {
     TextInputType keyboardType = TextInputType.text,
     bool obscureText = false,
   }) {
-    final theme = Theme.of(context);
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: theme.textTheme.bodyMedium),
+        Text(label, style: Theme.of(context).textTheme.bodyMedium),
         const SizedBox(height: 5),
         TextFormField(
+          autovalidateMode: AutovalidateMode.onUserInteraction,
           controller: controller,
           keyboardType: keyboardType,
           obscureText: obscureText,
@@ -256,7 +258,7 @@ class _SignupPageState extends State<SignupPage> {
           decoration: InputDecoration(
             hintText: hintText,
             filled: true,
-            fillColor: theme.colorScheme.primaryContainer,
+            fillColor: Theme.of(context).colorScheme.primaryContainer,
             contentPadding: const EdgeInsets.symmetric(
               vertical: 2,
               horizontal: 15,
@@ -274,7 +276,6 @@ class _SignupPageState extends State<SignupPage> {
   }
 
   Widget _buildLoginLink() {
-    final theme = Theme.of(context);
     return InkWell(
       onTap: () {
         Navigator.of(context).pushReplacement(
@@ -288,7 +289,7 @@ class _SignupPageState extends State<SignupPage> {
             TextSpan(
               text: "Login",
               style: TextStyle(
-                color: theme.colorScheme.onPrimaryContainer,
+                color: Theme.of(context).colorScheme.onPrimaryContainer,
                 fontWeight: FontWeight.bold,
               ),
             ),

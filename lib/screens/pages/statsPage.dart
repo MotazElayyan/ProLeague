@@ -26,16 +26,32 @@ class StatsPage extends StatelessWidget {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                buildStatCard('Goals', '7', 'assets/images/player.png'),
-                buildStatCard('Most Assists', '11', 'assets/images/player.png'),
+                BuildStatCard(
+                  title: 'Goals',
+                  value: '7',
+                  imgUrl: 'assets/images/player.png',
+                ),
+                BuildStatCard(
+                  title: 'Most Assists',
+                  value: '11',
+                  imgUrl: 'assets/images/player.png',
+                ),
               ],
             ),
             SizedBox(height: 20),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                buildStatCard('Goals', '25', 'assets/images/player.png'),
-                buildStatCard('Most Passes', '7,885', 'assets/images/player.png'),
+                BuildStatCard(
+                  title: 'Goals',
+                  value: '25',
+                  imgUrl: 'assets/images/player.png',
+                ),
+                BuildStatCard(
+                  title: 'Most Passes',
+                  value: '7,885',
+                  imgUrl: 'assets/images/player.png',
+                ),
               ],
             ),
             SizedBox(height: 20),

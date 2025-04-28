@@ -6,15 +6,12 @@ import 'package:grad_project/screens/pages/FavTeams.dart';
 import 'package:grad_project/screens/pages/newsPage.dart';
 import 'package:grad_project/screens/pages/profilePage.dart';
 import 'package:grad_project/screens/pages/statsPage.dart';
-import 'package:grad_project/providers/favoritesProvider.dart';
 
 class Tabs extends ConsumerStatefulWidget {
   const Tabs({super.key});
 
   @override
-  ConsumerState<Tabs> createState() {
-    return _TabsState();
-  }
+  ConsumerState<Tabs> createState() => _TabsState();
 }
 
 class _TabsState extends ConsumerState<Tabs> {
@@ -26,23 +23,15 @@ class _TabsState extends ConsumerState<Tabs> {
     });
   }
 
-  Set<String> selectedTeams = {};
-
   @override
   Widget build(BuildContext context) {
-    final selectedTeams = ref.watch(
-      favoriteTeamsProvider,
-    ); 
-
     Widget activePage = const NewsPage();
-    var activePageTitle = 'News';
+    String activePageTitle = 'News';
 
     if (_selectedPageIndex == 1) {
-      activePage = FavTeamsScreen(selectedTeams: selectedTeams.toList());
+      activePage = const FavTeamsScreen();
       activePageTitle = 'Favourites';
-    }
-
-    if (_selectedPageIndex == 2) {
+    } else if (_selectedPageIndex == 2) {
       activePage = const StatsPage();
       activePageTitle = 'Statistics';
     }
@@ -58,12 +47,12 @@ class _TabsState extends ConsumerState<Tabs> {
         child: ListView(
           children: [
             ListTile(
-              leading: Icon(Icons.person),
-              title: Text('Profile'),
+              leading: const Icon(Icons.person),
+              title: const Text('Profile'),
               onTap: () {
-                Navigator.of(
-                  context,
-                ).push(MaterialPageRoute(builder: (ctx) => ProfilePage()));
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (ctx) => const ProfilePage()),
+                );
               },
             ),
           ],
@@ -73,13 +62,13 @@ class _TabsState extends ConsumerState<Tabs> {
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
         color: Theme.of(context).colorScheme.primaryContainer,
-        animationDuration: Duration(milliseconds: 400),
+        animationDuration: const Duration(milliseconds: 400),
         onTap: _selectPage,
         index: _selectedPageIndex,
         items: [
-          Icon(Icons.newspaper),
+          const Icon(Icons.newspaper),
           Image.asset('assets/images/logo1.png', width: 30, height: 30),
-          Icon(Icons.bar_chart),
+          const Icon(Icons.bar_chart),
         ],
       ),
     );

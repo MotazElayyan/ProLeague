@@ -5,13 +5,14 @@ class FavoriteTeamsNotifier extends StateNotifier<Set<String>> {
 
   void toggleTeam(String team) {
     if (state.contains(team)) {
-      state = state..remove(team);
+      state = {...state}..remove(team);
     } else {
-      state = state..add(team);
+      state = {...state, team};
     }
   }
 }
 
-final favoriteTeamsProvider = StateNotifierProvider<FavoriteTeamsNotifier, Set<String>>((ref) {
-  return FavoriteTeamsNotifier();
-});
+final favoriteTeamsProvider =
+    StateNotifierProvider<FavoriteTeamsNotifier, Set<String>>((ref) {
+      return FavoriteTeamsNotifier();
+    });

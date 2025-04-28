@@ -15,7 +15,6 @@ class ChooseFavTeam extends ConsumerStatefulWidget {
 }
 
 class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
-  final Set<String> selectedTeams = {};
   bool _isSaving = false;
 
   void _start() {
@@ -26,13 +25,6 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
 
   void _toggleSelection(String team) {
     ref.read(favoriteTeamsProvider.notifier).toggleTeam(team);
-    setState(() {
-      if (selectedTeams.contains(team)) {
-        selectedTeams.remove(team);
-      } else {
-        selectedTeams.add(team);
-      }
-    });
   }
 
   Future<void> saveFavorites() async {
@@ -48,19 +40,27 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
       _isSaving = true;
     });
 
+    final selectedTeams = ref.read(favoriteTeamsProvider);
+
     try {
+      final userDoc =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
+      final username = userDoc.data()?['username'] ?? 'Unknown';
+
       await FirebaseFirestore.instance
           .collection('favorite_teams')
           .doc(user.uid)
           .set({
             'userId': user.uid,
+            'username': username,
             'teams': selectedTeams.toList(),
             'timestamp': FieldValue.serverTimestamp(),
           });
-      print("Favorites saved successfully");
       _start();
     } catch (e) {
-      print("Failed to save favorites: $e");
       ScaffoldMessenger.of(
         context,
       ).showSnackBar(const SnackBar(content: Text('Failed to save favorites')));
@@ -91,6 +91,7 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
+    final selectedTeams = ref.watch(favoriteTeamsProvider);
 
     return Scaffold(
       backgroundColor: theme.colorScheme.primary,
@@ -100,9 +101,12 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
         actions: [
           TextButton(
             onPressed: _start,
-            child: const Text(
+            child: Text(
               'Skip >',
-              style: TextStyle(color: Colors.white, fontSize: 16),
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.secondary,
+                fontSize: 16,
+              ),
             ),
           ),
         ],
@@ -182,7 +186,9 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
               padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
               child:
                   _isSaving
-                      ? const CircularProgressIndicator(color: Colors.white)
+                      ? CircularProgressIndicator(
+                        color: Theme.of(context).colorScheme.secondary,
+                      )
                       : CustomElevatedButton(
                         title: 'Continue >',
                         onPressed: saveFavorites,

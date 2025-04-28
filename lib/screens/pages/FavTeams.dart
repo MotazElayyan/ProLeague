@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
+import 'package:grad_project/providers/favoritesProvider.dart';
 import 'package:grad_project/teams/faisalyMatchItem.dart';
 import 'package:grad_project/teams/ahliMatchItem.dart';
 import 'package:grad_project/teams/aqabamatchItem.dart';
@@ -16,27 +17,22 @@ import 'package:grad_project/teams/shababjMatchItem.dart';
 import 'package:grad_project/teams/wehdatMatchItem.dart';
 
 final Map<String, List<Widget>> teamMatchWidgets = {
-  'Al Jazeera': [
-    JazeeraMatchItem(teamName: 'Al Jazeera'),
-    JazeeraMatchItem(teamName: 'Al Jazeera'),
-    JazeeraMatchItem(teamName: 'Al Jazeera'),
-  ],
+  'Al Jazeera': [JazeeraMatchItem(teamName: 'Al Jazeera')],
   'Al Wehdat': [WehdatMatchItem(teamName: 'Al Wehdat')],
   'Al Faisaly': [FaisalyMatchItem(teamName: 'Al Faisaly')],
   'Al Ramtha': [RamthaMatchItem(teamName: 'Al Ramtha')],
   'Al Ahli': [AhliMatchItem(teamName: 'Al Ahli')],
   'Al Salt': [SaltMatchItem(teamName: 'Al Salt')],
-  'Shabab AL Aqaba': [AqabaMatchItem(teamName: 'Shabab AL Aqaba')],
+  'Shabab Al Aqaba': [AqabaMatchItem(teamName: 'Shabab Al Aqaba')],
   'Al Hussein': [HusseinMatchItem(teamName: 'Al Hussein')],
   'Maan': [MaanMatchItem(teamName: 'Maan')],
   'Al Sareeh': [SareehMatchItem(teamName: 'Al Sareeh')],
-  'Moghayer AL Sarhan': [SarhanMatchItem(teamName: 'Moghayer AL Sarhan')],
+  'Moghayer Al Sarhan': [SarhanMatchItem(teamName: 'Moghayer Al Sarhan')],
   'Shabab Al Ordon': [ShababMatchItem(teamName: 'Shabab Al Ordon')],
 };
 
 class FavTeamsScreen extends ConsumerStatefulWidget {
-  final List<String> selectedTeams;
-  const FavTeamsScreen({super.key, required this.selectedTeams});
+  const FavTeamsScreen({super.key});
 
   @override
   ConsumerState<FavTeamsScreen> createState() => _FavTeamsScreenState();
@@ -45,59 +41,128 @@ class FavTeamsScreen extends ConsumerStatefulWidget {
 class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
   @override
   Widget build(BuildContext context) {
+    final selectedTeams = ref.watch(favoriteTeamsProvider);
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       body: SafeArea(
-        top: true,
         child: Padding(
-          padding: const EdgeInsets.all(8.0),
+          padding: const EdgeInsets.all(12),
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               Row(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Text('Pro', style: Theme.of(context).textTheme.titleLarge),
-                  Image.asset('assets/images/logo1.png', width: 50, height: 50),
-                  Text('League', style: Theme.of(context).textTheme.titleLarge),
+                  Text(
+                    'Pro ',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
+                  Image.asset('assets/images/logo1.png', width: 40, height: 40),
+                  Text(
+                    ' League',
+                    style: Theme.of(context).textTheme.headlineSmall?.copyWith(
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.primary,
+                    ),
+                  ),
                 ],
               ),
-              const SizedBox(height: 16),
+              const SizedBox(height: 20),
               Expanded(
                 child: ListView.builder(
-                  itemCount: widget.selectedTeams.length,
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: selectedTeams.length,
                   itemBuilder: (context, index) {
-                    final teamName = widget.selectedTeams[index];
-                    final matchWidget = teamMatchWidgets[teamName];
-                    if (matchWidget == null) {
-                      return Text('No match data for $teamName');
-                    }
-                    return Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8.0,
-                            vertical: 8,
-                          ),
+                    final teamName = selectedTeams.elementAt(index);
+                    final matchWidgets = teamMatchWidgets[teamName];
+
+                    if (matchWidgets == null || matchWidgets.isEmpty) {
+                      return Padding(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Center(
                           child: Text(
-                            teamName,
-                            style: Theme.of(context).textTheme.titleMedium,
+                            'No matches available for $teamName',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
                           ),
                         ),
-                        CarouselSlider(
-                          options: CarouselOptions(
-                            height: 200,
-                            enlargeCenterPage: true,
-                            enableInfiniteScroll: false,
-                            autoPlay: false,
-                          ),
-                          items:
-                              matchWidget
-                                  .map((matchWidget) => matchWidget)
-                                  .toList(),
+                      );
+                    }
+
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 10),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      elevation: 3,
+                      child: Padding(
+                        padding: const EdgeInsets.symmetric(
+                          vertical: 12,
+                          horizontal: 10,
                         ),
-                        const SizedBox(height: 24),
-                      ],
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              teamName,
+                              style: Theme.of(
+                                context,
+                              ).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                            const SizedBox(height: 10),
+                            Text(
+                              'Fixtures',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            CarouselSlider(
+                              options: CarouselOptions(
+                                height: 150,
+                                enlargeCenterPage: true,
+                                enableInfiniteScroll: true,
+                                autoPlay: true,
+                                autoPlayInterval: const Duration(seconds: 3),
+                                viewportFraction: 0.9,
+                              ),
+                              items:
+                                  matchWidgets.map((match) {
+                                    return Container(
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.surfaceContainer,
+                                        borderRadius: BorderRadius.circular(15),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black12,
+                                            blurRadius: 5,
+                                            offset: Offset(0, 3),
+                                          ),
+                                        ],
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: match,
+                                      ),
+                                    );
+                                  }).toList(),
+                            ),
+                          ],
+                        ),
+                      ),
                     );
                   },
                 ),
