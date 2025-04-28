@@ -84,8 +84,6 @@ class _SignupPageState extends State<SignupPage> {
       } else if (error.code == 'invalid-email') {
         message = 'The email address is invalid.';
       }
-      print('FirebaseAuthException Code: ${error.code}');
-      print('FirebaseAuthException Message: ${error.message}');
 
       if (mounted) {
         ScaffoldMessenger.of(
