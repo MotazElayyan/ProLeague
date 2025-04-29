@@ -138,13 +138,12 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
     final selectedTeams = ref.watch(favoriteTeamsProvider);
 
     return Scaffold(
-      backgroundColor: theme.colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: theme.colorScheme.primary,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: const Text('Choose Your Favorite Team'),
         actions: [
           TextButton(

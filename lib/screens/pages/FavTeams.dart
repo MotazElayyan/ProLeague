@@ -57,7 +57,7 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
                     'Pro ',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                   Image.asset('assets/images/logo1.png', width: 40, height: 40),
@@ -65,7 +65,7 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
                     ' League',
                     style: Theme.of(context).textTheme.headlineSmall?.copyWith(
                       fontWeight: FontWeight.bold,
-                      color: Theme.of(context).colorScheme.primary,
+                      color: Theme.of(context).colorScheme.secondary,
                     ),
                   ),
                 ],

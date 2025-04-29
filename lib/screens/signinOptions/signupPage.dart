@@ -21,13 +21,16 @@ class SignupPage extends StatefulWidget {
 
 class _SignupPageState extends State<SignupPage> {
   final _formKey = GlobalKey<FormState>();
+
   final TextEditingController username = TextEditingController();
   final TextEditingController email = TextEditingController();
   final TextEditingController password = TextEditingController();
+  final TextEditingController confirmPassword = TextEditingController();
 
   File? _pickedImage;
   bool _isLoading = false;
   bool _showPassword = false;
+  bool _showPassword1 = false;
   AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
 
   Future<void> _signup() async {
@@ -113,6 +116,7 @@ class _SignupPageState extends State<SignupPage> {
     username.dispose();
     email.dispose();
     password.dispose();
+    confirmPassword.dispose();
     super.dispose();
   }
 
@@ -212,6 +216,34 @@ class _SignupPageState extends State<SignupPage> {
                             r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$',
                           ).hasMatch(value)) {
                             return 'Password must be at least 8 characters\nwith upper, lower case and a number';
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 16),
+                      _buildTextField(
+                        controller: confirmPassword,
+                        hintText: '********',
+                        label: 'Confirm Password',
+                        prefixIcon: Icons.lock_outline,
+                        obscureText: !_showPassword1,
+                        suffixIcon: IconButton(
+                          icon: Icon(
+                            _showPassword
+                                ? Icons.visibility
+                                : Icons.visibility_off,
+                          ),
+                          onPressed: () {
+                            setState(() {
+                              _showPassword1 = !_showPassword1;
+                            });
+                          },
+                        ),
+                        validator: (value) {
+                          if (value == null || value.isEmpty) {
+                            return 'Please confirm your password';
+                          } else if (value != password.text) {
+                            return 'Passwords do not match';
                           }
                           return null;
                         },
