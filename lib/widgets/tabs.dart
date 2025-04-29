@@ -4,6 +4,7 @@ import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:grad_project/screens/pages/FavTeams.dart';
+import 'package:grad_project/screens/pages/landingPage.dart';
 import 'package:grad_project/screens/pages/newsPage.dart';
 import 'package:grad_project/screens/pages/profilePage.dart';
 import 'package:grad_project/screens/pages/statsPage.dart';
@@ -63,9 +64,15 @@ class _TabsState extends ConsumerState<Tabs> {
               },
             ),
             InkWell(
-              onTap: () {
-                FirebaseAuth.instance.signOut();
+              onTap: () async {
+                Navigator.of(context).pop();
+                await FirebaseAuth.instance.signOut();
+                if (!mounted) return;
+                Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (ctx) => LandingPage()),
+                );
               },
+
               child: ListTile(
                 leading: const Icon(
                   Icons.logout,

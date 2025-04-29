@@ -5,9 +5,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:grad_project/models/elevatedButton.dart';
-import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
+//import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
 import 'package:grad_project/screens/signinOptions/loginPage.dart';
 import 'package:grad_project/models/imageInput.dart';
+import 'package:grad_project/screens/signinOptions/verifyEmailPage.dart';
 
 final firebase = FirebaseAuth.instance;
 
@@ -50,6 +51,8 @@ class _SignupPageState extends State<SignupPage> {
         password: password.text.trim(),
       );
 
+      await userCredential.user!.sendEmailVerification();
+
       final storageRef = FirebaseStorage.instance
           .ref()
           .child('user_images')
@@ -71,10 +74,14 @@ class _SignupPageState extends State<SignupPage> {
 
       if (!mounted) return;
 
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(builder: (ctx) => const ChooseFavTeam()),
-        (route) => false,
+      Navigator.of(context).pushReplacement(
+        MaterialPageRoute(builder: (ctx) => const VerifyEmailPage()),
       );
+
+      // Navigator.of(context).pushAndRemoveUntil(
+      //   MaterialPageRoute(builder: (ctx) => const ChooseFavTeam()),
+      //   (route) => false,
+      // );
     } on FirebaseAuthException catch (error) {
       String message = 'Authentication failed. Please try again.';
       if (error.code == 'email-already-in-use') {
