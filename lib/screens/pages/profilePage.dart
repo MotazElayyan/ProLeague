@@ -40,14 +40,12 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: theme.colorScheme.primaryContainer,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: const Text('Profile'),
       ),
-      backgroundColor: theme.colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       body: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -56,12 +54,12 @@ class _ProfilePageState extends State<ProfilePage> {
             const SizedBox(height: 20),
             _imageUrl == null
                 ? const CircleAvatar(
-                  radius: 50,
+                  radius: 100,
                   backgroundColor: Colors.grey,
                   child: Icon(Icons.person, size: 50),
                 )
                 : CircleAvatar(
-                  radius: 50,
+                  radius: 100,
                   backgroundImage: NetworkImage(_imageUrl!),
                 ),
             const SizedBox(height: 20),
@@ -69,13 +67,13 @@ class _ProfilePageState extends State<ProfilePage> {
               width: double.infinity,
               height: 37,
               decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer,
+                color: Theme.of(context).colorScheme.primaryContainer,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   'General Settings',
-                  style: theme.textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
             ),
@@ -86,7 +84,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 const Icon(Icons.light),
                 Text(
                   'Mode (Dark/Light)',
-                  style: theme.textTheme.bodyLarge!.copyWith(fontSize: 17),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.copyWith(fontSize: 17),
                 ),
                 const Icon(Icons.sunny),
               ],
@@ -98,7 +98,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 const Icon(Icons.key),
                 Text(
                   'Change Password',
-                  style: theme.textTheme.bodyLarge!.copyWith(fontSize: 17),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.copyWith(fontSize: 17),
                 ),
                 const Icon(Icons.arrow_forward_ios),
               ],
@@ -108,11 +110,14 @@ class _ProfilePageState extends State<ProfilePage> {
               width: double.infinity,
               height: 37,
               decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer,
+                color: Theme.of(context).colorScheme.primaryContainer,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
-                child: Text('Information', style: theme.textTheme.bodyMedium),
+                child: Text(
+                  'Information',
+                  style: Theme.of(context).textTheme.bodyMedium,
+                ),
               ),
             ),
             const SizedBox(height: 20),
@@ -122,7 +127,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 const Icon(Icons.phone_iphone),
                 Text(
                   'About App',
-                  style: theme.textTheme.bodyLarge!.copyWith(fontSize: 17),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.copyWith(fontSize: 17),
                 ),
                 const Icon(Icons.arrow_forward_ios),
               ],
@@ -134,7 +141,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 const Icon(Icons.privacy_tip_rounded),
                 Text(
                   'Privacy Policy',
-                  style: theme.textTheme.bodyLarge!.copyWith(fontSize: 17),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.copyWith(fontSize: 17),
                 ),
                 const Icon(Icons.arrow_forward_ios),
               ],
@@ -146,7 +155,9 @@ class _ProfilePageState extends State<ProfilePage> {
                 const Icon(Icons.share),
                 Text(
                   'Share This App',
-                  style: theme.textTheme.bodyLarge!.copyWith(fontSize: 17),
+                  style: Theme.of(
+                    context,
+                  ).textTheme.bodyLarge!.copyWith(fontSize: 17),
                 ),
                 const Icon(Icons.arrow_forward_ios),
               ],
@@ -156,32 +167,34 @@ class _ProfilePageState extends State<ProfilePage> {
               width: double.infinity,
               height: 37,
               decoration: BoxDecoration(
-                color: theme.colorScheme.primaryContainer,
+                color: Theme.of(context).colorScheme.primaryContainer,
               ),
               child: Padding(
                 padding: const EdgeInsets.all(8.0),
                 child: Text(
                   'Account Settings',
-                  style: theme.textTheme.bodyMedium,
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
               ),
             ),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const Icon(Icons.exit_to_app),
-                Text(
-                  'Log out',
-                  style: theme.textTheme.bodyLarge!.copyWith(fontSize: 17),
-                ),
-                IconButton(
-                  onPressed: () {
-                    FirebaseAuth.instance.signOut();
-                  },
-                  icon: const Icon(Icons.arrow_forward_ios),
-                ),
-              ],
-            ),
+            // Row(
+            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            //   children: [
+            //     const Icon(Icons.exit_to_app),
+            //     Text(
+            //       'Log out',
+            //       style: Theme.of(
+            //         context,
+            //       ).textTheme.bodyLarge!.copyWith(fontSize: 17),
+            //     ),
+            //     IconButton(
+            //       onPressed: () {
+            //         FirebaseAuth.instance.signOut();
+            //       },
+            //       icon: const Icon(Icons.arrow_forward_ios),
+            //     ),
+            //   ],
+            // ),
           ],
         ),
       ),

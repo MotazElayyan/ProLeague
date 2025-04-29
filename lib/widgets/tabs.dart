@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -48,12 +49,33 @@ class _TabsState extends ConsumerState<Tabs> {
           children: [
             ListTile(
               leading: const Icon(Icons.person),
-              title: const Text('Profile'),
+              title: Text(
+                'Profile',
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  fontSize: 28,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
               onTap: () {
                 Navigator.of(context).push(
                   MaterialPageRoute(builder: (ctx) => const ProfilePage()),
                 );
               },
+            ),
+            InkWell(
+              onTap: () {
+                FirebaseAuth.instance.signOut();
+              },
+              child: ListTile(
+                leading: const Icon(Icons.logout),
+                title: Text(
+                  'Log Out',
+                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                    fontSize: 28,
+                    color: const Color.fromARGB(255, 236, 40, 26),
+                  ),
+                ),
+              ),
             ),
           ],
         ),

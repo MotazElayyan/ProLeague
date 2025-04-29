@@ -7,7 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:grad_project/models/elevatedButton.dart';
 import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
 import 'package:grad_project/screens/signinOptions/loginPage.dart';
-import 'package:grad_project/widgets/imageInput.dart';
+import 'package:grad_project/models/imageInput.dart';
 
 final firebase = FirebaseAuth.instance;
 
