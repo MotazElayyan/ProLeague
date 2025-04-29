@@ -14,48 +14,52 @@ class LoginPage extends StatefulWidget {
 }
 
 class _LoginPageState extends State<LoginPage> {
+  final _formKey = GlobalKey<FormState>();
+  bool _showPassword = false;
+
+  final TextEditingController emailController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  void _login() async {
+    final email = emailController.text.trim();
+    final password = passwordController.text;
+
+    try {
+      await FirebaseAuth.instance.signInWithEmailAndPassword(
+        email: email,
+        password: password,
+      );
+
+      Navigator.of(context).pushAndRemoveUntil(
+        MaterialPageRoute(builder: (ctx) => Tabs()),
+        (route) => false,
+      );
+    } on FirebaseAuthException catch (error) {
+      String message = 'An error occurred. Please try again.';
+      if (error.code == 'user-not-found') {
+        message = 'User not found.';
+      } else if (error.code == 'wrong-password') {
+        message = 'Wrong password.';
+      }
+
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(message)));
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    final _formKey = GlobalKey<FormState>();
-
-    TextEditingController email = TextEditingController();
-    TextEditingController password = TextEditingController();
-
-    void _login() async {
-      String emailValue = email.text;
-      String passwordValue = password.text;
-
-      try {
-        await FirebaseAuth.instance.signInWithEmailAndPassword(
-          email: emailValue,
-          password: passwordValue,
-        );
-        Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (ctx) => Tabs()),
-          (route) => false,
-        );
-      } on FirebaseAuthException catch (error) {
-        if (error.code == 'user-not-found') {
-          ScaffoldMessenger.of(context).clearSnackBars();
-          ScaffoldMessenger.of(context).showSnackBar(
-            SnackBar(content: Text(error.message ?? 'User not found.')),
-          );
-        } else if (error.code == 'wrong-password') {}
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(error.message ?? 'Wrong password.')),
-        );
-      }
-    }
+    final theme = Theme.of(context);
 
     return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
+      backgroundColor: theme.colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primary,
+        backgroundColor: theme.colorScheme.primary,
         title: const Text('Login'),
       ),
       body: SafeArea(
-        top: true,
         child: Stack(
           children: [
             Opacity(
@@ -64,205 +68,201 @@ class _LoginPageState extends State<LoginPage> {
                 alignment: AlignmentDirectional(0, -1.98),
                 child: Icon(
                   Icons.sports_soccer,
-                  color: Color(0xFF363272),
+                  color: const Color(0xFF363272),
                   size: 500,
                 ),
               ),
             ),
-            Column(
-              children: [
-                Image.asset(
-                  'assets/images/logo1.png',
-                  height: 159.5,
-                  width: 112.7,
-                ),
-                Text(
-                  'Sign Into your account',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                Form(
-                  key: _formKey,
-                  child: Text(
-                    'Email Address: ',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      fillColor: Theme.of(context).colorScheme.primaryContainer,
-                      hintText: 'Example@gmail.com',
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 2,
-                        horizontal: 15,
-                      ),
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      prefixIcon: Icon(Icons.email),
-                    ),
-                    controller: email,
-                    autovalidateMode: AutovalidateMode.onUserInteraction,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your email';
-                      } else if (RegExp(
-                        r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                      ).hasMatch(value)) {
-                        return null;
-                      }
-                      return 'Please enter a valid email';
-                    },
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Text('Password', style: Theme.of(context).textTheme.bodyMedium),
-                const SizedBox(height: 10),
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: TextFormField(
-                    keyboardType: TextInputType.emailAddress,
-                    decoration: InputDecoration(
-                      fillColor: Theme.of(context).colorScheme.primaryContainer,
-                      hintText: '*********',
-                      contentPadding: EdgeInsets.symmetric(
-                        vertical: 2,
-                        horizontal: 15,
-                      ),
-                      filled: true,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      enabledBorder: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(30),
-                      ),
-                      prefixIcon: Icon(Icons.key),
-                    ),
-                    controller: password,
-                    validator: (value) {
-                      if (value == null || value.isEmpty) {
-                        return 'Please enter your password';
-                      } else if (RegExp(
-                        r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$',
-                      ).hasMatch(value)) {
-                        return null;
-                      }
-                      return 'Please enter a valid Password';
-                    },
-                  ),
-                ),
-                const SizedBox(height: 10),
-                Align(
-                  alignment: AlignmentDirectional(0.84, 0.04),
-                  child: InkWell(
-                    splashColor: Colors.transparent,
-                    focusColor: Colors.transparent,
-                    hoverColor: Colors.transparent,
-                    highlightColor: Colors.transparent,
-                    onTap: () {},
-                    child: Text(
-                      'Forgot your password?',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 15),
-                CustomElevatedButton(title: 'Log In', onPressed: _login),
-                const SizedBox(height: 10),
-                Text(
-                  '________________________ OR ________________________',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 10),
-                Text(
-                  'Log In with...',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                const SizedBox(height: 10),
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 16.0),
+                child: Column(
                   children: [
-                    Expanded(
-                      child: FlutterSocialButton(
-                        onTap: () {},
-                        buttonType: ButtonType.facebook,
-                        mini: true,
-                      ),
+                    const SizedBox(height: 10),
+                    Image.asset(
+                      'assets/images/logo1.png',
+                      height: 159.5,
+                      width: 112.7,
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: FlutterSocialButton(
-                        onTap: () {},
-                        buttonType: ButtonType.google,
-                        mini: true,
-                      ),
+                    Text(
+                      'Sign Into your account',
+                      style: theme.textTheme.bodyLarge,
                     ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: FlutterSocialButton(
-                        onTap: () {},
-                        buttonType: ButtonType.twitter,
-                        mini: true,
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 10),
-                SocialButton(
-                  onTap: () {},
-                  icon: Icon(Icons.apple),
-                  buttonColor: Theme.of(context).colorScheme.secondary,
-                  label: 'Sign in with apple',
-                ),
-                InkWell(
-                  onTap: () {
-                    Navigator.of(
-                      context,
-                    ).push(MaterialPageRoute(builder: (ctx) => SignupPage()));
-                  },
-                  child: Center(
-                    child: Text.rich(
-                      TextSpan(
+                    const SizedBox(height: 20),
+
+                    Form(
+                      key: _formKey,
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          TextSpan(text: "Don't Have An Account ? "),
-                          TextSpan(
-                            text: "Signup",
-                            style: TextStyle(
-                              color:
-                                  Theme.of(
-                                    context,
-                                  ).colorScheme.onPrimaryContainer,
-                              fontWeight: FontWeight.bold,
+                          Text(
+                            'Email Address:',
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                          const SizedBox(height: 10),
+                          _buildTextField(
+                            controller: emailController,
+                            hintText: 'Example@gmail.com',
+                            prefixIcon: Icons.email,
+                            keyboardType: TextInputType.emailAddress,
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your email';
+                              }
+                              if (!RegExp(
+                                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                              ).hasMatch(value)) {
+                                return 'Please enter a valid email';
+                              }
+                              return null;
+                            },
+                          ),
+                          const SizedBox(height: 20),
+
+                          Text('Password:', style: theme.textTheme.bodyMedium),
+                          const SizedBox(height: 10),
+                          _buildTextField(
+                            controller: passwordController,
+                            hintText: '*********',
+                            prefixIcon: Icons.key,
+                            obscureText: !_showPassword,
+                            suffixIcon: IconButton(
+                              icon: Icon(
+                                _showPassword
+                                    ? Icons.visibility
+                                    : Icons.visibility_off,
+                              ),
+                              onPressed: () {
+                                setState(() {
+                                  _showPassword = !_showPassword;
+                                });
+                              },
                             ),
+                            validator: (value) {
+                              if (value == null || value.isEmpty) {
+                                return 'Please enter your password';
+                              }
+                              if (!RegExp(
+                                r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$',
+                              ).hasMatch(value)) {
+                                return 'Please enter a valid password';
+                              }
+                              return null;
+                            },
                           ),
                         ],
                       ),
                     ),
-                  ),
-                ),
-              ],
-            ),
-            Opacity(
-              opacity: 0.3,
-              child: Align(
-                alignment: AlignmentDirectional(10, 3),
-                child: Icon(
-                  Icons.sports_soccer,
-                  color: Color(0xFF363272),
-                  size: 500,
+
+                    const SizedBox(height: 10),
+                    Align(
+                      alignment: Alignment.centerRight,
+                      child: InkWell(
+                        onTap: () {},
+                        child: Text(
+                          'Forgot your password?',
+                          style: theme.textTheme.bodyMedium,
+                        ),
+                      ),
+                    ),
+
+                    const SizedBox(height: 20),
+                    CustomElevatedButton(title: 'Log In', onPressed: _login),
+
+                    const SizedBox(height: 15),
+                    Text(
+                      '________________________ OR ________________________',
+                      style: theme.textTheme.bodyMedium,
+                    ),
+                    const SizedBox(height: 10),
+                    Text('Log In with...', style: theme.textTheme.bodyMedium),
+                    const SizedBox(height: 10),
+
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                      children: [
+                        _buildSocialButton(ButtonType.facebook),
+                        _buildSocialButton(ButtonType.google),
+                        _buildSocialButton(ButtonType.twitter),
+                      ],
+                    ),
+
+                    const SizedBox(height: 10),
+                    SocialButton(
+                      onTap: () {},
+                      icon: const Icon(Icons.apple),
+                      buttonColor: theme.colorScheme.secondary,
+                      label: 'Sign in with Apple',
+                    ),
+
+                    const SizedBox(height: 10),
+                    InkWell(
+                      onTap: () {
+                        Navigator.of(context).push(
+                          MaterialPageRoute(builder: (ctx) => SignupPage()),
+                        );
+                      },
+                      child: Center(
+                        child: Text.rich(
+                          TextSpan(
+                            children: [
+                              const TextSpan(text: "Don't Have An Account? "),
+                              TextSpan(
+                                text: "Signup",
+                                style: TextStyle(
+                                  color: theme.colorScheme.onPrimaryContainer,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    const SizedBox(height: 20),
+                  ],
                 ),
               ),
             ),
           ],
         ),
       ),
+    );
+  }
+
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hintText,
+    required IconData prefixIcon,
+    Widget? suffixIcon,
+    String? Function(String?)? validator,
+    TextInputType keyboardType = TextInputType.text,
+    bool obscureText = false,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: obscureText,
+      keyboardType: keyboardType,
+      validator: validator,
+      autovalidateMode: AutovalidateMode.onUserInteraction,
+      decoration: InputDecoration(
+        fillColor: Theme.of(context).colorScheme.primaryContainer,
+        filled: true,
+        hintText: hintText,
+        contentPadding: const EdgeInsets.symmetric(vertical: 2, horizontal: 15),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(30),
+        ),
+        prefixIcon: Icon(prefixIcon),
+        suffixIcon: suffixIcon,
+      ),
+    );
+  }
+
+  Widget _buildSocialButton(ButtonType type) {
+    return Expanded(
+      child: FlutterSocialButton(onTap: () {}, buttonType: type, mini: true),
     );
   }
 }

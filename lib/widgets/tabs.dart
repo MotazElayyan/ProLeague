@@ -52,7 +52,7 @@ class _TabsState extends ConsumerState<Tabs> {
               title: Text(
                 'Profile',
                 style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  fontSize: 28,
+                  fontSize: 18,
                   color: Theme.of(context).colorScheme.secondary,
                 ),
               ),
@@ -67,11 +67,14 @@ class _TabsState extends ConsumerState<Tabs> {
                 FirebaseAuth.instance.signOut();
               },
               child: ListTile(
-                leading: const Icon(Icons.logout),
+                leading: const Icon(
+                  Icons.logout,
+                  color: Color.fromARGB(255, 236, 40, 26),
+                ),
                 title: Text(
                   'Log Out',
                   style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    fontSize: 28,
+                    fontSize: 18,
                     color: const Color.fromARGB(255, 236, 40, 26),
                   ),
                 ),
