@@ -77,20 +77,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const Icon(Icons.light),
-                Text(
-                  'Mode (Dark/Light)',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge!.copyWith(fontSize: 17),
-                ),
-                const Icon(Icons.sunny),
-              ],
-            ),
             const SizedBox(height: 15),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
@@ -162,39 +148,6 @@ class _ProfilePageState extends State<ProfilePage> {
                 const Icon(Icons.arrow_forward_ios),
               ],
             ),
-            const SizedBox(height: 15),
-            Container(
-              width: double.infinity,
-              height: 37,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Account Settings',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-              ),
-            ),
-            // Row(
-            //   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            //   children: [
-            //     const Icon(Icons.exit_to_app),
-            //     Text(
-            //       'Log out',
-            //       style: Theme.of(
-            //         context,
-            //       ).textTheme.bodyLarge!.copyWith(fontSize: 17),
-            //     ),
-            //     IconButton(
-            //       onPressed: () {
-            //         FirebaseAuth.instance.signOut();
-            //       },
-            //       icon: const Icon(Icons.arrow_forward_ios),
-            //     ),
-            //   ],
-            // ),
           ],
         ),
       ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:grad_project/providers/favoritesProvider.dart';
 
 import 'package:grad_project/screens/pages/FavTeams.dart';
 import 'package:grad_project/screens/pages/newsPage.dart';
@@ -15,6 +16,14 @@ class Tabs extends ConsumerStatefulWidget {
 
 class _TabsState extends ConsumerState<Tabs> {
   int _selectedPageIndex = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      ref.read(favoriteTeamsProvider.notifier).loadFavorites();
+    });
+  }
 
   void _selectPage(int index) {
     setState(() {

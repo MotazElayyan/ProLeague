@@ -136,7 +136,7 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
                               enlargeCenterPage: true,
                               enableInfiniteScroll: true,
                               autoPlay: true,
-                              autoPlayInterval: const Duration(seconds: 3),
+                              autoPlayInterval: const Duration(seconds: 2),
                               viewportFraction: 0.9,
                             ),
                             items:
