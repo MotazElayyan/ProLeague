@@ -1,6 +1,7 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import 'package:grad_project/screens/pages/landingPage.dart';
 import 'package:grad_project/widgets/tabs.dart';
@@ -29,7 +30,6 @@ class _SplashScreenState extends State<HomePage> {
       setState(() => _opacity = 1.0);
     });
 
-    // Fade out and check auth status
     Future.delayed(const Duration(seconds: 2), () async {
       setState(() => _opacity = 0.0);
 

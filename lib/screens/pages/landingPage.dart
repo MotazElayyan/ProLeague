@@ -31,47 +31,49 @@ class _LandingPageState extends State<LandingPage> {
                 ),
               ),
             ),
-            Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Image.asset(
-                  'assets/images/logo1.png',
-                  width: 160,
-                  height: 160,
-                  fit: BoxFit.cover,
-                ),
-                Text('Welcome', style: Theme.of(context).textTheme.bodyLarge),
-                const SizedBox(height: 5),
-                Text(
-                  'Help us tailor your experience by answering a few quick and easy questions',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                  textAlign: TextAlign.center,
-                ),
-                const SizedBox(height: 70),
-                CustomElevatedButton(
-                  title: 'Get Started',
-                  onPressed: () {
-                    Navigator.of(
-                      context,
-                    ).push(MaterialPageRoute(builder: (ctx) => SignupPage()));
-                  },
-                ),
-                const SizedBox(height: 8),
-                Text(
-                  'Already have an account?',
-                  style: Theme.of(context).textTheme.bodyLarge,
-                ),
-                const SizedBox(height: 5),
-                CustomElevatedButton(
-                  title: 'Log In',
-                  onPressed: () {
-                    Navigator.of(
-                      context,
-                    ).push(MaterialPageRoute(builder: (ctx) => LoginPage()));
-                  },
-                ),
-              ],
+            Center(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.center,
+                children: [
+                  Image.asset(
+                    'assets/images/logo1.png',
+                    width: 160,
+                    height: 160,
+                    fit: BoxFit.cover,
+                  ),
+                  Text('Welcome', style: Theme.of(context).textTheme.bodyLarge),
+                  const SizedBox(height: 5),
+                  Text(
+                    'The home of Jordanian football',
+                    style: Theme.of(context).textTheme.bodyMedium,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 35),
+                  CustomElevatedButton(
+                    title: 'Get Started',
+                    onPressed: () {
+                      Navigator.of(
+                        context,
+                      ).push(MaterialPageRoute(builder: (ctx) => SignupPage()));
+                    },
+                  ),
+                  const SizedBox(height: 8),
+                  Text(
+                    'Already have an account?',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  const SizedBox(height: 5),
+                  CustomElevatedButton(
+                    title: 'Log In',
+                    onPressed: () {
+                      Navigator.of(
+                        context,
+                      ).push(MaterialPageRoute(builder: (ctx) => LoginPage()));
+                    },
+                  ),
+                ],
+              ),
             ),
             Opacity(
               opacity: 0.3,

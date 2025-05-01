@@ -5,7 +5,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 
 import 'package:grad_project/models/elevatedButton.dart';
-//import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
 import 'package:grad_project/screens/signinOptions/loginPage.dart';
 import 'package:grad_project/models/imageInput.dart';
 import 'package:grad_project/screens/signinOptions/verifyEmailPage.dart';
@@ -29,8 +28,8 @@ class _SignupPageState extends State<SignupPage> {
 
   File? _pickedImage;
   bool _isLoading = false;
-  bool _showPassword = false;
   bool _showPassword1 = false;
+  bool _showPassword2 = false;
   AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
 
   Future<void> _signup() async {
@@ -196,16 +195,16 @@ class _SignupPageState extends State<SignupPage> {
                         hintText: '********',
                         label: 'Password',
                         prefixIcon: Icons.lock,
-                        obscureText: !_showPassword,
+                        obscureText: !_showPassword1,
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _showPassword
+                            _showPassword1
                                 ? Icons.visibility
                                 : Icons.visibility_off,
                           ),
                           onPressed: () {
                             setState(() {
-                              _showPassword = !_showPassword;
+                              _showPassword1 = !_showPassword1;
                             });
                           },
                         ),
@@ -226,16 +225,16 @@ class _SignupPageState extends State<SignupPage> {
                         hintText: '********',
                         label: 'Confirm Password',
                         prefixIcon: Icons.lock_outline,
-                        obscureText: !_showPassword1,
+                        obscureText: !_showPassword2,
                         suffixIcon: IconButton(
                           icon: Icon(
-                            _showPassword
+                            _showPassword2
                                 ? Icons.visibility
                                 : Icons.visibility_off,
                           ),
                           onPressed: () {
                             setState(() {
-                              _showPassword1 = !_showPassword1;
+                              _showPassword2 = !_showPassword2;
                             });
                           },
                         ),
