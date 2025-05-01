@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+
 import 'package:grad_project/models/newsCarouselSlider.dart';
 import 'package:grad_project/models/newsItem.dart';
+import 'package:grad_project/widgets/buildDrawer.dart';
 import 'package:grad_project/widgets/recommendationNewsItem.dart';
 
 class NewsPage extends StatefulWidget {
@@ -23,101 +25,104 @@ class _NewsPageState extends State<NewsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      body: SafeArea(
-        child: SingleChildScrollView(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Breaking NEWS',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        title: Text('NEWS', style: Theme.of(context).textTheme.titleLarge),
+      ),
+      drawer: BuildDrawer(),
+      body: SingleChildScrollView(
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.start,
+          children: [
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Breaking NEWS',
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'View All',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'View All',
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              const CustomCarouselSlider(),
-              const SizedBox(height: 16),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(8.0),
-                    child: Text(
-                      'Recommendations',
-                      style: Theme.of(context).textTheme.titleLarge,
-                    ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            const CustomCarouselSlider(),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: Text(
+                    'Recommendations',
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  TextButton(
-                    onPressed: () {},
-                    child: Text(
-                      'View All',
-                      style: Theme.of(context).textTheme.bodyMedium,
-                    ),
+                ),
+                TextButton(
+                  onPressed: () {},
+                  child: Text(
+                    'View All',
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
-                ],
-              ),
-              const SizedBox(height: 8),
-              FutureBuilder<List<NewsItem>>(
-                future: _newsFuture,
-                builder: (context, snapshot) {
-                  if (snapshot.connectionState == ConnectionState.waiting) {
+                ),
+              ],
+            ),
+            const SizedBox(height: 8),
+            FutureBuilder<List<NewsItem>>(
+              future: _newsFuture,
+              builder: (context, snapshot) {
+                if (snapshot.connectionState == ConnectionState.waiting) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (snapshot.hasError) {
+                  return Padding(
+                    padding: const EdgeInsets.all(16),
+                    child: Text('Error loading news: ${snapshot.error}'),
+                  );
+                } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+                  return const Padding(
+                    padding: EdgeInsets.all(16),
+                    child: Text('No news available.'),
+                  );
+                } else {
+                  final newsList = snapshot.data!;
+                  final othersNews =
+                      newsList
+                          .where((news) => news.category == "others")
+                          .toList();
+                  if (othersNews.isEmpty) {
                     return const Padding(
                       padding: EdgeInsets.all(16),
-                      child: CircularProgressIndicator(),
-                    );
-                  } else if (snapshot.hasError) {
-                    return Padding(
-                      padding: const EdgeInsets.all(16),
-                      child: Text('Error loading news: ${snapshot.error}'),
-                    );
-                  } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                    return const Padding(
-                      padding: EdgeInsets.all(16),
-                      child: Text('No news available.'),
-                    );
-                  } else {
-                    final newsList = snapshot.data!;
-                    final othersNews =
-                        newsList
-                            .where((news) => news.category == "others")
-                            .toList();
-                    if (othersNews.isEmpty) {
-                      return const Padding(
-                        padding: EdgeInsets.all(16),
-                        child: Text('No recommended news available.'),
-                      );
-                    }
-                    return ListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: othersNews.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.only(bottom: 16),
-                          child: RecommendationNewsItem(
-                            newsItem: othersNews[index],
-                          ),
-                        );
-                      },
+                      child: Text('No recommended news available.'),
                     );
                   }
-                },
-              ),
-            ],
-          ),
+                  return ListView.builder(
+                    shrinkWrap: true,
+                    physics: const NeverScrollableScrollPhysics(),
+                    itemCount: othersNews.length,
+                    itemBuilder: (context, index) {
+                      return Padding(
+                        padding: const EdgeInsets.only(bottom: 16),
+                        child: RecommendationNewsItem(
+                          newsItem: othersNews[index],
+                        ),
+                      );
+                    },
+                  );
+                }
+              },
+            ),
+          ],
         ),
       ),
     );

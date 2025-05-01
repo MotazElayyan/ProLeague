@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:grad_project/models/statCard.dart';
+import 'package:grad_project/widgets/buildDrawer.dart';
 
 class StatsPage extends StatelessWidget {
   const StatsPage({super.key});
@@ -9,6 +10,15 @@ class StatsPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
+      appBar: AppBar(
+        automaticallyImplyLeading: true,
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        title: Text(
+          'Statistics',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
+      ),
+      drawer: BuildDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(

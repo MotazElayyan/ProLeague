@@ -1,12 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:grad_project/screens/pages/FavTeams.dart';
-import 'package:grad_project/screens/pages/landingPage.dart';
 import 'package:grad_project/screens/pages/newsPage.dart';
-import 'package:grad_project/screens/pages/profilePage.dart';
 import 'package:grad_project/screens/pages/statsPage.dart';
 
 class Tabs extends ConsumerStatefulWidget {
@@ -28,68 +25,15 @@ class _TabsState extends ConsumerState<Tabs> {
   @override
   Widget build(BuildContext context) {
     Widget activePage = const NewsPage();
-    String activePageTitle = 'News';
 
     if (_selectedPageIndex == 1) {
       activePage = const FavTeamsScreen();
-      activePageTitle = 'Favourites';
     } else if (_selectedPageIndex == 2) {
       activePage = const StatsPage();
-      activePageTitle = 'Statistics';
     }
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        title: Text(activePageTitle),
-      ),
-      drawer: Drawer(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        child: ListView(
-          children: [
-            ListTile(
-              leading: const Icon(Icons.person),
-              title: Text(
-                'Profile',
-                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                  fontSize: 18,
-                  color: Theme.of(context).colorScheme.secondary,
-                ),
-              ),
-              onTap: () {
-                Navigator.of(context).push(
-                  MaterialPageRoute(builder: (ctx) => const ProfilePage()),
-                );
-              },
-            ),
-            InkWell(
-              onTap: () async {
-                Navigator.of(context).pop();
-                await FirebaseAuth.instance.signOut();
-                if (!mounted) return;
-                Navigator.of(context).pushReplacement(
-                  MaterialPageRoute(builder: (ctx) => LandingPage()),
-                );
-              },
-
-              child: ListTile(
-                leading: const Icon(
-                  Icons.logout,
-                  color: Color.fromARGB(255, 236, 40, 26),
-                ),
-                title: Text(
-                  'Log Out',
-                  style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                    fontSize: 18,
-                    color: const Color.fromARGB(255, 236, 40, 26),
-                  ),
-                ),
-              ),
-            ),
-          ],
-        ),
-      ),
       body: activePage,
       bottomNavigationBar: CurvedNavigationBar(
         backgroundColor: Theme.of(context).colorScheme.primary,
