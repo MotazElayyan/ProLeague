@@ -33,9 +33,9 @@ class _BuildDrawerState extends ConsumerState<BuildDrawer> {
               ),
             ),
             onTap: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(builder: (ctx) => const ProfilePage()),
-              );
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (ctx) => const ProfilePage()));
             },
           ),
           ListTile(
@@ -69,8 +69,7 @@ class _BuildDrawerState extends ConsumerState<BuildDrawer> {
               ),
             ),
             onTap: () {
-              final newMode = isDark ? ThemeMode.light : ThemeMode.dark;
-              ref.read(themeModeProvider.notifier).state = newMode;
+              ref.read(themeModeProvider.notifier).toggleTheme();
             },
           ),
         ],
