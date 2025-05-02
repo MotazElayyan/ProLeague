@@ -1,3 +1,5 @@
+// ignore_for_file: deprecated_member_use
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:carousel_slider/carousel_slider.dart';
@@ -52,16 +54,20 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
         title: Row(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text('Pro ', style: Theme.of(context).textTheme.titleLarge),
-            Image.asset('assets/images/logo1.png', width: 40, height: 40),
-            Text(' League', style: Theme.of(context).textTheme.titleLarge),
+            Text('Pro', style: Theme.of(context).textTheme.titleLarge),
+            const SizedBox(width: 4),
+            Image.asset('assets/images/logo1.png', width: 35, height: 35),
+            const SizedBox(width: 4),
+            Text('League', style: Theme.of(context).textTheme.titleLarge),
           ],
         ),
+        centerTitle: true,
         actions: [
           IconButton(
             icon: Icon(
-              Icons.add,
+              Icons.add_circle_outline,
               color: Theme.of(context).colorScheme.secondary,
+              size: 28,
             ),
             onPressed: () {
               Navigator.of(context).push(
@@ -73,108 +79,109 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
       ),
       drawer: BuildDrawer(),
       body: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          children: [
-            const SizedBox(height: 20),
-            Expanded(
-              child: ListView.builder(
-                physics: const BouncingScrollPhysics(),
-                itemCount: selectedTeams.length,
-                itemBuilder: (context, index) {
-                  final teamName = selectedTeams.elementAt(index);
-                  final matchWidgets = teamMatchWidgets[teamName];
+        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
+        child:
+            selectedTeams.isEmpty
+                ? Center(
+                  child: Text(
+                    'No favorite teams selected.',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                )
+                : ListView.builder(
+                  physics: const BouncingScrollPhysics(),
+                  itemCount: selectedTeams.length,
+                  itemBuilder: (context, index) {
+                    final teamName = selectedTeams.elementAt(index);
+                    final matchWidgets = teamMatchWidgets[teamName];
 
-                  if (matchWidgets == null || matchWidgets.isEmpty) {
-                    return Padding(
-                      padding: const EdgeInsets.all(8.0),
-                      child: Center(
-                        child: Text(
-                          'No matches available for $teamName',
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodyMedium?.copyWith(
-                            color: Theme.of(context).colorScheme.error,
+                    if (matchWidgets == null || matchWidgets.isEmpty) {
+                      return Padding(
+                        padding: const EdgeInsets.symmetric(vertical: 12.0),
+                        child: Center(
+                          child: Text(
+                            'No matches available for $teamName',
+                            style: Theme.of(
+                              context,
+                            ).textTheme.bodyMedium?.copyWith(
+                              color: Theme.of(context).colorScheme.error,
+                            ),
                           ),
+                        ),
+                      );
+                    }
+
+                    return Card(
+                      margin: const EdgeInsets.symmetric(vertical: 12),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(16),
+                      ),
+                      elevation: 4,
+                      color: Theme.of(context).colorScheme.primaryContainer,
+                      child: Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              teamName,
+                              style: Theme.of(
+                                context,
+                              ).textTheme.titleMedium?.copyWith(
+                                fontWeight: FontWeight.bold,
+                                color: Theme.of(context).colorScheme.secondary,
+                              ),
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Upcoming Fixtures:',
+                              style: Theme.of(context).textTheme.bodyMedium,
+                            ),
+                            const SizedBox(height: 12),
+                            CarouselSlider(
+                              options: CarouselOptions(
+                                height: 150,
+                                enlargeCenterPage: true,
+                                enableInfiniteScroll: true,
+                                autoPlay: true,
+                                autoPlayInterval: const Duration(seconds: 3),
+                                viewportFraction: 0.9,
+                              ),
+                              items:
+                                  matchWidgets.map((match) {
+                                    return Container(
+                                      margin: const EdgeInsets.symmetric(
+                                        horizontal: 4,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color:
+                                            Theme.of(context)
+                                                .colorScheme
+                                                .secondary, 
+                                        borderRadius: BorderRadius.circular(15),
+                                        boxShadow: [
+                                          BoxShadow(
+                                            color: Colors.black.withOpacity(
+                                              0.1,
+                                            ), 
+                                            blurRadius: 4,
+                                            offset: const Offset(0, 2),
+                                          ),
+                                        ],
+                                      ),
+                                      child: ClipRRect(
+                                        borderRadius: BorderRadius.circular(15),
+                                        child: match,
+                                      ),
+                                    );
+                                  }).toList(),
+                            ),
+                          ],
                         ),
                       ),
                     );
-                  }
-
-                  return Card(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(20),
-                    ),
-                    color: Theme.of(context).colorScheme.primaryContainer,
-                    elevation: 3,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(
-                        vertical: 12,
-                        horizontal: 10,
-                      ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            teamName,
-                            style: Theme.of(
-                              context,
-                            ).textTheme.titleMedium?.copyWith(
-                              fontWeight: FontWeight.bold,
-                              color: Theme.of(context).colorScheme.secondary,
-                            ),
-                          ),
-                          const SizedBox(height: 10),
-                          Text(
-                            'Fixtures',
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
-                          CarouselSlider(
-                            options: CarouselOptions(
-                              height: 150,
-                              enlargeCenterPage: true,
-                              enableInfiniteScroll: true,
-                              autoPlay: true,
-                              autoPlayInterval: const Duration(seconds: 2),
-                              viewportFraction: 0.9,
-                            ),
-                            items:
-                                matchWidgets.map((match) {
-                                  return Container(
-                                    margin: const EdgeInsets.symmetric(
-                                      horizontal: 4,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color:
-                                          Theme.of(
-                                            context,
-                                          ).colorScheme.surfaceContainer,
-                                      borderRadius: BorderRadius.circular(15),
-                                      boxShadow: [
-                                        BoxShadow(
-                                          color: Colors.black12,
-                                          blurRadius: 5,
-                                          offset: Offset(0, 3),
-                                        ),
-                                      ],
-                                    ),
-                                    child: ClipRRect(
-                                      borderRadius: BorderRadius.circular(15),
-                                      child: match,
-                                    ),
-                                  );
-                                }).toList(),
-                          ),
-                        ],
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ],
-        ),
+                  },
+                ),
       ),
     );
   }
