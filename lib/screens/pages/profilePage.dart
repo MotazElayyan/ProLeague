@@ -11,6 +11,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   String? _imageUrl;
+  String? _username;
 
   @override
   void initState() {
@@ -29,8 +30,10 @@ class _ProfilePageState extends State<ProfilePage> {
               .doc(user.uid)
               .get();
       if (docSnapshot.exists) {
+        final data = docSnapshot.data();
         setState(() {
-          _imageUrl = docSnapshot.data()?['image_url'];
+          _imageUrl = data?['image_url'];
+          _username = data?['username'];
         });
       }
     } catch (error) {
@@ -62,6 +65,9 @@ class _ProfilePageState extends State<ProfilePage> {
                   radius: 100,
                   backgroundImage: NetworkImage(_imageUrl!),
                 ),
+            const SizedBox(height: 10),
+            if (_username != null)
+              Text(_username!, style: Theme.of(context).textTheme.titleLarge),
             const SizedBox(height: 20),
             Container(
               width: double.infinity,

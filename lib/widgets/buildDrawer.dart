@@ -39,6 +39,19 @@ class _BuildDrawerState extends ConsumerState<BuildDrawer> {
             },
           ),
           ListTile(
+            leading: Icon(isDark ? Icons.dark_mode : Icons.light_mode),
+            title: Text(
+              'Mode (Dark/Light)',
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                fontSize: 18,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+            onTap: () {
+              ref.read(themeModeProvider.notifier).toggleTheme();
+            },
+          ),
+          ListTile(
             leading: const Icon(
               Icons.logout,
               color: Color.fromARGB(255, 236, 40, 26),
@@ -57,19 +70,6 @@ class _BuildDrawerState extends ConsumerState<BuildDrawer> {
               Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (ctx) => LandingPage()),
               );
-            },
-          ),
-          ListTile(
-            leading: Icon(isDark ? Icons.dark_mode : Icons.light_mode),
-            title: Text(
-              'Mode (Dark/Light)',
-              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                fontSize: 18,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-            ),
-            onTap: () {
-              ref.read(themeModeProvider.notifier).toggleTheme();
             },
           ),
         ],
