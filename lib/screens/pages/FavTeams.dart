@@ -70,7 +70,7 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
               size: 28,
             ),
             onPressed: () {
-              Navigator.of(context).push(
+              Navigator.of(context).pushReplacement(
                 MaterialPageRoute(builder: (context) => const ChooseFavTeam()),
               );
             },
