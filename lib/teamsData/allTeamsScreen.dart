@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:grad_project/teams/teamSheet.dart';
+import 'package:grad_project/teamsData/teamSheet.dart';
 
 class AllTeamsScreen extends StatelessWidget {
   AllTeamsScreen({super.key});
@@ -87,7 +87,7 @@ class AllTeamsScreen extends StatelessWidget {
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (_) => TeamSheet(
+                  builder: (ctx) => TeamSheet(
                     teamName: team['name']!,
                     logoUrl: team['image']!,
                   ),

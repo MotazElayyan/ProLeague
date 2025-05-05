@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
 import 'package:grad_project/providers/favoritesProvider.dart';
-import 'package:grad_project/teams/allTeamsScreen.dart';
-import 'package:grad_project/teams/teamSheet.dart';
+import 'package:grad_project/teamsData/allTeamsScreen.dart';
+import 'package:grad_project/teamsData/coaches.dart';
+import 'package:grad_project/teamsData/teamSheet.dart';
+import 'package:grad_project/widgets/buildDrawer.dart';
 
 class MorePage extends ConsumerStatefulWidget {
   const MorePage({super.key});
@@ -83,6 +85,11 @@ class _MorePageState extends ConsumerState<MorePage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
+      appBar: AppBar(
+        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+        title: Text('More', style: Theme.of(context).textTheme.titleLarge),
+      ),
+      drawer: BuildDrawer(),
       body: SafeArea(
         child: Padding(
           padding: const EdgeInsets.all(16.0),
@@ -178,7 +185,11 @@ class _MorePageState extends ConsumerState<MorePage> {
                   ).push(MaterialPageRoute(builder: (ctx) => AllTeamsScreen()));
                 }),
 
-                _listItem("Coaches", () {}),
+                _listItem("Coaches", () {
+                  Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (ctx) => CoachesPage()));
+                }),
                 _listItem("Players", () {}),
 
                 Padding(
@@ -191,11 +202,7 @@ class _MorePageState extends ConsumerState<MorePage> {
 
                 Text(
                   "Settings:",
-                  style: TextStyle(
-                    color: Colors.white,
-                    fontSize: 18,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: Theme.of(context).textTheme.bodyLarge
                 ),
                 SizedBox(height: 8),
                 _listItem("Notifications", () {}),
