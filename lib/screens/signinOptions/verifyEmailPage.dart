@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
+import 'package:grad_project/screens/signinOptions/allowNotifications.dart';
 
 class VerifyEmailPage extends StatefulWidget {
   const VerifyEmailPage({super.key});
@@ -25,7 +25,7 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       if (user != null && user.emailVerified) {
         if (!mounted) return;
         Navigator.of(context).pushAndRemoveUntil(
-          MaterialPageRoute(builder: (ctx) => const ChooseFavTeam()),
+          MaterialPageRoute(builder: (ctx) => const AllowNotifications()),
           (route) => false,
         );
         break;

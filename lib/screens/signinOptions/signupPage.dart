@@ -80,10 +80,6 @@ class _SignupPageState extends State<SignupPage> {
         MaterialPageRoute(builder: (ctx) => const VerifyEmailPage()),
       );
 
-      // Navigator.of(context).pushAndRemoveUntil(
-      //   MaterialPageRoute(builder: (ctx) => const ChooseFavTeam()),
-      //   (route) => false,
-      // );
     } on FirebaseAuthException catch (error) {
       String message = 'Authentication failed. Please try again.';
       if (error.code == 'email-already-in-use') {

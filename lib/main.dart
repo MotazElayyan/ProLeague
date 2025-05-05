@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:grad_project/screens/signinOptions/allowNotifications.dart';
 import 'firebase_options.dart';
 
 import 'package:grad_project/screens/pages/homePage.dart';
@@ -27,6 +28,10 @@ final lightTheme = ThemeData().copyWith(
       fontWeight: FontWeight.bold,
       color: kColorScheme.onSecondaryContainer,
     ),
+    bodyLarge: TextStyle(
+      color: kColorScheme.secondary,
+      fontWeight: FontWeight.bold,
+    ),
     bodyMedium: TextStyle(color: kColorScheme.onSecondaryContainer),
   ),
   appBarTheme: const AppBarTheme().copyWith(
@@ -49,7 +54,10 @@ final darkTheme = ThemeData.dark().copyWith(
       fontWeight: FontWeight.bold,
       color: kDarkColorScheme.secondary,
     ),
-    bodyLarge: TextStyle(color: kDarkColorScheme.secondary),
+    bodyLarge: TextStyle(
+      color: kDarkColorScheme.secondary,
+      fontWeight: FontWeight.bold,
+    ),
     bodyMedium: TextStyle(color: kDarkColorScheme.secondary),
   ),
   appBarTheme: const AppBarTheme().copyWith(
