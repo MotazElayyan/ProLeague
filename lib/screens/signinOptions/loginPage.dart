@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_social_button/flutter_social_button.dart';
+import 'package:grad_project/models/customTextField.dart';
 
 import 'package:grad_project/models/elevatedButton.dart';
 import 'package:grad_project/screens/signinOptions/forgotPassword.dart';
@@ -96,14 +97,11 @@ class _LoginPageState extends State<LoginPage> {
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          Text(
-                            'Email Address:',
-                            style: theme.textTheme.bodyMedium,
-                          ),
                           const SizedBox(height: 10),
-                          _buildTextField(
+                          CustomTextField(
                             controller: emailController,
                             hintText: 'Example@gmail.com',
+                            label: 'Email Address',
                             prefixIcon: Icons.email,
                             keyboardType: TextInputType.emailAddress,
                             validator: (value) {
@@ -119,12 +117,10 @@ class _LoginPageState extends State<LoginPage> {
                             },
                           ),
                           const SizedBox(height: 20),
-
-                          Text('Password:', style: theme.textTheme.bodyMedium),
-                          const SizedBox(height: 10),
-                          _buildTextField(
+                          CustomTextField(
                             controller: passwordController,
                             hintText: '*********',
+                            label: 'Password',
                             prefixIcon: Icons.key,
                             obscureText: !_showPassword,
                             suffixIcon: IconButton(
@@ -237,35 +233,35 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String hintText,
-    required IconData prefixIcon,
-    Widget? suffixIcon,
-    String? Function(String?)? validator,
-    TextInputType keyboardType = TextInputType.text,
-    bool obscureText = false,
-  }) {
-    return TextFormField(
-      controller: controller,
-      obscureText: obscureText,
-      keyboardType: keyboardType,
-      validator: validator,
-      autovalidateMode: AutovalidateMode.onUserInteraction,
-      decoration: InputDecoration(
-        fillColor: Theme.of(context).colorScheme.primaryContainer,
-        filled: true,
-        hintText: hintText,
-        contentPadding: const EdgeInsets.symmetric(vertical: 2, horizontal: 15),
-        border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(30),
-        ),
-        prefixIcon: Icon(prefixIcon),
-        suffixIcon: suffixIcon,
-      ),
-    );
-  }
+  // Widget _buildTextField({
+  //   required TextEditingController controller,
+  //   required String hintText,
+  //   required IconData prefixIcon,
+  //   Widget? suffixIcon,
+  //   String? Function(String?)? validator,
+  //   TextInputType keyboardType = TextInputType.text,
+  //   bool obscureText = false,
+  // }) {
+  //   return TextFormField(
+  //     controller: controller,
+  //     obscureText: obscureText,
+  //     keyboardType: keyboardType,
+  //     validator: validator,
+  //     autovalidateMode: AutovalidateMode.onUserInteraction,
+  //     decoration: InputDecoration(
+  //       fillColor: Theme.of(context).colorScheme.primaryContainer,
+  //       filled: true,
+  //       hintText: hintText,
+  //       contentPadding: const EdgeInsets.symmetric(vertical: 2, horizontal: 15),
+  //       border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
+  //       enabledBorder: OutlineInputBorder(
+  //         borderRadius: BorderRadius.circular(30),
+  //       ),
+  //       prefixIcon: Icon(prefixIcon),
+  //       suffixIcon: suffixIcon,
+  //     ),
+  //   );
+  // }
 
   Widget _buildSocialButton(ButtonType type) {
     return Expanded(
