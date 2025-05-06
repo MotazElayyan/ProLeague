@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import 'package:grad_project/screens/pages/videosPage.dart';
 import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
 import 'package:grad_project/providers/favoritesProvider.dart';
 import 'package:grad_project/teamsData/allTeamsScreen.dart';
@@ -178,7 +179,11 @@ class _MorePageState extends ConsumerState<MorePage> {
                 ),
                 SizedBox(height: 8),
                 _listItem("Watch Live", () {}),
-                _listItem("Videos", () {}),
+                _listItem("Videos", () {
+                  Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (ctx) => VideosPage()));
+                }),
                 _listItem("Teams", () {
                   Navigator.of(
                     context,
