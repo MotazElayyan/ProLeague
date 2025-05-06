@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_social_button/flutter_social_button.dart';
 
 import 'package:grad_project/models/elevatedButton.dart';
+import 'package:grad_project/screens/signinOptions/forgotPassword.dart';
 import 'package:grad_project/screens/signinOptions/signupPage.dart';
 import 'package:grad_project/widgets/tabs.dart';
 
@@ -158,7 +159,13 @@ class _LoginPageState extends State<LoginPage> {
                     Align(
                       alignment: Alignment.centerRight,
                       child: InkWell(
-                        onTap: () {},
+                        onTap: () {
+                          Navigator.of(context).push(
+                            MaterialPageRoute(
+                              builder: (ctx) => ForgotPassword(),
+                            ),
+                          );
+                        },
                         child: Text(
                           'Forgot your password?',
                           style: theme.textTheme.bodyMedium,
