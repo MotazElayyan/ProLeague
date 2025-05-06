@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:grad_project/screens/signinOptions/changePassword.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -43,118 +44,109 @@ class _ProfilePageState extends State<ProfilePage> {
 
   @override
   Widget build(BuildContext context) {
+    final colorScheme = Theme.of(context).colorScheme;
+
     return Scaffold(
+      backgroundColor: colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: const Text('Profile'),
+        backgroundColor: colorScheme.primaryContainer,
       ),
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      body: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            const SizedBox(height: 20),
-            _imageUrl == null
-                ? const CircleAvatar(
-                  radius: 100,
-                  backgroundColor: Colors.grey,
-                  child: Icon(Icons.person, size: 50),
-                )
-                : CircleAvatar(
-                  radius: 100,
-                  backgroundImage: NetworkImage(_imageUrl!),
-                ),
-            const SizedBox(height: 10),
-            if (_username != null)
-              Text(_username!, style: Theme.of(context).textTheme.titleLarge),
-            const SizedBox(height: 20),
-            Container(
-              width: double.infinity,
-              height: 37,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'General Settings',
-                  style: Theme.of(context).textTheme.bodyMedium,
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Column(
+            children: [
+              Center(
+                child: CircleAvatar(
+                  radius: 60,
+                  backgroundColor: Colors.grey.shade300,
+                  backgroundImage:
+                      _imageUrl != null ? NetworkImage(_imageUrl!) : null,
+                  child:
+                      _imageUrl == null
+                          ? const Icon(
+                            Icons.person,
+                            size: 60,
+                            color: Colors.white,
+                          )
+                          : null,
                 ),
               ),
-            ),
-            const SizedBox(height: 15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const Icon(Icons.key),
-                Text(
-                  'Change Password',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge!.copyWith(fontSize: 17),
-                ),
-                const Icon(Icons.arrow_forward_ios),
-              ],
-            ),
-            const SizedBox(height: 15),
-            Container(
-              width: double.infinity,
-              height: 37,
-              decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.primaryContainer,
+              const SizedBox(height: 12),
+              Text(
+                _username ?? 'Loading...',
+                style: Theme.of(context).textTheme.titleLarge,
               ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Text(
-                  'Information',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
+              const SizedBox(height: 30),
+              _buildSectionTitle('   General Settings'),
+              const SizedBox(height: 10),
+              _buildSettingTile(
+                icon: Icons.key,
+                label: 'Change Password',
+                onTap: () {
+                  Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (ctx) => ChangePassword()));
+                },
               ),
-            ),
-            const SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const Icon(Icons.phone_iphone),
-                Text(
-                  'About App',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge!.copyWith(fontSize: 17),
-                ),
-                const Icon(Icons.arrow_forward_ios),
-              ],
-            ),
-            const SizedBox(height: 15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const Icon(Icons.privacy_tip_rounded),
-                Text(
-                  'Privacy Policy',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge!.copyWith(fontSize: 17),
-                ),
-                const Icon(Icons.arrow_forward_ios),
-              ],
-            ),
-            const SizedBox(height: 15),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-              children: [
-                const Icon(Icons.share),
-                Text(
-                  'Share This App',
-                  style: Theme.of(
-                    context,
-                  ).textTheme.bodyLarge!.copyWith(fontSize: 17),
-                ),
-                const Icon(Icons.arrow_forward_ios),
-              ],
-            ),
-          ],
+              const SizedBox(height: 30),
+              _buildSectionTitle('   Information'),
+              const SizedBox(height: 10),
+              _buildSettingTile(
+                icon: Icons.phone_iphone,
+                label: 'About App',
+                onTap: () {},
+              ),
+              _buildSettingTile(
+                icon: Icons.privacy_tip_rounded,
+                label: 'Privacy Policy',
+                onTap: () {},
+              ),
+              _buildSettingTile(
+                icon: Icons.share,
+                label: 'Share This App',
+                onTap: () {},
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
+    return Container(
+      width: double.infinity,
+      height: 40,
+      color: Theme.of(context).colorScheme.primaryContainer,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: Text(title, style: Theme.of(context).textTheme.bodyLarge),
+      ),
+    );
+  }
+
+  Widget _buildSettingTile({
+    required IconData icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Card(
+        color: Theme.of(context).colorScheme.primaryContainer,
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        elevation: 3,
+        child: ListTile(
+          contentPadding: const EdgeInsets.symmetric(
+            horizontal: 16,
+            vertical: 10,
+          ),
+          leading: Icon(icon, color: Theme.of(context).colorScheme.primary),
+          title: Text(label, style: Theme.of(context).textTheme.bodyMedium),
+          trailing: const Icon(Icons.arrow_forward_ios, size: 16),
+          onTap: onTap,
         ),
       ),
     );
