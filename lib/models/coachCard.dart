@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
 
+import 'package:grad_project/models/coachItem.dart';
+
 class CoachCard extends StatelessWidget {
-  final Map<String, String> coach;
+  final Coach coach;
 
   const CoachCard(this.coach, {super.key});
 
@@ -16,20 +18,20 @@ class CoachCard extends StatelessWidget {
       ),
       child: Column(
         children: [
-          if (coach['picture'] != null && coach['picture']!.isNotEmpty)
+          if (coach.picture.isNotEmpty)
             CircleAvatar(
               radius: 30,
-              backgroundImage: NetworkImage(coach['picture']!),
+              backgroundImage: NetworkImage(coach.picture),
             ),
           const SizedBox(height: 10),
           Text(
-            coach['team']!,
+            coach.team,
             style: Theme.of(context).textTheme.titleLarge,
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 4),
           Text(
-            coach['name']!.isNotEmpty ? coach['name']! : 'TBA',
+            coach.name.isNotEmpty ? coach.name : 'TBA',
             style: Theme.of(context).textTheme.bodyLarge,
             textAlign: TextAlign.center,
           ),

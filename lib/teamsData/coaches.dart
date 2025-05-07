@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:grad_project/models/coachCard.dart';
+import 'package:grad_project/models/coachItem.dart';
 
 class CoachesPage extends StatelessWidget {
   const CoachesPage({super.key});
 
-  Future<List<Map<String, String>>> fetchCoaches() async {
+  Future<List<Coach>> fetchCoaches() async {
     try {
       final docSnapshot =
           await FirebaseFirestore.instance
@@ -14,21 +15,21 @@ class CoachesPage extends StatelessWidget {
               .doc('coaches')
               .get();
 
-      if (docSnapshot.exists) {
-        final data = docSnapshot.data();
-        final List<dynamic> coachesList = data?['team-coaches'] ?? [];
-
-        return coachesList.map<Map<String, String>>((coach) {
-          return {
-            'name': coach['name']?.toString().trim() ?? '',
-            'team': coach['team']?.toString().trim() ?? '',
-            'picture': coach['picture']?.toString().trim() ?? '',
-          };
-        }).toList();
-      } else {
+      if (!docSnapshot.exists) {
         print('Document does not exist');
         return [];
       }
+
+      final data = docSnapshot.data();
+
+      if (data == null || data['team-coaches'] == null) return [];
+
+      final List<dynamic> coachesList = data['team-coaches'];
+
+      return coachesList
+          .whereType<Map<String, dynamic>>()
+          .map((coachMap) => Coach.fromMap(coachMap))
+          .toList();
     } catch (e) {
       print('Error fetching coaches: $e');
       return [];
@@ -43,7 +44,7 @@ class CoachesPage extends StatelessWidget {
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: const Text('Team Coaches'),
       ),
-      body: FutureBuilder<List<Map<String, String>>>(
+      body: FutureBuilder<List<Coach>>(
         future: fetchCoaches(),
         builder: (context, snapshot) {
           if (snapshot.connectionState == ConnectionState.waiting) {
