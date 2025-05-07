@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:grad_project/models/elevatedButton.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 
+import 'package:grad_project/models/elevatedButton.dart';
 import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
 
 class AllowNotifications extends StatefulWidget {
@@ -18,27 +21,42 @@ class _AllowNotificationsState extends State<AllowNotifications> {
       _isProcessing = true;
     });
 
-    await Future.delayed(const Duration(seconds: 2));
+    try {
+      NotificationSettings settings =
+          await FirebaseMessaging.instance.requestPermission();
+
+      if (settings.authorizationStatus == AuthorizationStatus.authorized) {
+        final fcmToken = await FirebaseMessaging.instance.getToken();
+        final user = FirebaseAuth.instance.currentUser;
+
+        if (user != null && fcmToken != null) {
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .update({'fcmToken': fcmToken});
+        }
+      }
+    } catch (e) {
+      debugPrint("Notification permission or token error: $e");
+    }
+
+    await Future.delayed(const Duration(seconds: 1));
+
+    if (!mounted) return;
 
     setState(() {
       _isProcessing = false;
     });
 
-    if (mounted) {
-      Navigator.of(context).pushAndRemoveUntil(
-        MaterialPageRoute(
-          builder: (context) => const ChooseFavTeam(),
-        ),
-        (route) => false,
-      );
-    }
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => const ChooseFavTeam()),
+      (route) => false,
+    );
   }
 
   void _handleDenyNotifications() {
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(
-        builder: (context) => const ChooseFavTeam(),
-      ),
+      MaterialPageRoute(builder: (context) => const ChooseFavTeam()),
       (route) => false,
     );
   }
@@ -48,7 +66,8 @@ class _AllowNotificationsState extends State<AllowNotifications> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        title: Text('Notifications', style: Theme.of(context).textTheme.titleLarge),
+        title: Text('Notifications',
+            style: Theme.of(context).textTheme.titleLarge),
         backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
       body: SafeArea(
@@ -65,7 +84,7 @@ class _AllowNotificationsState extends State<AllowNotifications> {
               ),
               const SizedBox(height: 40),
               Text(
-                'Would You Like To Recieve\nNotifications From This App?',
+                'Would You Like To Receive\nNotifications From This App?',
                 textAlign: TextAlign.center,
                 style: Theme.of(context)
                     .textTheme

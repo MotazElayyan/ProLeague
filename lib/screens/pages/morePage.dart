@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:grad_project/screens/pages/videosPage.dart';
+import 'package:grad_project/screens/signinOptions/allowNotifications.dart';
 import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
 import 'package:grad_project/providers/favoritesProvider.dart';
 import 'package:grad_project/teamsData/allTeamsScreen.dart';
@@ -205,12 +206,13 @@ class _MorePageState extends ConsumerState<MorePage> {
                   ),
                 ),
 
-                Text(
-                  "Settings:",
-                  style: Theme.of(context).textTheme.bodyLarge
-                ),
+                Text("Settings:", style: Theme.of(context).textTheme.bodyLarge),
                 SizedBox(height: 8),
-                _listItem("Notifications", () {}),
+                _listItem("Notifications", () {
+                  Navigator.of(context).push(
+                    MaterialPageRoute(builder: (ctx) => AllowNotifications()),
+                  );
+                }),
 
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),

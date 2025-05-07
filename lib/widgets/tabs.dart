@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grad_project/providers/favoritesProvider.dart';
 
 import 'package:grad_project/screens/pages/FavTeams.dart';
+import 'package:grad_project/screens/pages/communityPage.dart';
 import 'package:grad_project/screens/pages/newsPage.dart';
 import 'package:grad_project/screens/pages/statsPage.dart';
 import 'package:grad_project/screens/pages/morePage.dart';
@@ -39,8 +40,10 @@ class _TabsState extends ConsumerState<Tabs> {
     if (_selectedPageIndex == 1) {
       activePage = const FavTeamsScreen();
     } else if (_selectedPageIndex == 2) {
-      activePage = const StatsPage();
+      activePage = const CommunityPage();
     } else if (_selectedPageIndex == 3) {
+      activePage = const StatsPage();
+    } else if (_selectedPageIndex == 4) {
       activePage = const MorePage();
     }
 
@@ -56,6 +59,7 @@ class _TabsState extends ConsumerState<Tabs> {
         items: [
           const Icon(Icons.newspaper),
           Image.asset('assets/images/logo1.png', width: 30, height: 30),
+          const Icon(Icons.people_alt_rounded),
           const Icon(Icons.bar_chart),
           const Icon(Icons.more_vert),
         ],
