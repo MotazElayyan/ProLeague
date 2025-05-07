@@ -43,7 +43,7 @@ class _ChatsState extends State<Chats> {
     return '${sorted[0]}_${sorted[1]}';
   }
 
-  Stream<QuerySnapshot> _chatMessagesStream() {
+  Stream<QuerySnapshot> _getMessages() {
     final currentUser = _auth.currentUser!;
     final chatId = chatIdFromUsers(currentUser.uid, widget.otherUserId);
 
@@ -70,7 +70,7 @@ class _ChatsState extends State<Chats> {
           children: [
             Expanded(
               child: StreamBuilder<QuerySnapshot>(
-                stream: _chatMessagesStream(),
+                stream: _getMessages(),
                 builder: (context, snapshot) {
                   if (!snapshot.hasData) {
                     return const Center(child: CircularProgressIndicator());
@@ -98,7 +98,12 @@ class _ChatsState extends State<Chats> {
                             vertical: 10,
                           ),
                           decoration: BoxDecoration(
-                            color: isMe ? Colors.blue[200] : Colors.grey[300],
+                            color:
+                                isMe
+                                    ? const Color.fromARGB(255, 79, 136, 183)
+                                    : Theme.of(
+                                      context,
+                                    ).colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(12),
                           ),
                           child: Text(
