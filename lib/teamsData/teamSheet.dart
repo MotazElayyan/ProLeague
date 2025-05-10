@@ -10,12 +10,11 @@ class TeamSheet extends StatelessWidget {
   Future<Map<String, List<Map<String, dynamic>>>> fetchPlayersByRole() async {
     final doc =
         await FirebaseFirestore.instance
-            .collection('Teams')
+            .collection('teams')
             .doc(teamName)
             .get();
     final data = doc.data();
 
-    // Cleaned categories
     final Map<String, List<Map<String, dynamic>>> roles = {
       "Coach": [],
       "Goalkeeper": [],
@@ -25,25 +24,28 @@ class TeamSheet extends StatelessWidget {
       "Forward": [],
     };
 
-    if (data != null) {
-      for (var entry in data.entries) {
-        final player = entry.value as Map<String, dynamic>;
-        String role = (player['Role'] ?? 'Unknown').toString().toLowerCase();
+    if (data != null && data.containsKey('team')) {
+      final team = data['team'];
+      final members = team['members'] as Map<String, dynamic>;
 
-        if (role.contains('coach')) {
+      members.forEach((uid, memberData) {
+        final player = memberData as Map<String, dynamic>;
+        final roleRaw = player['Role']?.toString().toLowerCase() ?? '';
+
+        if (roleRaw.contains('coach')) {
           roles["Coach"]!.add(player);
-        } else if (role.contains('goal')) {
+        } else if (roleRaw.contains('goal')) {
           roles["Goalkeeper"]!.add(player);
-        } else if (role.contains('defend')) {
+        } else if (roleRaw.contains('defend')) {
           roles["Defender"]!.add(player);
-        } else if (role.contains('mid')) {
+        } else if (roleRaw.contains('mid')) {
           roles["Midfielder"]!.add(player);
-        } else if (role.contains('forward')) {
+        } else if (roleRaw.contains('forward')) {
           roles["Forward"]!.add(player);
-        } else if (role.contains('striker')) {
+        } else if (roleRaw.contains('striker')) {
           roles["Striker"]!.add(player);
         }
-      }
+      });
     }
 
     return roles;

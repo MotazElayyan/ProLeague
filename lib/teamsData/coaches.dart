@@ -1,35 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:grad_project/models/coachCard.dart';
 import 'package:grad_project/models/coachItem.dart';
+import 'package:grad_project/models/coachCard.dart';
 
 class CoachesPage extends StatelessWidget {
   const CoachesPage({super.key});
 
   Future<List<Coach>> fetchCoaches() async {
     try {
-      final docSnapshot =
-          await FirebaseFirestore.instance
-              .collection('coaches')
-              .doc('coaches')
-              .get();
+      final querySnapshot =
+          await FirebaseFirestore.instance.collection('Coaches').get();
 
-      if (!docSnapshot.exists) {
-        print('Document does not exist');
-        return [];
-      }
-
-      final data = docSnapshot.data();
-
-      if (data == null || data['team-coaches'] == null) return [];
-
-      final List<dynamic> coachesList = data['team-coaches'];
-
-      return coachesList
-          .whereType<Map<String, dynamic>>()
-          .map((coachMap) => Coach.fromMap(coachMap))
-          .toList();
+      return querySnapshot.docs.map((doc) {
+        final data = doc.data();
+        print("Fetched coach: $data");
+        return Coach.fromMap(data);
+      }).toList();
     } catch (e) {
       print('Error fetching coaches: $e');
       return [];
@@ -68,12 +55,11 @@ class CoachesPage extends StatelessWidget {
 
           return Padding(
             padding: const EdgeInsets.all(16.0),
-            child: SingleChildScrollView(
-              child: Wrap(
-                spacing: 12,
-                runSpacing: 12,
-                children: coaches.map((coach) => CoachCard(coach)).toList(),
-              ),
+            child: GridView.count(
+              crossAxisCount: 2,
+              crossAxisSpacing: 12,
+              mainAxisSpacing: 12,
+              children: coaches.map((coach) => CoachCard(coach)).toList(),
             ),
           );
         },

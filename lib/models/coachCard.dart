@@ -10,30 +10,36 @@ class CoachCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: 160,
-      padding: const EdgeInsets.all(12),
       decoration: BoxDecoration(
         color: Theme.of(context).colorScheme.primaryContainer,
+        border: Border.all(color: Theme.of(context).colorScheme.secondary),
         borderRadius: BorderRadius.circular(12),
       ),
       child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          if (coach.picture.isNotEmpty)
-            CircleAvatar(
-              radius: 30,
-              backgroundImage: NetworkImage(coach.picture),
-            ),
-          const SizedBox(height: 10),
           Text(
-            coach.team,
-            style: Theme.of(context).textTheme.titleLarge,
+            coach.name,
+            style: Theme.of(
+              context,
+            ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
             textAlign: TextAlign.center,
           ),
-          const SizedBox(height: 4),
-          Text(
-            coach.name.isNotEmpty ? coach.name : 'TBA',
-            style: Theme.of(context).textTheme.bodyLarge,
-            textAlign: TextAlign.center,
+          CircleAvatar(
+            radius: 50,
+            backgroundImage: NetworkImage(coach.picture),
+          ),
+          Row(
+            children: [
+              Expanded(child: Image.network(coach.logo, width: 35, height: 35)),
+              Expanded(
+                child: Text(
+                  coach.team,
+                  style: Theme.of(context).textTheme.bodyMedium,
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ],
           ),
         ],
       ),
