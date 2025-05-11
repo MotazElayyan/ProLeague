@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:grad_project/screens/pages/tablePage.dart';
 
 import 'package:grad_project/screens/pages/videosPage.dart';
 import 'package:grad_project/screens/signinOptions/allowNotifications.dart';
@@ -196,7 +197,11 @@ class _MorePageState extends ConsumerState<MorePage> {
                     context,
                   ).push(MaterialPageRoute(builder: (ctx) => CoachesPage()));
                 }),
-                _listItem("Players", () {}),
+                _listItem("Table", () {
+                  Navigator.of(
+                    context,
+                  ).push(MaterialPageRoute(builder: (ctx) => TablePage()));
+                }),
 
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 16.0),

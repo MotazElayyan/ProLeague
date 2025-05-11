@@ -76,9 +76,13 @@ class TeamSheet extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '${role}s',
-                        style: Theme.of(context).textTheme.bodyLarge,
+                      Container(
+                        color: Theme.of(context).colorScheme.primaryContainer,
+                        width: double.infinity,
+                        child: Text(
+                          '${role}s',
+                          style: Theme.of(context).textTheme.bodyLarge,
+                        ),
                       ),
                       const SizedBox(height: 8),
                       ...players.map(
