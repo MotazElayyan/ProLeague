@@ -1,26 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 
 import 'package:grad_project/models/coachItem.dart';
 import 'package:grad_project/models/coachCard.dart';
+import 'package:grad_project/firestoreServices/fetchTeamData.dart';
 
 class CoachesPage extends StatelessWidget {
   const CoachesPage({super.key});
 
   Future<List<Coach>> fetchCoaches() async {
-    try {
-      final querySnapshot =
-          await FirebaseFirestore.instance.collection('Coaches').get();
-
-      return querySnapshot.docs.map((doc) {
-        final data = doc.data();
-        print("Fetched coach: $data");
-        return Coach.fromMap(data);
-      }).toList();
-    } catch (e) {
-      print('Error fetching coaches: $e');
-      return [];
-    }
+    final rawCoaches = await CoachService.fetchAllCoaches();
+    return rawCoaches.map((data) => Coach.fromMap(data)).toList();
   }
 
   @override
