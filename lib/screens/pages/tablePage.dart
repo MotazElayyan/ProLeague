@@ -177,7 +177,7 @@ class _HeaderCell extends StatelessWidget {
         text,
         style: Theme.of(context).textTheme.labelLarge?.copyWith(
           fontWeight: FontWeight.bold,
-          color: Colors.grey[300],
+          color: Theme.of(context).colorScheme.secondary,
         ),
         textAlign: TextAlign.center,
       ),
@@ -199,7 +199,7 @@ class _DataCell extends StatelessWidget {
         text,
         textAlign: TextAlign.center,
         style: TextStyle(
-          color: Colors.white,
+          color: Theme.of(context).colorScheme.secondary,
           fontWeight: bold ? FontWeight.bold : FontWeight.normal,
         ),
       ),
