@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 
 class Chats extends StatefulWidget {
   final String otherUserId;
@@ -21,6 +22,21 @@ class _ChatsState extends State<Chats> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
 
+  @override
+  void initState() {
+    super.initState();
+    _subscribeToChatTopic();
+  }
+
+  void _subscribeToChatTopic() {
+    final currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      final chatId = chatIdFromUsers(currentUser.uid, widget.otherUserId);
+      FirebaseMessaging.instance.subscribeToTopic(chatId);
+      debugPrint('Subscribed to topic: $chatId');
+    }
+  }
+
   void _sendMessage() async {
     final text = _controller.text.trim();
     final currentUser = _auth.currentUser;
@@ -29,10 +45,17 @@ class _ChatsState extends State<Chats> {
 
     final chatId = chatIdFromUsers(currentUser.uid, widget.otherUserId);
 
+    final userDoc =
+        await _firestore.collection('users').doc(currentUser.uid).get();
+    final currentUsername = userDoc.data()?['username'] ?? 'Unknown';
+    final profileImage = userDoc.data()?['image_url'] ?? '';
+
     await _firestore.collection('messages').doc(chatId).collection('chat').add({
       'text': text,
       'createdAt': Timestamp.now(),
       'userId': currentUser.uid,
+      'username': currentUsername,
+      'profileImage': profileImage,
     });
 
     _controller.clear();
@@ -53,6 +76,22 @@ class _ChatsState extends State<Chats> {
         .collection('chat')
         .orderBy('createdAt', descending: true)
         .snapshots();
+  }
+
+  @override
+  void dispose() {
+    _unsubscribeFromChatTopic();
+    _controller.dispose();
+    super.dispose();
+  }
+
+  void _unsubscribeFromChatTopic() {
+    final currentUser = _auth.currentUser;
+    if (currentUser != null) {
+      final chatId = chatIdFromUsers(currentUser.uid, widget.otherUserId);
+      FirebaseMessaging.instance.unsubscribeFromTopic(chatId);
+      debugPrint('Unsubscribed from topic: $chatId');
+    }
   }
 
   @override
