@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:grad_project/teamsData/teamSheet.dart';
+import 'package:grad_project/widgets/tableWidgets.dart';
 
 class TablePage extends StatefulWidget {
   const TablePage({super.key});
@@ -64,144 +64,15 @@ class _TablePageState extends State<TablePage> {
             scrollDirection: Axis.horizontal,
             child: Column(
               children: [
-                _buildHeader(context),
+                header(context),
                 ...List.generate(teams.length, (index) {
                   final team = teams[index];
-                  return _buildTeamRow(context, team, index + 1);
+                  return teamRow(context, team, index + 1);
                 }),
               ],
             ),
           );
         },
-      ),
-    );
-  }
-
-  Widget _buildHeader(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.primaryContainer,
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      child: Row(
-        children: const [
-          _HeaderCell('Pos', width: 50),
-          _HeaderCell('Club', width: 100),
-          _HeaderCell('PL', width: 40),
-          _HeaderCell('W', width: 40),
-          _HeaderCell('D', width: 40),
-          _HeaderCell('L', width: 40),
-          _HeaderCell('GD', width: 50),
-          _HeaderCell('Pts', width: 50),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildTeamRow(
-    BuildContext context,
-    Map<String, dynamic> team,
-    int position,
-  ) {
-    return InkWell(
-      onTap: () {
-        Navigator.push(
-          context,
-          MaterialPageRoute(
-            builder:
-                (ctx) => TeamSheet(
-                  teamName: team['team'] ?? '',
-                  logoUrl: team['team-logo'] ?? '',
-                ),
-          ),
-        );
-      },
-      child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-        decoration: BoxDecoration(
-          border: Border(
-            bottom: BorderSide(
-              color: Theme.of(context).dividerColor,
-              width: 0.5,
-            ),
-          ),
-        ),
-        child: Row(
-          children: [
-            _DataCell('$position', width: 50),
-            SizedBox(
-              width: 100,
-              child: Row(
-                children: [
-                  if ((team['team-logo'] ?? '').toString().isNotEmpty)
-                    Image.network(
-                      team['team-logo'],
-                      width: 24,
-                      height: 24,
-                      errorBuilder:
-                          (context, error, stackTrace) =>
-                              const Icon(Icons.error, size: 20),
-                    ),
-                  const SizedBox(width: 6),
-                  Expanded(
-                    child: Text(
-                      team['team'] ?? '',
-                      style: const TextStyle(fontWeight: FontWeight.w500),
-                      overflow: TextOverflow.ellipsis,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            _DataCell('${team['played'] ?? 0}', width: 40),
-            _DataCell('${team['won'] ?? 0}', width: 40),
-            _DataCell('${team['drawn'] ?? 0}', width: 40),
-            _DataCell('${team['lost'] ?? 0}', width: 40),
-            _DataCell('${team['goalDifference'] ?? 0}', width: 50),
-            _DataCell('${team['points'] ?? 0}', width: 50, bold: true),
-          ],
-        ),
-      ),
-    );
-  }
-}
-
-class _HeaderCell extends StatelessWidget {
-  final String text;
-  final double width;
-  const _HeaderCell(this.text, {required this.width});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      child: Text(
-        text,
-        style: Theme.of(context).textTheme.labelLarge?.copyWith(
-          fontWeight: FontWeight.bold,
-          color: Theme.of(context).colorScheme.secondary,
-        ),
-        textAlign: TextAlign.center,
-      ),
-    );
-  }
-}
-
-class _DataCell extends StatelessWidget {
-  final String text;
-  final double width;
-  final bool bold;
-  const _DataCell(this.text, {required this.width, this.bold = false});
-
-  @override
-  Widget build(BuildContext context) {
-    return SizedBox(
-      width: width,
-      child: Text(
-        text,
-        textAlign: TextAlign.center,
-        style: TextStyle(
-          color: Theme.of(context).colorScheme.secondary,
-          fontWeight: bold ? FontWeight.bold : FontWeight.normal,
-        ),
       ),
     );
   }
