@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
+
 import 'package:grad_project/screens/signinOptions/changePassword.dart';
+import 'package:grad_project/firestoreServices/usersData.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});
@@ -17,29 +17,16 @@ class _ProfilePageState extends State<ProfilePage> {
   @override
   void initState() {
     super.initState();
-    _loadUserProfile();
+    _fetchUserProfileData();
   }
 
-  Future<void> _loadUserProfile() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) return;
+  Future<void> _fetchUserProfileData() async {
+    final profileData = await UserProfileService.loadUserProfile();
 
-    try {
-      final docSnapshot =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
-      if (docSnapshot.exists) {
-        final data = docSnapshot.data();
-        setState(() {
-          _imageUrl = data?['image_url'];
-          _username = data?['username'];
-        });
-      }
-    } catch (error) {
-      print('Error loading user profile: $error');
-    }
+    setState(() {
+      _imageUrl = profileData['imageUrl'];
+      _username = profileData['username'];
+    });
   }
 
   @override

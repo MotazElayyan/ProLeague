@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:grad_project/providers/themeProvider.dart';
-import 'package:grad_project/screens/pages/landingPage.dart';
+import 'package:grad_project/screens/signinOptions/landingPage.dart';
 import 'package:grad_project/screens/pages/profilePage.dart';
 
 class BuildDrawer extends ConsumerStatefulWidget {

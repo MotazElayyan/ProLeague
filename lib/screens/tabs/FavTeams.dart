@@ -2,11 +2,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:carousel_slider/carousel_slider.dart';
+import 'package:intl/intl.dart';
 
 import 'package:grad_project/widgets/buildDrawer.dart';
 import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
 import 'package:grad_project/providers/favoritesProvider.dart';
-import 'package:intl/intl.dart';
+import 'package:grad_project/firestoreServices/fetchTeamData.dart';
 
 class FavTeamsScreen extends ConsumerStatefulWidget {
   const FavTeamsScreen({super.key});
@@ -130,7 +131,7 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
                           final teamName = selectedTeams.elementAt(index);
 
                           return FutureBuilder<List<Map<String, dynamic>>>(
-                            future: fetchFixtures(teamName),
+                            future: FixtureService.fetchFixtures(teamName),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
@@ -338,7 +339,7 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
                           final teamName = selectedTeams.elementAt(index);
 
                           return FutureBuilder<List<Map<String, dynamic>>>(
-                            future: fetchResults(teamName),
+                            future: FixtureService.fetchResults(teamName),
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
@@ -537,7 +538,7 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
                         },
                       ),
             ),
-            //table tab 
+            //table tab
           ],
         ),
       ),

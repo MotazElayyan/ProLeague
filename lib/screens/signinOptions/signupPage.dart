@@ -1,16 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
-import 'package:grad_project/models/customTextField.dart';
 
+import 'package:grad_project/models/customTextField.dart';
 import 'package:grad_project/models/elevatedButton.dart';
 import 'package:grad_project/screens/signinOptions/loginPage.dart';
-import 'package:grad_project/models/imageInput.dart';
 import 'package:grad_project/screens/signinOptions/verifyEmailPage.dart';
-
-final firebase = FirebaseAuth.instance;
+import 'package:grad_project/models/imageInput.dart';
+import 'package:grad_project/firestoreServices/usersData.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -48,62 +44,29 @@ class _SignupPageState extends State<SignupPage> {
       _isLoading = true;
     });
 
-    try {
-      final userCredential = await firebase.createUserWithEmailAndPassword(
-        email: email.text.trim(),
-        password: password.text.trim(),
-      );
+    final errorMessage = await UserSignupService.signupUser(
+      username: username.text,
+      email: email.text,
+      password: password.text,
+      pickedImage: _pickedImage!,
+    );
 
-      await userCredential.user!.sendEmailVerification();
+    if (!mounted) return;
 
-      final storageRef = FirebaseStorage.instance
-          .ref()
-          .child('user_images')
-          .child('${userCredential.user!.uid}.jpg');
-
-      await storageRef.putFile(_pickedImage!);
-      final imageUrl = await storageRef.getDownloadURL();
-
-      await FirebaseFirestore.instance
-          .collection('users')
-          .doc(userCredential.user!.uid)
-          .set({
-            'username': username.text.trim(),
-            'email': email.text.trim(),
-            'image_url': imageUrl,
-          });
-
-      await userCredential.user!.updateDisplayName(username.text.trim());
-
-      if (!mounted) return;
-
+    if (errorMessage != null) {
+      ScaffoldMessenger.of(
+        context,
+      ).showSnackBar(SnackBar(content: Text(errorMessage)));
+    } else {
       Navigator.of(context).pushReplacement(
         MaterialPageRoute(builder: (ctx) => const VerifyEmailPage()),
       );
+    }
 
-    } on FirebaseAuthException catch (error) {
-      String message = 'Authentication failed. Please try again.';
-      if (error.code == 'email-already-in-use') {
-        message = 'This email address is already in use.';
-      } else if (error.code == 'weak-password') {
-        message = 'The password is too weak.';
-      } else if (error.code == 'invalid-email') {
-        message = 'The email address is invalid.';
-      }
-
-      if (mounted) {
-        ScaffoldMessenger.of(
-          context,
-        ).showSnackBar(SnackBar(content: Text(message)));
-      }
-    } catch (error) {
-      print('Signup error: $error');
-    } finally {
-      if (mounted) {
-        setState(() {
-          _isLoading = false;
-        });
-      }
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
     }
   }
 
@@ -266,47 +229,6 @@ class _SignupPageState extends State<SignupPage> {
       ),
     );
   }
-
-  // Widget _buildTextField({
-  //   required TextEditingController controller,
-  //   required String hintText,
-  //   required String label,
-  //   required IconData prefixIcon,
-  //   Widget? suffixIcon,
-  //   required FormFieldValidator<String> validator,
-  //   TextInputType keyboardType = TextInputType.text,
-  //   bool obscureText = false,
-  // }) {
-  //   return Column(
-  //     crossAxisAlignment: CrossAxisAlignment.start,
-  //     children: [
-  //       Text(label, style: Theme.of(context).textTheme.bodyMedium),
-  //       const SizedBox(height: 5),
-  //       TextFormField(
-  //         autovalidateMode: AutovalidateMode.onUserInteraction,
-  //         controller: controller,
-  //         keyboardType: keyboardType,
-  //         obscureText: obscureText,
-  //         validator: validator,
-  //         decoration: InputDecoration(
-  //           hintText: hintText,
-  //           filled: true,
-  //           fillColor: Theme.of(context).colorScheme.primaryContainer,
-  //           contentPadding: const EdgeInsets.symmetric(
-  //             vertical: 2,
-  //             horizontal: 15,
-  //           ),
-  //           border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-  //           enabledBorder: OutlineInputBorder(
-  //             borderRadius: BorderRadius.circular(30),
-  //           ),
-  //           prefixIcon: Icon(prefixIcon),
-  //           suffixIcon: suffixIcon,
-  //         ),
-  //       ),
-  //     ],
-  //   );
-  // }
 
   Widget _buildLoginLink() {
     return InkWell(
