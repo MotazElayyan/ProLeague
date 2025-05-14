@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
 
-import 'package:grad_project/models/elevatedButton.dart';
+import 'package:grad_project/models/CustomButtons.dart';
 import 'package:grad_project/screens/signinOptions/loginPage.dart';
 import 'package:grad_project/screens/signinOptions/signupPage.dart';
 
-class LandingPage extends StatefulWidget {
-  const LandingPage({super.key});
+class HomePage extends StatefulWidget {
+  const HomePage({super.key});
 
   @override
-  State<LandingPage> createState() => _LandingPageState();
+  State<HomePage> createState() => _HomePageState();
 }
 
-class _LandingPageState extends State<LandingPage> {
+class _HomePageState extends State<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(

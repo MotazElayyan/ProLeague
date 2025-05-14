@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_social_button/flutter_social_button.dart';
-import 'package:grad_project/models/customTextField.dart';
 
-import 'package:grad_project/models/elevatedButton.dart';
+import 'package:grad_project/models/customTextField.dart';
+import 'package:grad_project/models/CustomButtons.dart';
 import 'package:grad_project/screens/signinOptions/forgotPassword.dart';
 import 'package:grad_project/screens/signinOptions/signupPage.dart';
 import 'package:grad_project/widgets/tabs.dart';
@@ -184,9 +184,18 @@ class _LoginPageState extends State<LoginPage> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                       children: [
-                        _buildSocialButton(ButtonType.facebook),
-                        _buildSocialButton(ButtonType.google),
-                        _buildSocialButton(ButtonType.twitter),
+                        SocialButtonItem(
+                          buttonType: ButtonType.facebook,
+                          onTap: () {},
+                        ),
+                        SocialButtonItem(
+                          buttonType: ButtonType.google,
+                          onTap: () {},
+                        ),
+                        SocialButtonItem(
+                          buttonType: ButtonType.twitter,
+                          onTap: () {},
+                        ),
                       ],
                     ),
 
@@ -194,7 +203,7 @@ class _LoginPageState extends State<LoginPage> {
                     SocialButton(
                       onTap: () {},
                       icon: const Icon(Icons.apple),
-                      buttonColor: theme.colorScheme.secondary,
+                      buttonColor: theme.colorScheme.primaryContainer,
                       label: 'Sign in with Apple',
                     ),
 
@@ -230,42 +239,6 @@ class _LoginPageState extends State<LoginPage> {
           ],
         ),
       ),
-    );
-  }
-
-  // Widget _buildTextField({
-  //   required TextEditingController controller,
-  //   required String hintText,
-  //   required IconData prefixIcon,
-  //   Widget? suffixIcon,
-  //   String? Function(String?)? validator,
-  //   TextInputType keyboardType = TextInputType.text,
-  //   bool obscureText = false,
-  // }) {
-  //   return TextFormField(
-  //     controller: controller,
-  //     obscureText: obscureText,
-  //     keyboardType: keyboardType,
-  //     validator: validator,
-  //     autovalidateMode: AutovalidateMode.onUserInteraction,
-  //     decoration: InputDecoration(
-  //       fillColor: Theme.of(context).colorScheme.primaryContainer,
-  //       filled: true,
-  //       hintText: hintText,
-  //       contentPadding: const EdgeInsets.symmetric(vertical: 2, horizontal: 15),
-  //       border: OutlineInputBorder(borderRadius: BorderRadius.circular(30)),
-  //       enabledBorder: OutlineInputBorder(
-  //         borderRadius: BorderRadius.circular(30),
-  //       ),
-  //       prefixIcon: Icon(prefixIcon),
-  //       suffixIcon: suffixIcon,
-  //     ),
-  //   );
-  // }
-
-  Widget _buildSocialButton(ButtonType type) {
-    return Expanded(
-      child: FlutterSocialButton(onTap: () {}, buttonType: type, mini: true),
     );
   }
 }

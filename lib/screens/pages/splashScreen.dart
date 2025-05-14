@@ -2,17 +2,17 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:grad_project/screens/signinOptions/landingPage.dart';
+import 'package:grad_project/screens/signinOptions/HomePage.dart';
 import 'package:grad_project/widgets/tabs.dart';
 
-class HomePage extends StatefulWidget {
-  const HomePage({super.key});
+class SplashScreen extends StatefulWidget {
+  const SplashScreen({super.key});
 
   @override
-  State<HomePage> createState() => _SplashScreenState();
+  State<SplashScreen> createState() => _SplashScreenState();
 }
 
-class _SplashScreenState extends State<HomePage> {
+class _SplashScreenState extends State<SplashScreen> {
   double _opacity = 0.0;
 
   @override
@@ -43,7 +43,7 @@ class _SplashScreenState extends State<HomePage> {
       } else {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (context) => const LandingPage()),
+          MaterialPageRoute(builder: (context) => const HomePage()),
         );
       }
     });

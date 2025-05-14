@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:grad_project/providers/themeProvider.dart';
-import 'package:grad_project/screens/signinOptions/landingPage.dart';
+import 'package:grad_project/screens/signinOptions/HomePage.dart';
 import 'package:grad_project/screens/pages/profilePage.dart';
 
 class BuildDrawer extends ConsumerStatefulWidget {
@@ -68,7 +68,7 @@ class _BuildDrawerState extends ConsumerState<BuildDrawer> {
               await FirebaseAuth.instance.signOut();
               if (!mounted) return;
               Navigator.of(context).pushReplacement(
-                MaterialPageRoute(builder: (ctx) => LandingPage()),
+                MaterialPageRoute(builder: (ctx) => HomePage()),
               );
             },
           ),

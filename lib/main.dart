@@ -5,7 +5,7 @@ import 'package:firebase_app_check/firebase_app_check.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'firebase_options.dart';
 
-import 'package:grad_project/screens/pages/homePage.dart';
+import 'package:grad_project/screens/pages/splashScreen.dart';
 import 'package:grad_project/providers/themeProvider.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
@@ -96,7 +96,7 @@ class App extends ConsumerWidget {
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeMode,
-      home: HomePage(),
+      home: SplashScreen(),
     );
   }
 }

@@ -2,7 +2,7 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 
 import 'package:grad_project/models/customTextField.dart';
-import 'package:grad_project/models/elevatedButton.dart';
+import 'package:grad_project/models/CustomButtons.dart';
 import 'package:grad_project/screens/signinOptions/loginPage.dart';
 import 'package:grad_project/screens/signinOptions/verifyEmailPage.dart';
 import 'package:grad_project/models/imageInput.dart';

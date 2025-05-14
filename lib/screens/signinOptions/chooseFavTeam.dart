@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:grad_project/models/elevatedButton.dart';
+import 'package:grad_project/models/CustomButtons.dart';
 import 'package:grad_project/providers/favoritesProvider.dart';
 import 'package:grad_project/teamsData/teamsList.dart';
 import 'package:grad_project/widgets/tabs.dart';
