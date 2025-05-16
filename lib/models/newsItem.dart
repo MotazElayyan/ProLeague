@@ -36,11 +36,13 @@ List<NewsItem> news = [];
 
 Future<List<NewsItem>> getNews() async {
   try {
-    final snapshot = await FirebaseFirestore.instance.collection('News').get();
+    final snapshot =
+        await FirebaseFirestore.instance.collection('NewsLatest').get();
 
-    final newsList = snapshot.docs.map((doc) {
-      return NewsItem.fromFirestore(doc.data());
-    }).toList();
+    final newsList =
+        snapshot.docs.map((doc) {
+          return NewsItem.fromFirestore(doc.data());
+        }).toList();
 
     return newsList;
   } catch (e) {

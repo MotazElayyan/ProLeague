@@ -25,8 +25,10 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
   }
 
   Future<void> fetchNews() async {
-    final snapshot = await FirebaseFirestore.instance.collection('News').get();
-    final newsList = snapshot.docs.map((doc) => NewsItem.fromFirestore(doc.data())).toList();
+    final snapshot =
+        await FirebaseFirestore.instance.collection('NewsLatest').get();
+    final newsList =
+        snapshot.docs.map((doc) => NewsItem.fromFirestore(doc.data())).toList();
     setState(() {
       _news = newsList;
       _isLoading = false;
@@ -39,96 +41,100 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
       return Center(child: CircularProgressIndicator());
     }
     final List<Widget> imageSliders =
-        _news.map(
-          (item) => Container(
-            margin: const EdgeInsets.all(5.0),
-            decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(46.0),
-            ),
-            child: ClipRRect(
-              borderRadius: BorderRadius.all(Radius.circular(24.0)),
-              child: Stack(
-                children: <Widget>[
-                  Link(
-                    target: LinkTarget.self,
-                    uri: Uri.parse(item.link),
-                    builder:
-                        (context, followLink) => InkWell(
-                          onTap: followLink,
-                          child: Image.network(
-                            item.imgUrl,
-                            fit: BoxFit.cover,
-                            width: 1000.0,
-                          ),
-                        ),
-                  ),
-                  Positioned(
-                    top: 10,
-                    left: 20,
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        color: Theme.of(context).colorScheme.primary,
-                        borderRadius: BorderRadius.circular(16.0),
-                      ),
-                      child: Padding(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Text(
-                          item.category,
-                          style: Theme.of(context).textTheme.bodyMedium,
-                        ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    bottom: 0.0,
-                    left: 0.0,
-                    right: 0.0,
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Padding(
-                          padding: const EdgeInsets.symmetric(horizontal: 20.0),
-                          child: Text(
-                            '${item.author} • ${item.time}',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10.0,
-                              fontWeight: FontWeight.normal,
+        _news
+            .map(
+              (item) => Container(
+                margin: const EdgeInsets.all(5.0),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(46.0),
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.all(Radius.circular(24.0)),
+                  child: Stack(
+                    children: <Widget>[
+                      Link(
+                        target: LinkTarget.self,
+                        uri: Uri.parse(item.link),
+                        builder:
+                            (context, followLink) => InkWell(
+                              onTap: followLink,
+                              child: Image.network(
+                                item.imgUrl,
+                                fit: BoxFit.cover,
+                                width: 1000.0,
+                              ),
                             ),
-                          ),
-                        ),
-                        Container(
+                      ),
+                      Positioned(
+                        top: 10,
+                        left: 20,
+                        child: DecoratedBox(
                           decoration: BoxDecoration(
-                            gradient: LinearGradient(
-                              colors: [
-                                Color.fromARGB(200, 0, 0, 0),
-                                Color.fromARGB(0, 0, 0, 0),
-                              ],
-                              begin: Alignment.bottomCenter,
-                              end: Alignment.topCenter,
-                            ),
+                            color: Theme.of(context).colorScheme.primary,
+                            borderRadius: BorderRadius.circular(16.0),
                           ),
-                          padding: EdgeInsets.symmetric(
-                            vertical: 10.0,
-                            horizontal: 20.0,
-                          ),
-                          child: Text(
-                            item.title,
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 17.0,
-                              fontWeight: FontWeight.bold,
+                          child: Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: Text(
+                              item.category,
+                              style: Theme.of(context).textTheme.bodyMedium,
                             ),
                           ),
                         ),
-                      ],
-                    ),
+                      ),
+                      Positioned(
+                        bottom: 0.0,
+                        left: 0.0,
+                        right: 0.0,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Padding(
+                              padding: const EdgeInsets.symmetric(
+                                horizontal: 20.0,
+                              ),
+                              child: Text(
+                                '${item.author} • ${item.time}',
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 10.0,
+                                  fontWeight: FontWeight.normal,
+                                ),
+                              ),
+                            ),
+                            Container(
+                              decoration: BoxDecoration(
+                                gradient: LinearGradient(
+                                  colors: [
+                                    Color.fromARGB(200, 0, 0, 0),
+                                    Color.fromARGB(0, 0, 0, 0),
+                                  ],
+                                  begin: Alignment.bottomCenter,
+                                  end: Alignment.topCenter,
+                                ),
+                              ),
+                              padding: EdgeInsets.symmetric(
+                                vertical: 10.0,
+                                horizontal: 20.0,
+                              ),
+                              child: Text(
+                                item.title,
+                                style: TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 17.0,
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
                   ),
-                ],
+                ),
               ),
-            ),
-          ),
-        ).toList();
+            )
+            .toList();
     return Column(
       children: [
         CarouselSlider(

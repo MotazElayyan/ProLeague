@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:grad_project/models/statCard.dart';
+import 'package:grad_project/screens/tabs/awardsPage.dart';
 import 'package:grad_project/widgets/buildDrawer.dart';
 
 class StatsPage extends StatelessWidget {
@@ -8,66 +9,80 @@ class StatsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBar(
-        automaticallyImplyLeading: true,
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
-        title: Text(
-          'Statistics',
-          style: Theme.of(context).textTheme.titleLarge,
+    return DefaultTabController(
+      length: 2,
+      child: Scaffold(
+        backgroundColor: Theme.of(context).colorScheme.primary,
+        appBar: AppBar(
+          automaticallyImplyLeading: true,
+          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
+          title: Text(
+            'Statistics',
+            style: Theme.of(context).textTheme.titleLarge,
+          ),
+          bottom: TabBar(
+            indicatorColor: Theme.of(context).colorScheme.secondary,
+            labelColor: Theme.of(context).colorScheme.secondary,
+            unselectedLabelColor: Colors.grey,
+            tabs: const [Tab(text: 'Statistics'), Tab(text: 'Awards')],
+          ),
         ),
-      ),
-      drawer: BuildDrawer(),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        drawer: BuildDrawer(),
+        body: TabBarView(
+          physics: const BouncingScrollPhysics(),
           children: [
-            Text(
-              '2024/2025 Top Stats',
-              style: TextStyle(
-                color: Colors.white,
-                fontSize: 20,
-                fontWeight: FontWeight.bold,
+            // ---------- Stats Tab ----------
+            Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    '2024/2025 Top Stats',
+                    style: Theme.of(context).textTheme.bodyLarge,
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      BuildStatCard(
+                        title: 'Goals',
+                        value: '7',
+                        imgUrl: 'assets/images/player.png',
+                      ),
+                      BuildStatCard(
+                        title: 'Most Assists',
+                        value: '11',
+                        imgUrl: 'assets/images/player.png',
+                      ),
+                    ],
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      BuildStatCard(
+                        title: 'Goals',
+                        value: '25',
+                        imgUrl: 'assets/images/player.png',
+                      ),
+                      BuildStatCard(
+                        title: 'Most Passes',
+                        value: '7,885',
+                        imgUrl: 'assets/images/player.png',
+                      ),
+                    ],
+                  ),
+                ],
               ),
             ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                BuildStatCard(
-                  title: 'Goals',
-                  value: '7',
-                  imgUrl: 'assets/images/player.png',
-                ),
-                BuildStatCard(
-                  title: 'Most Assists',
-                  value: '11',
-                  imgUrl: 'assets/images/player.png',
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                BuildStatCard(
-                  title: 'Goals',
-                  value: '25',
-                  imgUrl: 'assets/images/player.png',
-                ),
-                BuildStatCard(
-                  title: 'Most Passes',
-                  value: '7,885',
-                  imgUrl: 'assets/images/player.png',
-                ),
-              ],
-            ),
-            SizedBox(height: 20),
+
+            // ---------- Awards Tab ----------
+            AwardsTab(),
           ],
         ),
       ),
     );
   }
 }
+
