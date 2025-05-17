@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-class BuildStatCard extends StatelessWidget {
-  const BuildStatCard({
+class StatCard extends StatelessWidget {
+  const StatCard({
     super.key,
     required this.title,
     required this.value,
@@ -17,63 +17,58 @@ class BuildStatCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return InkWell(
-    onTap: onPressed,
-    child: Container(
-      width: 160,
-      height: 140,
-      decoration: BoxDecoration(
-        color: Colors.grey[800],
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.blue, width: 2),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Image.asset(imgUrl, width: 40, height: 40),
-          Text(title, style: TextStyle(color: Colors.white, fontSize: 16)),
-          SizedBox(height: 4),
-          Text(
-            value,
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 28,
-              fontWeight: FontWeight.bold,
+      onTap: onPressed,
+      borderRadius: BorderRadius.circular(12),
+      child: Container(
+        decoration: BoxDecoration(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(color: Colors.grey.shade300),
+          boxShadow: [
+            BoxShadow(
+              color: Theme.of(context).colorScheme.secondary,
+              blurRadius: 6,
+              offset: const Offset(0, 3),
             ),
-          ),
-        ],
+          ],
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            AspectRatio(
+              aspectRatio: 2,
+              child: ClipRRect(
+                borderRadius: const BorderRadius.only(
+                  topLeft: Radius.circular(12),
+                  topRight: Radius.circular(12),
+                ),
+                child:
+                    imgUrl.startsWith('http')
+                        ? Image.network(imgUrl, fit: BoxFit.fill, width: 30, height: 30)
+                        : Image.asset(imgUrl, fit: BoxFit.fill, width: 30, height: 30),
+              ),
+            ),
+            Padding(
+              padding: const EdgeInsets.all(12.0),
+              child: Column(
+                children: [
+                  Text(
+                    title,
+                    style: Theme.of(context).textTheme.titleLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                  const SizedBox(height: 6),
+                  Text(
+                    value,
+                    style: Theme.of(context).textTheme.bodyLarge,
+                    textAlign: TextAlign.center,
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       ),
-    ),
-  );
+    );
   }
 }
-
-// Widget buildStatCard(String title, String value, String imgUrl) {
-//   return InkWell(
-//     onTap: () {},
-//     child: Container(
-//       width: 160,
-//       height: 140,
-//       decoration: BoxDecoration(
-//         color: Colors.grey[800],
-//         borderRadius: BorderRadius.circular(12),
-//         border: Border.all(color: Colors.blue, width: 2),
-//       ),
-//       child: Column(
-//         mainAxisAlignment: MainAxisAlignment.center,
-//         children: [
-//           Image.asset(imgUrl, width: 40, height: 40),
-//           Text(title, style: TextStyle(color: Colors.white, fontSize: 16)),
-//           SizedBox(height: 4),
-//           Text(
-//             value,
-//             style: TextStyle(
-//               color: Colors.white,
-//               fontSize: 28,
-//               fontWeight: FontWeight.bold,
-//             ),
-//           ),
-//         ],
-//       ),
-//     ),
-//   );
-// }

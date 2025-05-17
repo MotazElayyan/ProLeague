@@ -21,7 +21,7 @@ class AllTeamsScreen extends StatelessWidget {
           return ListTile(
             leading: CircleAvatar(
               backgroundImage: NetworkImage(team['image']!),
-              backgroundColor: Theme.of(context).colorScheme.secondary,
+              backgroundColor: Theme.of(context).colorScheme.primaryContainer,
             ),
             title: Text(team['name']!),
             onTap: () {

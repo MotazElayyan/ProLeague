@@ -41,7 +41,7 @@ exports.sendChatNotification = onDocumentCreated('messages/{chatId}/chat/{messag
     }
 });
 
-// 📰 Scraper core logic (reusable function)
+// 📰 Scraper core logic (Overwrites NewsLatest collection)
 const scrapeJfaNewsCore = async () => {
     const url = "https://jfa.com.jo/category.php?po=397&idcat=0&idsubcat=0&title=latest-news";
 
@@ -71,22 +71,40 @@ const scrapeJfaNewsCore = async () => {
             }
         });
 
-        if (newsItems.length === 0) {
-            console.log("No news items found to scrape.");
-            return "No news found.";
+        const latestNewsCollection = db.collection("NewsLatest");
+
+        // 🗑️ Delete all existing documents in NewsLatest
+        const snapshot = await latestNewsCollection.get();
+        const deleteBatch = db.batch();
+
+        snapshot.forEach((doc) => {
+            deleteBatch.delete(doc.ref);
+        });
+
+        if (!snapshot.empty) {
+            await deleteBatch.commit();
+            console.log(`Deleted ${snapshot.size} old news items.`);
+        } else {
+            console.log("No old news items to delete.");
         }
 
-        const latestNewsCollection = db.collection("NewsLatest");
-        const batch = db.batch();
+        // ➕ Add new news items
+        if (newsItems.length === 0) {
+            console.log("No new news items found to add.");
+            return "No new news found.";
+        }
+
+        const addBatch = db.batch();
 
         newsItems.forEach((item) => {
             const docRef = latestNewsCollection.doc(item.id);
-            batch.set(docRef, item);
+            addBatch.set(docRef, item);
         });
 
-        await batch.commit();
-        console.log(`${newsItems.length} news items added to 'NewsLatest' collection`);
-        return `Added ${newsItems.length} news items.`;
+        await addBatch.commit();
+        console.log(`Added ${newsItems.length} news items to 'NewsLatest' collection.`);
+
+        return `Updated with ${newsItems.length} fresh news items.`;
     } catch (error) {
         console.error("Error scraping JFA news:", error);
         return "Error scraping news.";
