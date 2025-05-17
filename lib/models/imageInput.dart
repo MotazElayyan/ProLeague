@@ -52,11 +52,11 @@ class _ImageInputState extends State<ImageInput> {
           onPressed: _selectImage,
           label: Text(
             'Add Image',
-            style: TextStyle(color: Theme.of(context).colorScheme.onPrimary),
+            style: TextStyle(color: Theme.of(context).colorScheme.secondary),
           ),
           icon: Icon(
             Icons.image,
-            color: Theme.of(context).colorScheme.onPrimary,
+            color: Theme.of(context).colorScheme.secondary,
           ),
         ),
       ],

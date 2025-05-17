@@ -10,7 +10,7 @@ const cheerio = require('cheerio');
 initializeApp();
 const db = getFirestore();
 
-// 🔔 Chat Notification Function
+// Chat Notification Function
 exports.sendChatNotification = onDocumentCreated('messages/{chatId}/chat/{messageId}', async (event) => {
     const messageData = event.data.data();
     const chatId = event.params.chatId;
@@ -41,7 +41,7 @@ exports.sendChatNotification = onDocumentCreated('messages/{chatId}/chat/{messag
     }
 });
 
-// 📰 Scraper core logic (Overwrites NewsLatest collection)
+// Scraper core logic (Overwrites NewsLatest collection)
 const scrapeJfaNewsCore = async () => {
     const url = "https://jfa.com.jo/category.php?po=397&idcat=0&idsubcat=0&title=latest-news";
 
@@ -73,7 +73,7 @@ const scrapeJfaNewsCore = async () => {
 
         const latestNewsCollection = db.collection("NewsLatest");
 
-        // 🗑️ Delete all existing documents in NewsLatest
+        // Delete all existing documents in NewsLatest
         const snapshot = await latestNewsCollection.get();
         const deleteBatch = db.batch();
 
@@ -88,7 +88,7 @@ const scrapeJfaNewsCore = async () => {
             console.log("No old news items to delete.");
         }
 
-        // ➕ Add new news items
+        // Add new news items
         if (newsItems.length === 0) {
             console.log("No new news items found to add.");
             return "No new news found.";
@@ -111,13 +111,13 @@ const scrapeJfaNewsCore = async () => {
     }
 };
 
-// ⏰ Scheduled every 12h
+// Scheduled every 12h
 exports.scrapeJfaNews = onSchedule('every 12 hours', async (event) => {
     console.log("Scheduled scrape triggered.");
     return await scrapeJfaNewsCore();
 });
 
-// 🖱️ Manual HTTP trigger
+// Manual HTTP trigger
 exports.scrapeJfaNewsNow = onRequest(async (req, res) => {
     console.log("Manual scrape triggered.");
     const result = await scrapeJfaNewsCore();

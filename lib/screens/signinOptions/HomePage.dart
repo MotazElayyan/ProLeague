@@ -11,7 +11,7 @@ class HomePage extends StatefulWidget {
   State<HomePage> createState() => _HomePageState();
 }
 
-class _HomePageState extends State<HomePage> {
+class _HomePageState extends State<HomePage> {  
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +42,7 @@ class _HomePageState extends State<HomePage> {
                     height: 160,
                     fit: BoxFit.cover,
                   ),
+                  const SizedBox(height: 15),
                   Text('Welcome', style: Theme.of(context).textTheme.bodyLarge),
                   const SizedBox(height: 5),
                   Text(

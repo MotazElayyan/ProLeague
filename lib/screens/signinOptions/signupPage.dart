@@ -90,6 +90,7 @@ class _SignupPageState extends State<SignupPage> {
         title: const Text('Signup'),
       ),
       body: SafeArea(
+        top: true,  
         child: Stack(
           children: [
             Positioned.fill(
