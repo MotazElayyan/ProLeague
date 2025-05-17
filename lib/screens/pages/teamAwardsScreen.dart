@@ -47,11 +47,22 @@ class TeamAwardsScreen extends StatelessWidget {
                     award['TeamName'],
                     style: Theme.of(context).textTheme.bodyLarge,
                   ),
-                  subtitle: Text(
-                    award['AwardName'],
-                    style: Theme.of(context).textTheme.bodyMedium!.copyWith(
-                      fontWeight: FontWeight.bold,
-                    ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        award['AwardName'],
+                        style: Theme.of(context).textTheme.bodyMedium!.copyWith(
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      CachedNetworkImage(
+                        imageUrl: award['picture'],
+                        height: 200,
+                        fit: BoxFit.cover,
+                      ),
+                    ],
                   ),
                 ),
               );

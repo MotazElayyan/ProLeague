@@ -92,29 +92,44 @@ class TeamService {
 }
 
 class FixtureService {
+  /// Fetch fixtures for a specific team from Firestore
   static Future<List<Map<String, dynamic>>> fetchFixtures(
     String teamName,
   ) async {
     try {
-      final doc =
+      // Step 1: Find the team document in 'fixtures' collection
+      final teamDocSnapshot =
           await FirebaseFirestore.instance
-              .collection('Fixtures')
-              .doc(teamName)
+              .collection('fixtures')
+              .where('TeamName', isEqualTo: teamName)
               .get();
 
-      if (!doc.exists || !doc.data()!.containsKey('teamFixtures')) {
+      if (teamDocSnapshot.docs.isEmpty) {
+        print('No fixtures document found for $teamName');
         return [];
       }
 
-      final List<dynamic> rawFixtures = doc['teamFixtures'];
+      final teamDocId = teamDocSnapshot.docs.first.id;
 
-      return rawFixtures.map<Map<String, dynamic>>((fixture) {
-        final data = Map<String, dynamic>.from(fixture);
-        if (data['dateTime'] is Timestamp) {
-          final timestamp = data['dateTime'] as Timestamp;
-          final formatter = DateFormat('d MMM yyyy • hh:mm a');
-          data['dateTime'] = formatter.format(timestamp.toDate());
+      // Step 2: Fetch fixtures from subcollection 'TeamFixtures'
+      final fixturesSnapshot =
+          await FirebaseFirestore.instance
+              .collection('fixtures')
+              .doc(teamDocId)
+              .collection('TeamFixtures')
+              .get();
+
+      // Step 3: Format and return fixtures data
+      return fixturesSnapshot.docs.map((doc) {
+        final data = doc.data();
+
+        if (data['DateTime'] is Timestamp) {
+          final timestamp = data['DateTime'] as Timestamp;
+          data['DateTime'] = DateFormat(
+            'd MMM yyyy • hh:mm a',
+          ).format(timestamp.toDate());
         }
+
         return data;
       }).toList();
     } catch (e) {
@@ -123,29 +138,40 @@ class FixtureService {
     }
   }
 
+  /// Fetch results for a specific team from Firestore
   static Future<List<Map<String, dynamic>>> fetchResults(
     String teamName,
   ) async {
     try {
-      final doc =
+      final resultsDoc =
           await FirebaseFirestore.instance
               .collection('Results')
               .doc(teamName)
               .get();
 
-      if (!doc.exists || !doc.data()!.containsKey('teamResults')) {
+      if (!resultsDoc.exists) {
+        print('No results document found for $teamName');
         return [];
       }
 
-      final List<dynamic> rawResults = doc['teamResults'];
+      final rawResults = resultsDoc.data()?['teamResults'] as List<dynamic>?;
 
+      if (rawResults == null || rawResults.isEmpty) {
+        print('No results found in teamResults array for $teamName');
+        return [];
+      }
+
+      // Map and format results
       return rawResults.map<Map<String, dynamic>>((result) {
         final data = Map<String, dynamic>.from(result);
+
         if (data['dateTime'] is Timestamp) {
           final timestamp = data['dateTime'] as Timestamp;
-          final formatter = DateFormat('d MMM yyyy • hh:mm a');
-          data['dateTime'] = formatter.format(timestamp.toDate());
+          data['dateTime'] = DateFormat(
+            'd MMM yyyy • hh:mm a',
+          ).format(timestamp.toDate());
         }
+
         return data;
       }).toList();
     } catch (e) {

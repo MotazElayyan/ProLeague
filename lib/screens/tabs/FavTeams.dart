@@ -18,28 +18,41 @@ class FavTeamsScreen extends ConsumerStatefulWidget {
 
 class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
   Future<List<Map<String, dynamic>>> fetchFixtures(String teamName) async {
-    final doc =
+    // First, get the document ID of the team (e.g., Al Ahli)
+    final teamDocSnapshot =
         await FirebaseFirestore.instance
-            .collection('Fixtures')
-            .doc(teamName)
+            .collection('fixtures')
+            .where('TeamName', isEqualTo: teamName)
             .get();
 
-    if (!doc.exists || !doc.data()!.containsKey('teamFixtures')) {
+    if (teamDocSnapshot.docs.isEmpty) {
       return [];
     }
 
-    final List<dynamic> rawFixtures = doc['teamFixtures'];
+    final teamDocId = teamDocSnapshot.docs.first.id;
 
-    return rawFixtures.map<Map<String, dynamic>>((fixture) {
-      final data = Map<String, dynamic>.from(fixture);
-      if (data['dateTime'] is Timestamp) {
-        final timestamp = data['dateTime'] as Timestamp;
-        final formatter = DateFormat('d MMM yyyy • hh:mm a');
-        data['dateTime'] = formatter.format(timestamp.toDate());
-        print("Fetched fixtures for $teamName: $rawFixtures");
-      }
-      return data;
-    }).toList();
+    final fixturesSnapshot =
+        await FirebaseFirestore.instance
+            .collection('fixtures')
+            .doc(teamDocId)
+            .collection('TeamFixtures')
+            .get();
+
+    final fixtures =
+        fixturesSnapshot.docs.map<Map<String, dynamic>>((doc) {
+          final data = doc.data();
+
+          // Convert Timestamp to readable string if needed
+          if (data['DateTime'] is Timestamp) {
+            final timestamp = data['DateTime'] as Timestamp;
+            final formatter = DateFormat('d MMM yyyy • hh:mm a');
+            data['DateTime'] = formatter.format(timestamp.toDate());
+          }
+
+          return data;
+        }).toList();
+
+    return fixtures;
   }
 
   Future<List<Map<String, dynamic>>> fetchResults(String teamName) async {
