@@ -5,13 +5,13 @@ import 'package:grad_project/screens/pages/tablePage.dart';
 import 'package:grad_project/screens/pages/videosPage.dart';
 import 'package:grad_project/screens/signinOptions/allowNotifications.dart';
 import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
-import 'package:grad_project/providers/favoritesProvider.dart';
+import 'package:grad_project/core/providers/favoritesProvider.dart';
 import 'package:grad_project/teamsData/allTeamsScreen.dart';
 import 'package:grad_project/teamsData/coaches.dart';
 import 'package:grad_project/teamsData/teamSheet.dart';
-import 'package:grad_project/widgets/buildDrawer.dart';
+import 'package:grad_project/core/widgets/buildDrawer.dart';
 import 'package:grad_project/teamsData/teamsList.dart';
-import 'package:grad_project/models/listItem.dart';
+import 'package:grad_project/core/models/listItem.dart';
 
 class MorePage extends ConsumerStatefulWidget {
   const MorePage({super.key});

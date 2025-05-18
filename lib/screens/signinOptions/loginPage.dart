@@ -2,11 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_social_button/flutter_social_button.dart';
 
-import 'package:grad_project/models/customTextField.dart';
-import 'package:grad_project/models/CustomButtons.dart';
+import 'package:grad_project/core/models/customTextField.dart';
+import 'package:grad_project/core/models/CustomButtons.dart';
 import 'package:grad_project/screens/signinOptions/forgotPassword.dart';
 import 'package:grad_project/screens/signinOptions/signupPage.dart';
-import 'package:grad_project/widgets/tabs.dart';
+import 'package:grad_project/core/widgets/tabs.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});

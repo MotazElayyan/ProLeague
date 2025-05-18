@@ -1,9 +1,9 @@
 import 'package:flutter/material.dart';
 
-import 'package:grad_project/models/newsCarouselSlider.dart';
-import 'package:grad_project/models/newsItem.dart';
-import 'package:grad_project/widgets/buildDrawer.dart';
-import 'package:grad_project/widgets/recommendationNewsItem.dart';
+import 'package:grad_project/core/models/newsCarouselSlider.dart';
+import 'package:grad_project/core/models/newsItem.dart';
+import 'package:grad_project/core/widgets/buildDrawer.dart';
+import 'package:grad_project/core/widgets/recommendationNewsItem.dart';
 
 class NewsPage extends StatefulWidget {
   const NewsPage({super.key});

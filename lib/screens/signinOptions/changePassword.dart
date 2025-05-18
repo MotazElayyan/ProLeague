@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:grad_project/models/customTextField.dart';
+import 'package:grad_project/core/models/customTextField.dart';
 import 'package:grad_project/screens/signinOptions/loginPage.dart';
 
 class ChangePassword extends StatefulWidget {

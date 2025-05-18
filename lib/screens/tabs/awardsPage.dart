@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:grad_project/screens/pages/playerAwardsPage.dart';
-import 'package:grad_project/screens/pages/teamAwardsScreen.dart';
-import 'package:grad_project/models/awardButton.dart';
+import 'package:grad_project/teamsData/playerAwardsPage.dart';
+import 'package:grad_project/teamsData/teamAwardsScreen.dart';
+import 'package:grad_project/core/models/awardButton.dart';
 
 class AwardsTab extends StatelessWidget {
   const AwardsTab({super.key});

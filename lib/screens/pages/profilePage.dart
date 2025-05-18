@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:grad_project/screens/signinOptions/changePassword.dart';
-import 'package:grad_project/firestoreServices/usersData.dart';
+import 'package:grad_project/core/firestoreServices/usersData.dart';
 
 class ProfilePage extends StatefulWidget {
   const ProfilePage({super.key});

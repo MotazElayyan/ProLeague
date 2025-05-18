@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
-import 'package:grad_project/firestoreServices/firestoreHelper.dart';
+import 'package:grad_project/core/firestoreServices/firestoreHelper.dart';
 
 class CoachService {
   static Future<List<Map<String, dynamic>>> fetchAllCoaches() async {

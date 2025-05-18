@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import 'package:grad_project/screens/pages/allusersPage.dart';
-import 'package:grad_project/widgets/buildDrawer.dart';
+import 'package:grad_project/core/widgets/buildDrawer.dart';
 
 class CommunityPage extends StatefulWidget {
   const CommunityPage({super.key});

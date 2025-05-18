@@ -3,11 +3,11 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:intl/intl.dart';
 
-import 'package:grad_project/widgets/buildDrawer.dart';
-import 'package:grad_project/models/fixturesCarouselSlider.dart';
+import 'package:grad_project/core/widgets/buildDrawer.dart';
+import 'package:grad_project/core/models/fixturesCarouselSlider.dart';
 import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
-import 'package:grad_project/providers/favoritesProvider.dart';
-import 'package:grad_project/firestoreServices/fetchTeamData.dart';
+import 'package:grad_project/core/providers/favoritesProvider.dart';
+import 'package:grad_project/core/firestoreServices/fetchTeamData.dart';
 
 class FavTeamsScreen extends ConsumerStatefulWidget {
   const FavTeamsScreen({super.key});

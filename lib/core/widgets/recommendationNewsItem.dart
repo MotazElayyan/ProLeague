@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:url_launcher/link.dart';
 
-import 'package:grad_project/models/newsItem.dart';
+import 'package:grad_project/core/models/newsItem.dart';
 
 class RecommendationNewsItem extends StatelessWidget {
   final NewsItem newsItem;

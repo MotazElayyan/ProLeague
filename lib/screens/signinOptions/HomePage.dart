@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:grad_project/models/CustomButtons.dart';
+import 'package:grad_project/core/models/CustomButtons.dart';
 import 'package:grad_project/screens/signinOptions/loginPage.dart';
 import 'package:grad_project/screens/signinOptions/signupPage.dart';
 

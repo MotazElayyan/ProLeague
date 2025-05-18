@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:grad_project/widgets/chats.dart';
+import 'package:grad_project/core/widgets/chats.dart';
 
 class Users extends StatefulWidget {
   const Users({super.key});

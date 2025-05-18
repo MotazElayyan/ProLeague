@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:curved_navigation_bar/curved_navigation_bar.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:grad_project/providers/favoritesProvider.dart';
+import 'package:grad_project/core/providers/favoritesProvider.dart';
 
 import 'package:grad_project/screens/tabs/FavTeams.dart';
 import 'package:grad_project/screens/tabs/communityPage.dart';

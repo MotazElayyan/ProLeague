@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:grad_project/widgets/tableWidgets.dart';
+import 'package:grad_project/core/widgets/tableWidgets.dart';
 
 class TablePage extends StatefulWidget {
   const TablePage({super.key});

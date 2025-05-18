@@ -6,7 +6,7 @@ import 'package:firebase_messaging/firebase_messaging.dart';
 import 'firebase_options.dart';
 
 import 'package:grad_project/screens/pages/splashScreen.dart';
-import 'package:grad_project/providers/themeProvider.dart';
+import 'package:grad_project/core/providers/themeProvider.dart';
 
 var kColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.light,

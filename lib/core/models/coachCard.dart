@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import 'package:grad_project/models/coachItem.dart';
+import 'package:grad_project/core/models/coachItem.dart';
 
 class CoachCard extends StatelessWidget {
   final Coach coach;

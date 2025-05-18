@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 
-import 'package:grad_project/models/coachItem.dart';
-import 'package:grad_project/models/coachCard.dart';
-import 'package:grad_project/firestoreServices/fetchTeamData.dart';
+import 'package:grad_project/core/models/coachItem.dart';
+import 'package:grad_project/core/models/coachCard.dart';
+import 'package:grad_project/core/firestoreServices/fetchTeamData.dart';
 
 class CoachesPage extends StatelessWidget {
   const CoachesPage({super.key});

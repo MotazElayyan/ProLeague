@@ -1,12 +1,12 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 
-import 'package:grad_project/models/customTextField.dart';
-import 'package:grad_project/models/CustomButtons.dart';
+import 'package:grad_project/core/models/customTextField.dart';
+import 'package:grad_project/core/models/CustomButtons.dart';
 import 'package:grad_project/screens/signinOptions/loginPage.dart';
 import 'package:grad_project/screens/signinOptions/verifyEmailPage.dart';
-import 'package:grad_project/models/imageInput.dart';
-import 'package:grad_project/firestoreServices/usersData.dart';
+import 'package:grad_project/core/models/imageInput.dart';
+import 'package:grad_project/core/firestoreServices/usersData.dart';
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});

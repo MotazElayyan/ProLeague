@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
-import 'package:grad_project/models/customTextField.dart';
-import 'package:grad_project/models/CustomButtons.dart';
+import 'package:grad_project/core/models/customTextField.dart';
+import 'package:grad_project/core/models/CustomButtons.dart';
 
 class ForgotPassword extends StatefulWidget {
   const ForgotPassword({super.key});

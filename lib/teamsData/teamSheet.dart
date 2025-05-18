@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
-import 'package:grad_project/firestoreServices/fetchTeamData.dart';
-import 'package:grad_project/firestoreServices/firestoreHelper.dart';
+import 'package:grad_project/core/firestoreServices/fetchTeamData.dart';
+import 'package:grad_project/core/firestoreServices/firestoreHelper.dart';
 
 class TeamSheet extends StatefulWidget {
   final String teamName;

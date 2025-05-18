@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:grad_project/models/statCard.dart';
+import 'package:grad_project/core/models/statCard.dart';
 import 'package:grad_project/screens/tabs/awardsPage.dart';
 import 'package:grad_project/teamsData/playersGoals.dart';
 import 'package:grad_project/teamsData/teamsGoals.dart';
-import 'package:grad_project/widgets/buildDrawer.dart';
+import 'package:grad_project/core/widgets/buildDrawer.dart';
 
 class StatsPage extends StatefulWidget {
   const StatsPage({super.key});

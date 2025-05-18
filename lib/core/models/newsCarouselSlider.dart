@@ -3,7 +3,7 @@ import 'package:carousel_slider/carousel_slider.dart';
 import 'package:url_launcher/link.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-import 'package:grad_project/models/newsItem.dart';
+import 'package:grad_project/core/models/newsItem.dart';
 
 class CustomCarouselSlider extends StatefulWidget {
   const CustomCarouselSlider({super.key});
