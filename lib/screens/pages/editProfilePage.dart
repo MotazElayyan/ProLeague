@@ -86,7 +86,9 @@ class _EditProfileState extends State<EditProfile> {
       appBar: AppBar(title: const Text('Edit Profile')),
       body:
           _isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? Center(child: CircularProgressIndicator(
+                color: Theme.of(context).colorScheme.secondary,
+              ))
               : SingleChildScrollView(
                 padding: const EdgeInsets.all(16),
                 child: Column(

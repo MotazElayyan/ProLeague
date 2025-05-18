@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class TeamsGoals extends StatefulWidget {
-  const TeamsGoals({super.key});
+class TeamsCleanSheets extends StatefulWidget {
+  const TeamsCleanSheets({super.key});
 
   @override
-  State<TeamsGoals> createState() => _TeamsGoalsState();
+  State<TeamsCleanSheets> createState() => _TeamsCleanSheetsState();
 }
 
-class _TeamsGoalsState extends State<TeamsGoals> {
+class _TeamsCleanSheetsState extends State<TeamsCleanSheets> {
   List<Map<String, dynamic>> teams = [];
-  bool isLoading = false;
+  bool isLoading = true;
 
   @override
   void initState() {
@@ -19,35 +19,34 @@ class _TeamsGoalsState extends State<TeamsGoals> {
   }
 
   Future<void> fetchAllTeams() async {
-    final teamsSnapshot =
-        await FirebaseFirestore.instance.collection('teams').get();
+    try {
+      final snapshot =
+          await FirebaseFirestore.instance.collection('teams').get();
+      final List<Map<String, dynamic>> loaded = [];
 
-    final List<Map<String, dynamic>> loadedTeams = [];
+      for (var doc in snapshot.docs) {
+        final data = doc.data();
+        final cleanSheets =
+            int.tryParse(data['CleanSheets']?.toString() ?? '0') ?? 0;
 
-    for (var teamDoc in teamsSnapshot.docs) {
-      final teamData = teamDoc.data();
-
-      if (teamData.containsKey('TeamGoals') && teamData['TeamGoals'] != null) {
-        loadedTeams.add({
-          'name': teamData['TeamName'] ?? '',
-          'logo': teamData['TeamLogo'] ?? '',
-          'goals': int.tryParse(teamData['TeamGoals'].toString()) ?? 0,
-        });
+        if (cleanSheets > 0) {
+          loaded.add({
+            'name': data['TeamName'] ?? '',
+            'logo': data['TeamLogo'] ?? '',
+            'sheets': cleanSheets,
+          });
+        }
       }
+
+      loaded.sort((a, b) => b['sheets'].compareTo(a['sheets']));
+
+      setState(() {
+        teams = loaded;
+        isLoading = false;
+      });
+    } catch (e) {
+      print('Error fetching clean sheets: $e');
     }
-
-    loadedTeams.removeWhere((team) => team['goals'] == 0);
-
-    loadedTeams.sort((a, b) {
-      final aGoals = a['goals'] ?? 0;
-      final bGoals = b['goals'] ?? 0;
-      return bGoals.compareTo(aGoals);
-    });
-
-    setState(() {
-      teams = loadedTeams;
-      isLoading = false;
-    });
   }
 
   @override
@@ -55,7 +54,10 @@ class _TeamsGoalsState extends State<TeamsGoals> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        title: Text('Teams', style: Theme.of(context).textTheme.titleLarge),
+        title: Text(
+          'Clean Sheets',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
       body:
           isLoading
@@ -64,13 +66,11 @@ class _TeamsGoalsState extends State<TeamsGoals> {
                   color: Theme.of(context).colorScheme.secondary,
                 ),
               )
-              : teams.isEmpty
-              ? const Center(child: CircularProgressIndicator())
               : ListView.builder(
                 itemCount: teams.length + 2,
                 itemBuilder: (context, index) {
                   if (index == 0) {
-                    final topTeam = teams[0];
+                    final top = teams[0];
                     return Container(
                       margin: const EdgeInsets.all(16),
                       padding: const EdgeInsets.all(16),
@@ -90,7 +90,7 @@ class _TeamsGoalsState extends State<TeamsGoals> {
                           ClipRRect(
                             borderRadius: BorderRadius.circular(12),
                             child: Image.network(
-                              topTeam['logo'],
+                              top['logo'],
                               width: 80,
                               height: 80,
                               fit: BoxFit.contain,
@@ -99,12 +99,12 @@ class _TeamsGoalsState extends State<TeamsGoals> {
                           const SizedBox(width: 16),
                           Expanded(
                             child: Text(
-                              topTeam['name'],
+                              top['name'],
                               style: Theme.of(context).textTheme.bodyLarge,
                             ),
                           ),
                           Text(
-                            topTeam['goals'].toString(),
+                            top['sheets'].toString(),
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                         ],
@@ -126,7 +126,7 @@ class _TeamsGoalsState extends State<TeamsGoals> {
                                   .copyWith(fontWeight: FontWeight.bold),
                             ),
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               'Team',
@@ -137,7 +137,7 @@ class _TeamsGoalsState extends State<TeamsGoals> {
                           SizedBox(
                             width: 40,
                             child: Text(
-                              'Goals',
+                              'CS',
                               style: Theme.of(context).textTheme.bodyMedium!
                                   .copyWith(fontWeight: FontWeight.bold),
                             ),
@@ -147,18 +147,16 @@ class _TeamsGoalsState extends State<TeamsGoals> {
                     );
                   } else {
                     final team = teams[index - 2];
-
                     Color? rowColor;
-                    if (index == 2) {
+                    if (index == 2)
                       rowColor = const Color(0xFFFFD700);
-                    } else if (index == 3) {
+                    else if (index == 3)
                       rowColor = const Color(0xFFC0C0C0);
-                    } else if (index == 4) {
+                    else if (index == 4)
                       rowColor = const Color(0xFFCD7F32);
-                    }
 
                     return TweenAnimationBuilder<Offset>(
-                      tween: Tween<Offset>(
+                      tween: Tween(
                         begin: const Offset(-1, 0),
                         end: Offset.zero,
                       ),
@@ -169,61 +167,57 @@ class _TeamsGoalsState extends State<TeamsGoals> {
                           offset: Offset(offset.dx * 30, 0),
                           child: Container(
                             color: rowColor,
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(
-                                horizontal: 16,
-                                vertical: 8,
-                              ),
-                              child: Row(
-                                children: [
-                                  SizedBox(
-                                    width: 30,
-                                    child: Text(
-                                      (index - 1).toString(),
-                                      style:
-                                          Theme.of(context).textTheme.bodyLarge,
-                                    ),
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 8,
+                            ),
+                            child: Row(
+                              children: [
+                                SizedBox(
+                                  width: 30,
+                                  child: Text(
+                                    (index - 1).toString(),
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
                                   ),
-                                  const SizedBox(width: 8),
-                                  Expanded(
-                                    child: Row(
-                                      children: [
-                                        ClipRRect(
-                                          borderRadius: BorderRadius.circular(
-                                            8,
-                                          ),
-                                          child: Image.network(
-                                            team['logo'],
-                                            width: 30,
-                                            height: 30,
-                                            fit: BoxFit.contain,
-                                          ),
+                                ),
+                                const SizedBox(width: 8),
+                                Expanded(
+                                  child: Row(
+                                    children: [
+                                      ClipRRect(
+                                        borderRadius: BorderRadius.circular(8),
+                                        child: Image.network(
+                                          team['logo'],
+                                          width: 30,
+                                          height: 30,
+                                          fit: BoxFit.contain,
                                         ),
-                                        const SizedBox(width: 8),
-                                        Flexible(
-                                          child: Text(
-                                            team['name'],
-                                            style:
-                                                Theme.of(
-                                                  context,
-                                                ).textTheme.bodyLarge,
-                                            overflow: TextOverflow.ellipsis,
-                                          ),
+                                      ),
+                                      const SizedBox(width: 8),
+                                      Flexible(
+                                        child: Text(
+                                          team['name'],
+                                          style:
+                                              Theme.of(
+                                                context,
+                                              ).textTheme.bodyLarge,
+                                          overflow: TextOverflow.ellipsis,
                                         ),
-                                      ],
-                                    ),
+                                      ),
+                                    ],
                                   ),
-                                  SizedBox(
-                                    width: 40,
-                                    child: Text(
-                                      team['goals'].toString(),
-                                      textAlign: TextAlign.end,
-                                      style:
-                                          Theme.of(context).textTheme.bodyLarge,
-                                    ),
+                                ),
+                                SizedBox(
+                                  width: 40,
+                                  child: Text(
+                                    team['sheets'].toString(),
+                                    textAlign: TextAlign.end,
+                                    style:
+                                        Theme.of(context).textTheme.bodyLarge,
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                           ),
                         );

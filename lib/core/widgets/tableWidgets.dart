@@ -49,7 +49,6 @@ class CustomDataCell extends StatelessWidget {
   }
 }
 
-/// Main team row widget with optional backgroundColor for ranking highlight
 Widget teamRow(
   BuildContext context,
   Map<String, dynamic> team,
@@ -70,6 +69,7 @@ Widget teamRow(
       );
     },
     child: Container(
+      height: 60,
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       decoration: BoxDecoration(
         color: backgroundColor ?? Colors.transparent,
@@ -118,7 +118,7 @@ Widget teamRow(
 
 Widget header(BuildContext context) {
   return Container(
-    color: Theme.of(context).colorScheme.primaryContainer,
+    color: Theme.of(context).colorScheme.primary,
     padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
     child: Row(
       children: const [

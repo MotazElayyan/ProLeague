@@ -55,7 +55,7 @@ class _PlayersAssistsState extends State<PlayersAssists> {
 
     setState(() {
       players = assistPlayers;
-      isLoading = true;
+      isLoading = false;
     });
   }
 
@@ -71,7 +71,11 @@ class _PlayersAssistsState extends State<PlayersAssists> {
       ),
       body:
           isLoading
-              ? const Center(child: CircularProgressIndicator())
+              ? Center(
+                child: CircularProgressIndicator(
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              )
               : players.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : ListView.builder(

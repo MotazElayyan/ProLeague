@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:grad_project/screens/pages/editProfile.dart';
+import 'package:grad_project/screens/pages/editProfilePage.dart';
 
 import 'package:grad_project/screens/signinOptions/changePassword.dart';
 import 'package:grad_project/core/firestoreServices/usersData.dart';
