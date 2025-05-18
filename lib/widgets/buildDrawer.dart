@@ -3,6 +3,8 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:grad_project/providers/themeProvider.dart';
+import 'package:grad_project/screens/pages/aboutAppPage.dart';
+import 'package:grad_project/screens/pages/privacyPolicyPage.dart';
 import 'package:grad_project/screens/signinOptions/HomePage.dart';
 import 'package:grad_project/screens/pages/profilePage.dart';
 
@@ -49,6 +51,42 @@ class _BuildDrawerState extends ConsumerState<BuildDrawer> {
             ),
             onTap: () {
               ref.read(themeModeProvider.notifier).toggleTheme();
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.document_scanner_sharp,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            title: Text(
+              'Privacy Policy',
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                fontSize: 18,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+            onTap: () async {
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (ctx) => PrivacyPolicyPage()));
+            },
+          ),
+          ListTile(
+            leading: Icon(
+              Icons.phonelink_setup_rounded,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+            title: Text(
+              'About App',
+              style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                fontSize: 18,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+            ),
+            onTap: () async {
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (ctx) => AboutAppPage()));
             },
           ),
           ListTile(

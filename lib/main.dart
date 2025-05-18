@@ -13,12 +13,14 @@ var kColorScheme = ColorScheme.fromSeed(
   seedColor: const Color.fromARGB(255, 175, 172, 237),
   primary: const Color.fromARGB(255, 175, 172, 237),
   secondary: Colors.black,
+  tertiary: const Color.fromARGB(255, 184, 184, 193),
 );
 var kDarkColorScheme = ColorScheme.fromSeed(
   brightness: Brightness.dark,
   seedColor: const Color.fromARGB(255, 0, 0, 100),
   primary: const Color.fromARGB(255, 0, 0, 100),
   secondary: Colors.white,
+  tertiary: const Color.fromARGB(255, 82, 82, 165),
 );
 
 final lightTheme = ThemeData().copyWith(

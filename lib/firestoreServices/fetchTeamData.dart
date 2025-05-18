@@ -45,12 +45,18 @@ class TeamService {
       final teamsSnapshot =
           await FirebaseFirestore.instance.collection('teams').get();
 
+      // Normalize input for fuzzy match
+      final cleanedInput = teamName.toLowerCase().replaceAll(
+        RegExp(r'[\s\-]'),
+        '',
+      );
+
+      // Try to find a matching team document
       final teamDoc = teamsSnapshot.docs.firstWhere((doc) {
-        final fetchedName =
-            (doc.data()['TeamName'] ?? '').toString().toLowerCase().trim();
-        return fetchedName.isNotEmpty &&
-            fetchedName.contains(teamName.toLowerCase().trim());
-      }, orElse: () => throw Exception('Team not found'));
+        final name = (doc.data()['TeamName'] ?? '').toString().toLowerCase();
+        final normalized = name.replaceAll(RegExp(r'[\s\-]'), '');
+        return normalized.contains(cleanedInput);
+      }, orElse: () => throw Exception('Team not found: $teamName'));
 
       final membersSnapshot =
           await teamDoc.reference.collection('Members').get();
@@ -80,7 +86,7 @@ class TeamService {
 
       return roles;
     } catch (e) {
-      print('Error fetching players for team $teamName: $e');
+      print('Error fetching players for team "$teamName": $e');
       return {
         "Goalkeepers": [],
         "Defenders": [],
@@ -92,26 +98,24 @@ class TeamService {
 }
 
 class FixtureService {
-  /// Fetch fixtures for a specific team from Firestore
   static Future<List<Map<String, dynamic>>> fetchFixtures(
     String teamName,
   ) async {
     try {
-      // Step 1: Find the team document in 'fixtures' collection
-      final teamDocSnapshot =
+      final teamSnapshot =
           await FirebaseFirestore.instance
               .collection('fixtures')
               .where('TeamName', isEqualTo: teamName)
               .get();
 
-      if (teamDocSnapshot.docs.isEmpty) {
-        print('No fixtures document found for $teamName');
-        return [];
-      }
+      if (teamSnapshot.docs.isEmpty) return [];
 
-      final teamDocId = teamDocSnapshot.docs.first.id;
+      final teamDoc = teamSnapshot.docs.first;
+      final teamDocId = teamDoc.id;
 
-      // Step 2: Fetch fixtures from subcollection 'TeamFixtures'
+      final homeDisplay = teamDoc.data()['Display'] ?? 'HOM';
+      final teamLogo = teamDoc.data()['TeamLogo'] ?? '';
+
       final fixturesSnapshot =
           await FirebaseFirestore.instance
               .collection('fixtures')
@@ -119,63 +123,23 @@ class FixtureService {
               .collection('TeamFixtures')
               .get();
 
-      // Step 3: Format and return fixtures data
       return fixturesSnapshot.docs.map((doc) {
         final data = doc.data();
 
         if (data['DateTime'] is Timestamp) {
-          final timestamp = data['DateTime'] as Timestamp;
-          data['DateTime'] = DateFormat(
-            'd MMM yyyy • hh:mm a',
-          ).format(timestamp.toDate());
+          final formatter = DateFormat('d MMM yyyy • hh:mm a');
+          data['DateTime'] = formatter.format(
+            (data['DateTime'] as Timestamp).toDate(),
+          );
         }
+
+        data['Display'] = homeDisplay;
+        data['TeamLogo'] = teamLogo;
 
         return data;
       }).toList();
     } catch (e) {
       print('Error fetching fixtures for $teamName: $e');
-      return [];
-    }
-  }
-
-  /// Fetch results for a specific team from Firestore
-  static Future<List<Map<String, dynamic>>> fetchResults(
-    String teamName,
-  ) async {
-    try {
-      final resultsDoc =
-          await FirebaseFirestore.instance
-              .collection('Results')
-              .doc(teamName)
-              .get();
-
-      if (!resultsDoc.exists) {
-        print('No results document found for $teamName');
-        return [];
-      }
-
-      final rawResults = resultsDoc.data()?['teamResults'] as List<dynamic>?;
-
-      if (rawResults == null || rawResults.isEmpty) {
-        print('No results found in teamResults array for $teamName');
-        return [];
-      }
-
-      // Map and format results
-      return rawResults.map<Map<String, dynamic>>((result) {
-        final data = Map<String, dynamic>.from(result);
-
-        if (data['dateTime'] is Timestamp) {
-          final timestamp = data['dateTime'] as Timestamp;
-          data['dateTime'] = DateFormat(
-            'd MMM yyyy • hh:mm a',
-          ).format(timestamp.toDate());
-        }
-
-        return data;
-      }).toList();
-    } catch (e) {
-      print('Error fetching results for $teamName: $e');
       return [];
     }
   }
