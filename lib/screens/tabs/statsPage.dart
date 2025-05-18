@@ -1,15 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import 'package:grad_project/core/models/statCard.dart';
 import 'package:grad_project/screens/tabs/awardsPage.dart';
+import 'package:grad_project/teamsData/playersAssists.dart';
 import 'package:grad_project/teamsData/playersGoals.dart';
 import 'package:grad_project/teamsData/teamsGoals.dart';
 import 'package:grad_project/core/widgets/buildDrawer.dart';
 
 class StatsPage extends StatefulWidget {
   const StatsPage({super.key});
-
   @override
   State<StatsPage> createState() => _StatsPageState();
 }
@@ -17,6 +16,8 @@ class StatsPage extends StatefulWidget {
 class _StatsPageState extends State<StatsPage> {
   Map<String, dynamic>? topPlayer;
   Map<String, dynamic>? topTeam;
+  Map<String, dynamic>? topAssistPlayer;
+  bool _isLoading = true;
 
   @override
   void initState() {
@@ -25,17 +26,16 @@ class _StatsPageState extends State<StatsPage> {
   }
 
   Future<void> fetchTopStats() async {
-    final teamsSnapshot =
-        await FirebaseFirestore.instance.collection('teams').get();
-
-    final List<Map<String, dynamic>> players = [];
-    final List<Map<String, dynamic>> teams = [];
+    final teamsSnapshot = await FirebaseFirestore.instance.collection('teams').get();
+    final players = <Map<String, dynamic>>[];
+    final assistPlayers = <Map<String, dynamic>>[];
+    final teams = <Map<String, dynamic>>[];
 
     for (var teamDoc in teamsSnapshot.docs) {
       final teamData = teamDoc.data();
       final teamLogo = teamData['TeamLogo'] ?? '';
 
-      if (teamData.containsKey('TeamGoals') && teamData['TeamGoals'] != null) {
+      if (teamData['TeamGoals'] != null) {
         teams.add({
           'name': teamData['TeamName'] ?? '',
           'logo': teamLogo,
@@ -43,34 +43,39 @@ class _StatsPageState extends State<StatsPage> {
         });
       }
 
-      final membersSnapshot =
-          await FirebaseFirestore.instance
-              .collection('teams')
-              .doc(teamDoc.id)
-              .collection('Members')
-              .get();
-
+      final membersSnapshot = await teamDoc.reference.collection('Members').get();
       for (var memberDoc in membersSnapshot.docs) {
-        final memberData = memberDoc.data();
-        if (memberData.containsKey('Goals') && memberData['Goals'] != null) {
+        final data = memberDoc.data();
+        if (data['Goals'] != null) {
           players.add({
-            'name': memberData['Name'] ?? '',
-            'goals': int.tryParse(memberData['Goals'].toString()) ?? 0,
-            'picture': memberData['picture'] ?? '',
+            'name': data['Name'] ?? '',
+            'goals': int.tryParse(data['Goals'].toString()) ?? 0,
+            'picture': data['picture'] ?? '',
+          });
+        }
+        if (data['Assists'] != null) {
+          assistPlayers.add({
+            'name': data['Name'] ?? '',
+            'assists': int.tryParse(data['Assists'].toString()) ?? 0,
+            'picture': data['picture'] ?? '',
           });
         }
       }
     }
 
     players.removeWhere((p) => p['goals'] == 0);
+    assistPlayers.removeWhere((p) => p['assists'] == 0);
     teams.removeWhere((t) => t['goals'] == 0);
 
     players.sort((a, b) => b['goals'].compareTo(a['goals']));
+    assistPlayers.sort((a, b) => b['assists'].compareTo(a['assists']));
     teams.sort((a, b) => b['goals'].compareTo(a['goals']));
 
     setState(() {
       topPlayer = players.isNotEmpty ? players.first : null;
+      topAssistPlayer = assistPlayers.isNotEmpty ? assistPlayers.first : null;
       topTeam = teams.isNotEmpty ? teams.first : null;
+      _isLoading = true;
     });
   }
 
@@ -90,90 +95,66 @@ class _StatsPageState extends State<StatsPage> {
           ),
         ),
         drawer: BuildDrawer(),
-        body: TabBarView(
-          physics: const BouncingScrollPhysics(),
-          children: [
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+        body: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : TabBarView(
                 children: [
-                  Text(
-                    '2024/2025 Top Stats',
-                    style: Theme.of(context).textTheme.bodyLarge,
-                  ),
-                  const SizedBox(height: 20),
-                  GridView.count(
-                    crossAxisCount: 2,
-                    shrinkWrap: true,
-                    physics: const NeverScrollableScrollPhysics(),
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.9,
-                    children: [
-                      StatCard(
-                        title: 'Goals',
-                        value:
-                            topPlayer != null
-                                ? topPlayer!['goals'].toString()
-                                : '0',
-                        imgUrl:
-                            topPlayer != null
-                                ? topPlayer!['picture']
-                                : 'assets/images/player.png',
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(builder: (ctx) => PlayersGoals()),
-                          );
-                        },
-                      ),
-                      StatCard(
-                        title: 'Most Assists',
-                        value: '11',
-                        imgUrl: 'assets/images/player.png',
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 20),
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Expanded(
-                        child: StatCard(
-                          title: 'Team Goals',
-                          value:
-                              topTeam != null
-                                  ? topTeam!['goals'].toString()
-                                  : '0',
-                          imgUrl:
-                              topTeam != null
-                                  ? topTeam!['logo']
-                                  : 'assets/images/player.png',
-                          onPressed: () {
-                            Navigator.push(
-                              context,
-                              MaterialPageRoute(builder: (ctx) => TeamsGoals()),
-                            );
-                          },
+                  Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('2024/2025 Top Stats', style: Theme.of(context).textTheme.bodyLarge),
+                        const SizedBox(height: 20),
+                        GridView.count(
+                          crossAxisCount: 2,
+                          shrinkWrap: true,
+                          physics: const NeverScrollableScrollPhysics(),
+                          crossAxisSpacing: 16,
+                          mainAxisSpacing: 16,
+                          childAspectRatio: 0.9,
+                          children: [
+                            StatCard(
+                              title: 'Goals',
+                              value: topPlayer?['goals'].toString() ?? '0',
+                              imgUrl: topPlayer?['picture'] ?? 'assets/images/player.png',
+                              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlayersGoals())),
+                            ),
+                            StatCard(
+                              title: 'Most Assists',
+                              value: topAssistPlayer?['assists'].toString() ?? '0',
+                              imgUrl: topAssistPlayer?['picture'] ?? 'assets/images/player.png',
+                              onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const PlayersAssists())),
+                            ),
+                          ],
                         ),
-                      ),
-                      const SizedBox(width: 16),
-                      Expanded(
-                        child: StatCard(
-                          title: 'Most Passes',
-                          value: '7,885',
-                          imgUrl: 'assets/images/player.png',
+                        const SizedBox(height: 20),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: StatCard(
+                                title: 'Team Goals',
+                                value: topTeam?['goals'].toString() ?? '0',
+                                imgUrl: topTeam?['logo'] ?? 'assets/images/player.png',
+                                onPressed: () => Navigator.push(context, MaterialPageRoute(builder: (_) => const TeamsGoals())),
+                              ),
+                            ),
+                            const SizedBox(width: 16),
+                            Expanded(
+                              child: StatCard(
+                                title: 'Most Passes',
+                                value: '7,885',
+                                imgUrl: 'assets/images/player.png',
+                              ),
+                            ),
+                          ],
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
+                  const AwardsTab(),
                 ],
               ),
-            ),
-            AwardsTab(),
-          ],
-        ),
       ),
     );
   }

@@ -10,6 +10,7 @@ class TeamsGoals extends StatefulWidget {
 
 class _TeamsGoalsState extends State<TeamsGoals> {
   List<Map<String, dynamic>> teams = [];
+  bool isLoading = false;
 
   @override
   void initState() {
@@ -45,6 +46,7 @@ class _TeamsGoalsState extends State<TeamsGoals> {
 
     setState(() {
       teams = loadedTeams;
+      isLoading = true;
     });
   }
 
@@ -56,7 +58,9 @@ class _TeamsGoalsState extends State<TeamsGoals> {
         title: Text('Teams', style: Theme.of(context).textTheme.titleLarge),
       ),
       body:
-          teams.isEmpty
+          isLoading
+              ? const Center(child: CircularProgressIndicator())
+              : teams.isEmpty
               ? const Center(child: CircularProgressIndicator())
               : ListView.builder(
                 itemCount: teams.length + 2,
@@ -144,9 +148,9 @@ class _TeamsGoalsState extends State<TeamsGoals> {
                     if (index == 2) {
                       rowColor = const Color(0xFFFFD700);
                     } else if (index == 3) {
-                      rowColor = const Color(0xFFC0C0C0); 
+                      rowColor = const Color(0xFFC0C0C0);
                     } else if (index == 4) {
-                      rowColor = const Color(0xFFCD7F32); 
+                      rowColor = const Color(0xFFCD7F32);
                     }
 
                     return TweenAnimationBuilder<Offset>(

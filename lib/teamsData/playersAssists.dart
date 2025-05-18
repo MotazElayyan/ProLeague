@@ -1,28 +1,28 @@
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class PlayersGoals extends StatefulWidget {
-  const PlayersGoals({super.key});
+class PlayersAssists extends StatefulWidget {
+  const PlayersAssists({super.key});
 
   @override
-  State<PlayersGoals> createState() => _PlayersGoalsState();
+  State<PlayersAssists> createState() => _PlayersAssistsState();
 }
 
-class _PlayersGoalsState extends State<PlayersGoals> {
+class _PlayersAssistsState extends State<PlayersAssists> {
   List<Map<String, dynamic>> players = [];
   bool isLoading = false;
 
   @override
   void initState() {
     super.initState();
-    fetchAllPlayers();
+    fetchPlayersWithAssists();
   }
 
-  Future<void> fetchAllPlayers() async {
+  Future<void> fetchPlayersWithAssists() async {
     final teamsSnapshot =
         await FirebaseFirestore.instance.collection('teams').get();
 
-    final List<Map<String, dynamic>> loadedPlayers = [];
+    final List<Map<String, dynamic>> assistPlayers = [];
 
     for (var teamDoc in teamsSnapshot.docs) {
       final teamData = teamDoc.data();
@@ -37,27 +37,24 @@ class _PlayersGoalsState extends State<PlayersGoals> {
 
       for (var memberDoc in membersSnapshot.docs) {
         final memberData = memberDoc.data();
-        if (memberData.containsKey('Goals') && memberData['Goals'] != null) {
-          loadedPlayers.add({
+        final assists =
+            int.tryParse(memberData['Assists']?.toString() ?? '0') ?? 0;
+
+        if (assists > 0) {
+          assistPlayers.add({
             'name': memberData['Name'] ?? '',
-            'clubLogo': teamLogo,
-            'goals': int.tryParse(memberData['Goals'].toString()) ?? 0,
+            'assists': assists,
             'picture': memberData['picture'] ?? '',
+            'clubLogo': teamLogo,
           });
         }
       }
     }
 
-    loadedPlayers.removeWhere((player) => player['goals'] == 0);
-
-    loadedPlayers.sort((a, b) {
-      final aGoals = int.tryParse(a['goals'].toString()) ?? 0;
-      final bGoals = int.tryParse(b['goals'].toString()) ?? 0;
-      return bGoals.compareTo(aGoals);
-    });
+    assistPlayers.sort((a, b) => b['assists'].compareTo(a['assists']));
 
     setState(() {
-      players = loadedPlayers;
+      players = assistPlayers;
       isLoading = true;
     });
   }
@@ -67,7 +64,10 @@ class _PlayersGoalsState extends State<PlayersGoals> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        title: Text('Players', style: Theme.of(context).textTheme.titleLarge),
+        title: Text(
+          'Most Assists',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
       body:
           isLoading
@@ -124,7 +124,7 @@ class _PlayersGoalsState extends State<PlayersGoals> {
                             ),
                           ),
                           Text(
-                            topPlayer['goals'].toString(),
+                            topPlayer['assists'].toString(),
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                         ],
@@ -146,7 +146,7 @@ class _PlayersGoalsState extends State<PlayersGoals> {
                                   .copyWith(fontWeight: FontWeight.bold),
                             ),
                           ),
-                          SizedBox(width: 8),
+                          const SizedBox(width: 8),
                           Expanded(
                             child: Text(
                               'Player',
@@ -165,7 +165,7 @@ class _PlayersGoalsState extends State<PlayersGoals> {
                           SizedBox(
                             width: 40,
                             child: Text(
-                              'Value',
+                              'AST',
                               style: Theme.of(context).textTheme.bodyMedium!
                                   .copyWith(fontWeight: FontWeight.bold),
                             ),
@@ -187,12 +187,10 @@ class _PlayersGoalsState extends State<PlayersGoals> {
 
                     return TweenAnimationBuilder<Offset>(
                       tween: Tween<Offset>(
-                        begin: const Offset(-1, 0), // Slide from left
-                        end: Offset.zero, // to position
+                        begin: const Offset(-1, 0),
+                        end: Offset.zero,
                       ),
-                      duration: Duration(
-                        milliseconds: 300 + (index * 50),
-                      ), // Staggered effect
+                      duration: Duration(milliseconds: 300 + (index * 50)),
                       curve: Curves.easeOut,
                       builder: (context, offset, child) {
                         return Transform.translate(
@@ -234,7 +232,7 @@ class _PlayersGoalsState extends State<PlayersGoals> {
                                   SizedBox(
                                     width: 40,
                                     child: Text(
-                                      player['goals'].toString(),
+                                      player['assists'].toString(),
                                       textAlign: TextAlign.end,
                                       style:
                                           Theme.of(context).textTheme.bodyLarge,

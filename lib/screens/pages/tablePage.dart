@@ -66,7 +66,21 @@ class _TablePageState extends State<TablePage> {
                 header(context),
                 ...List.generate(teams.length, (index) {
                   final team = teams[index];
-                  return teamRow(context, team, index + 1);
+                  final rank = index + 1;
+
+                  // 🎨 Color logic
+                  Color? bgColor;
+                  if (rank == 1) {
+                    bgColor = const Color(0xFFFFD700);
+                  } else if (rank == 2) {
+                    bgColor = const Color(0xFFC0C0C0);
+                  } else if (rank == 3) {
+                    bgColor = const Color(0xFFCD7F32);
+                  } else if (rank > teams.length - 4) {
+                    final shade = 100 + ((rank - (teams.length - 4)) * 100);
+                    bgColor = Colors.red[shade.clamp(100, 400)];
+                  }
+                  return teamRow(context, team, rank, backgroundColor: bgColor);
                 }),
               ],
             ),

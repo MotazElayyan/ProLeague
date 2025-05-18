@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-
 import 'package:grad_project/teamsData/teamSheet.dart';
 
 class HeaderCell extends StatelessWidget {
@@ -14,9 +13,9 @@ class HeaderCell extends StatelessWidget {
       child: Text(
         text,
         style: Theme.of(context).textTheme.labelLarge!.copyWith(
-              fontWeight: FontWeight.bold,
-              color: Theme.of(context).colorScheme.secondary,
-            ),
+          fontWeight: FontWeight.bold,
+          color: Theme.of(context).colorScheme.secondary,
+        ),
         textAlign: TextAlign.center,
       ),
     );
@@ -27,7 +26,12 @@ class CustomDataCell extends StatelessWidget {
   final String text;
   final double width;
   final bool bold;
-  const CustomDataCell(this.text, {required this.width, this.bold = false, super.key});
+  const CustomDataCell(
+    this.text, {
+    required this.width,
+    this.bold = false,
+    super.key,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -45,31 +49,32 @@ class CustomDataCell extends StatelessWidget {
   }
 }
 
+/// Main team row widget with optional backgroundColor for ranking highlight
 Widget teamRow(
   BuildContext context,
   Map<String, dynamic> team,
-  int position,
-) {
+  int position, {
+  Color? backgroundColor,
+}) {
   return InkWell(
     onTap: () {
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (ctx) => TeamSheet(
-            teamName: team['team'] ?? '',
-            logoUrl: team['team-logo'] ?? '',
-          ),
+          builder:
+              (ctx) => TeamSheet(
+                teamName: team['team'] ?? '',
+                logoUrl: team['team-logo'] ?? '',
+              ),
         ),
       );
     },
     child: Container(
       padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
       decoration: BoxDecoration(
+        color: backgroundColor ?? Colors.transparent,
         border: Border(
-          bottom: BorderSide(
-            color: Theme.of(context).dividerColor,
-            width: 0.5,
-          ),
+          bottom: BorderSide(color: Theme.of(context).dividerColor, width: 0.5),
         ),
       ),
       child: Row(
@@ -84,8 +89,9 @@ Widget teamRow(
                     team['team-logo'],
                     width: 24,
                     height: 24,
-                    errorBuilder: (context, error, stackTrace) =>
-                        const Icon(Icons.error, size: 20),
+                    errorBuilder:
+                        (context, error, stackTrace) =>
+                            const Icon(Icons.error, size: 20),
                   ),
                 const SizedBox(width: 6),
                 Expanded(
@@ -111,20 +117,20 @@ Widget teamRow(
 }
 
 Widget header(BuildContext context) {
-    return Container(
-      color: Theme.of(context).colorScheme.primaryContainer,
-      padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
-      child: Row(
-        children: const [
-          HeaderCell('Pos', width: 50),
-          HeaderCell('Club', width: 100),
-          HeaderCell('PL', width: 40),
-          HeaderCell('W', width: 40),
-          HeaderCell('D', width: 40),
-          HeaderCell('L', width: 40),
-          HeaderCell('GD', width: 50),
-          HeaderCell('Pts', width: 50),
-        ],
-      ),
-    );
-  }
+  return Container(
+    color: Theme.of(context).colorScheme.primaryContainer,
+    padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 8),
+    child: Row(
+      children: const [
+        HeaderCell('Pos', width: 50),
+        HeaderCell('Club', width: 100),
+        HeaderCell('PL', width: 40),
+        HeaderCell('W', width: 40),
+        HeaderCell('D', width: 40),
+        HeaderCell('L', width: 40),
+        HeaderCell('GD', width: 50),
+        HeaderCell('Pts', width: 50),
+      ],
+    ),
+  );
+}
