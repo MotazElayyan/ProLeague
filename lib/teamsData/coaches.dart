@@ -17,7 +17,6 @@ class CoachesPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: const Text('Team Coaches'),
       ),
       body: FutureBuilder<List<Coach>>(

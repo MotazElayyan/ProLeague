@@ -26,7 +26,6 @@ class _NewsPageState extends State<NewsPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text('NEWS', style: Theme.of(context).textTheme.titleLarge),
       ),
       drawer: BuildDrawer(),

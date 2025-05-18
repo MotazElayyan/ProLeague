@@ -68,7 +68,6 @@ class _AllowNotificationsState extends State<AllowNotifications> {
       appBar: AppBar(
         title: Text('Notifications',
             style: Theme.of(context).textTheme.titleLarge),
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
       body: SafeArea(
         child: Padding(

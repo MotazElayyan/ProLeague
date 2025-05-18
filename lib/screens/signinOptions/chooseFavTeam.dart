@@ -81,7 +81,6 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: const Text('Choose Your Favorite Team'),
         actions: [
           TextButton(

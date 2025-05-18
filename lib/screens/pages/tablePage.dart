@@ -16,7 +16,6 @@ class _TablePageState extends State<TablePage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text('Table', style: Theme.of(context).textTheme.titleLarge),
       ),
       body: FutureBuilder<QuerySnapshot>(

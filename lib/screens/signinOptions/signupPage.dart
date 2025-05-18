@@ -5,7 +5,7 @@ import 'package:grad_project/core/models/customTextField.dart';
 import 'package:grad_project/core/models/CustomButtons.dart';
 import 'package:grad_project/screens/signinOptions/loginPage.dart';
 import 'package:grad_project/screens/signinOptions/verifyEmailPage.dart';
-import 'package:grad_project/core/models/imageInput.dart';
+import 'package:grad_project/core/widgets/imageInput.dart';
 import 'package:grad_project/core/firestoreServices/usersData.dart';
 
 class SignupPage extends StatefulWidget {
@@ -86,7 +86,6 @@ class _SignupPageState extends State<SignupPage> {
     return Scaffold(
       backgroundColor: theme.colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: theme.colorScheme.primary,
         title: const Text('Signup'),
       ),
       body: SafeArea(

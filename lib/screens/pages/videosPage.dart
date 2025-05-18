@@ -36,7 +36,6 @@ class _VideosPageState extends State<VideosPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text('Videos', style: Theme.of(context).textTheme.titleLarge),
       ),
       body: Padding(

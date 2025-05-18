@@ -41,7 +41,6 @@ class _UsersState extends State<Users> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text('Chats', style: Theme.of(context).textTheme.titleLarge),
       ),
       body: StreamBuilder<QuerySnapshot>(

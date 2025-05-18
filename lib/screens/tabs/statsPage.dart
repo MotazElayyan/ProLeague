@@ -81,7 +81,6 @@ class _StatsPageState extends State<StatsPage> {
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           title: Text('Season', style: Theme.of(context).textTheme.titleLarge),
           bottom: TabBar(
             indicatorColor: Theme.of(context).colorScheme.secondary,

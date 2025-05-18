@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:grad_project/screens/pages/editProfile.dart';
 
 import 'package:grad_project/screens/signinOptions/changePassword.dart';
 import 'package:grad_project/core/firestoreServices/usersData.dart';
@@ -37,7 +38,16 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: colorScheme.primary,
       appBar: AppBar(
         title: const Text('Profile'),
-        backgroundColor: colorScheme.primaryContainer,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.edit),
+            onPressed: () {
+              Navigator.of(
+                context,
+              ).push(MaterialPageRoute(builder: (ctx) => const EditProfile()));
+            },
+          ),
+        ],
       ),
       body: SingleChildScrollView(
         child: Padding(

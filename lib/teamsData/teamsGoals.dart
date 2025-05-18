@@ -53,7 +53,6 @@ class _TeamsGoalsState extends State<TeamsGoals> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text('Teams', style: Theme.of(context).textTheme.titleLarge),
       ),
       body:

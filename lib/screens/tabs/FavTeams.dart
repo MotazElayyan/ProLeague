@@ -100,7 +100,6 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
       child: Scaffold(
         backgroundColor: Theme.of(context).colorScheme.primary,
         appBar: AppBar(
-          backgroundColor: Theme.of(context).colorScheme.primaryContainer,
           title: Row(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [

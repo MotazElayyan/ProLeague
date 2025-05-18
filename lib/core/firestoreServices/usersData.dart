@@ -11,10 +11,11 @@ class UserSignupService {
     required File pickedImage,
   }) async {
     try {
-      final userCredential = await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: email.trim(),
-        password: password.trim(),
-      );
+      final userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: email.trim(),
+            password: password.trim(),
+          );
 
       await userCredential.user!.sendEmailVerification();
 
@@ -26,11 +27,14 @@ class UserSignupService {
 
       final imageUrl = await storageRef.getDownloadURL();
 
-      await FirebaseFirestore.instance.collection('users').doc(userCredential.user!.uid).set({
-        'username': username.trim(),
-        'email': email.trim(),
-        'image_url': imageUrl,
-      });
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(userCredential.user!.uid)
+          .set({
+            'username': username.trim(),
+            'email': email.trim(),
+            'image_url': imageUrl,
+          });
 
       await userCredential.user!.updateDisplayName(username.trim());
 
@@ -61,17 +65,15 @@ class UserProfileService {
     }
 
     try {
-      final docSnapshot = await FirebaseFirestore.instance
-          .collection('users')
-          .doc(user.uid)
-          .get();
+      final docSnapshot =
+          await FirebaseFirestore.instance
+              .collection('users')
+              .doc(user.uid)
+              .get();
 
       if (docSnapshot.exists) {
         final data = docSnapshot.data();
-        return {
-          'imageUrl': data?['image_url'],
-          'username': data?['username'],
-        };
+        return {'imageUrl': data?['image_url'], 'username': data?['username']};
       } else {
         print('User document not found for UID: ${user.uid}');
       }
@@ -80,5 +82,42 @@ class UserProfileService {
     }
 
     return {'imageUrl': null, 'username': null};
+  }
+
+  static Future<void> updateUserProfile({
+    required String username,
+    required String email,
+    File? newImageFile,
+  }) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) {
+      throw Exception("No authenticated user.");
+    }
+
+    String? imageUrl;
+
+    if (newImageFile != null) {
+      final storageRef = FirebaseStorage.instance
+          .ref()
+          .child('user_images')
+          .child('${user.uid}.jpg');
+      await storageRef.putFile(newImageFile);
+      imageUrl = await storageRef.getDownloadURL();
+    }
+
+    final updatedData = {'username': username.trim(), 'email': email.trim()};
+
+    if (imageUrl != null) {
+      updatedData['image_url'] = imageUrl;
+    }
+
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(user.uid)
+        .update(updatedData);
+
+    // Optionally update FirebaseAuth user data
+    await user.updateDisplayName(username.trim());
+    await user.verifyBeforeUpdateEmail(email.trim());
   }
 }

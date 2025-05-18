@@ -16,7 +16,6 @@ class _CommunityPageState extends State<CommunityPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text('Community', style: Theme.of(context).textTheme.titleLarge),
         actions: [
           IconButton(

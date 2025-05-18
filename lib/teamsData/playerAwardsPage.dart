@@ -10,7 +10,6 @@ class PlayerAwardsScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text(
           'Player Awards',
           style: Theme.of(context).textTheme.titleLarge,

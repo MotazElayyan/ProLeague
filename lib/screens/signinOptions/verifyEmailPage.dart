@@ -39,7 +39,6 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
         title: const Text('Verify Email'),
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       ),
       body: Center(
         child: Column(

@@ -39,7 +39,6 @@ class _AboutAppPageState extends State<AboutAppPage> {
     return Scaffold(
       backgroundColor: colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: colorScheme.primaryContainer,
         title: Text(
           'About App',
           style: Theme.of(context).textTheme.titleLarge,

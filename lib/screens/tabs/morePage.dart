@@ -28,7 +28,6 @@ class _MorePageState extends ConsumerState<MorePage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.primaryContainer,
         title: Text('More', style: Theme.of(context).textTheme.titleLarge),
       ),
       drawer: BuildDrawer(),
