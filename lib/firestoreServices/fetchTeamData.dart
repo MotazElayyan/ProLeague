@@ -42,51 +42,87 @@ class TeamService {
     String teamName,
   ) async {
     try {
+      print('🔍 Looking for team: "$teamName"');
       final teamsSnapshot =
           await FirebaseFirestore.instance.collection('teams').get();
 
-      // Normalize input for fuzzy match
       final cleanedInput = teamName.toLowerCase().replaceAll(
         RegExp(r'[\s\-]'),
         '',
       );
+      print('🔧 Normalized input: $cleanedInput');
 
-      // Try to find a matching team document
-      final teamDoc = teamsSnapshot.docs.firstWhere((doc) {
-        final name = (doc.data()['TeamName'] ?? '').toString().toLowerCase();
-        final normalized = name.replaceAll(RegExp(r'[\s\-]'), '');
-        return normalized.contains(cleanedInput);
-      }, orElse: () => throw Exception('Team not found: $teamName'));
+      bool foundMatch = false;
 
-      final membersSnapshot =
-          await teamDoc.reference.collection('Members').get();
+      // Debug all team names from Firestore
+      for (final doc in teamsSnapshot.docs) {
+        final rawName = (doc.data()['TeamName'] ?? '').toString();
+        final normalizedName = rawName.toLowerCase().replaceAll(
+          RegExp(r'[\s\-]'),
+          '',
+        );
 
-      final Map<String, List<Map<String, dynamic>>> roles = {
+        print(
+          '🆔 Checking against Firestore team: "$rawName" -> "$normalizedName"',
+        );
+
+        if (normalizedName.contains(cleanedInput)) {
+          foundMatch = true;
+
+          final membersSnapshot =
+              await doc.reference.collection('Members').get();
+          print(
+            '📦 Members fetched for "$teamName": ${membersSnapshot.docs.length}',
+          );
+          if (membersSnapshot.docs.isNotEmpty) {
+            print(
+              '👤 First player name: ${membersSnapshot.docs.first.data()['Name']}',
+            );
+          }
+
+          final Map<String, List<Map<String, dynamic>>> roles = {
+            "Goalkeepers": [],
+            "Defenders": [],
+            "Midfielders": [],
+            "Forwards": [],
+          };
+
+          for (final playerDoc in membersSnapshot.docs) {
+            final data = playerDoc.data();
+            final roleRaw =
+                (FirestoreHelper.getField(data, 'Role') ?? '').toLowerCase();
+
+            if (roleRaw.contains('goal')) {
+              roles['Goalkeepers']!.add(data);
+            } else if (roleRaw.contains('defend')) {
+              roles['Defenders']!.add(data);
+            } else if (roleRaw.contains('mid')) {
+              roles['Midfielders']!.add(data);
+            } else if (roleRaw.contains('forward') ||
+                roleRaw.contains('striker')) {
+              roles['Forwards']!.add(data);
+            }
+          }
+
+          print(
+            '✅ Team matched: "$rawName" with ${membersSnapshot.docs.length} players',
+          );
+          return roles;
+        }
+      }
+
+      if (!foundMatch) {
+        print('❌ No matching team found for: "$teamName"');
+      }
+
+      return {
         "Goalkeepers": [],
         "Defenders": [],
         "Midfielders": [],
         "Forwards": [],
       };
-
-      for (final doc in membersSnapshot.docs) {
-        final data = doc.data();
-        final roleRaw =
-            (FirestoreHelper.getField(data, 'Role') ?? '').toLowerCase();
-
-        if (roleRaw.contains('goal')) {
-          roles['Goalkeepers']!.add(data);
-        } else if (roleRaw.contains('defend')) {
-          roles['Defenders']!.add(data);
-        } else if (roleRaw.contains('mid')) {
-          roles['Midfielders']!.add(data);
-        } else if (roleRaw.contains('forward') || roleRaw.contains('striker')) {
-          roles['Forwards']!.add(data);
-        }
-      }
-
-      return roles;
     } catch (e) {
-      print('Error fetching players for team "$teamName": $e');
+      print('❗ Error fetching players for team "$teamName": $e');
       return {
         "Goalkeepers": [],
         "Defenders": [],
