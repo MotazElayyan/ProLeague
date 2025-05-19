@@ -27,11 +27,8 @@ class CoachService {
           return data;
         }
       }
-
-      print('No coach found for team: $teamName');
       return null;
     } catch (e) {
-      print('Error fetching coach for team $teamName: $e');
       return null;
     }
   }
@@ -42,7 +39,6 @@ class TeamService {
     String teamName,
   ) async {
     try {
-      print('🔍 Looking for team: "$teamName"');
       final teamsSnapshot =
           await FirebaseFirestore.instance.collection('teams').get();
 
@@ -50,11 +46,7 @@ class TeamService {
         RegExp(r'[\s\-]'),
         '',
       );
-      print('🔧 Normalized input: $cleanedInput');
 
-      bool foundMatch = false;
-
-      // Debug all team names from Firestore
       for (final doc in teamsSnapshot.docs) {
         final rawName = (doc.data()['TeamName'] ?? '').toString();
         final normalizedName = rawName.toLowerCase().replaceAll(
@@ -62,23 +54,10 @@ class TeamService {
           '',
         );
 
-        print(
-          '🆔 Checking against Firestore team: "$rawName" -> "$normalizedName"',
-        );
-
         if (normalizedName.contains(cleanedInput)) {
-          foundMatch = true;
 
           final membersSnapshot =
               await doc.reference.collection('Members').get();
-          print(
-            '📦 Members fetched for "$teamName": ${membersSnapshot.docs.length}',
-          );
-          if (membersSnapshot.docs.isNotEmpty) {
-            print(
-              '👤 First player name: ${membersSnapshot.docs.first.data()['Name']}',
-            );
-          }
 
           final Map<String, List<Map<String, dynamic>>> roles = {
             "Goalkeepers": [],
@@ -104,15 +83,8 @@ class TeamService {
             }
           }
 
-          print(
-            '✅ Team matched: "$rawName" with ${membersSnapshot.docs.length} players',
-          );
           return roles;
         }
-      }
-
-      if (!foundMatch) {
-        print('❌ No matching team found for: "$teamName"');
       }
 
       return {
@@ -122,7 +94,6 @@ class TeamService {
         "Forwards": [],
       };
     } catch (e) {
-      print('❗ Error fetching players for team "$teamName": $e');
       return {
         "Goalkeepers": [],
         "Defenders": [],
@@ -138,24 +109,43 @@ class FixtureService {
     String teamName,
   ) async {
     try {
-      final teamSnapshot =
-          await FirebaseFirestore.instance
-              .collection('fixtures')
-              .where('TeamName', isEqualTo: teamName)
-              .get();
+      final allTeamsSnapshot =
+          await FirebaseFirestore.instance.collection('fixtures').get();
 
-      if (teamSnapshot.docs.isEmpty) return [];
+      DocumentSnapshot? matchedTeamDoc;
+      final normalizedInputName = teamName.toLowerCase().replaceAll(
+        RegExp(r'[\s\-]'),
+        '',
+      );
 
-      final teamDoc = teamSnapshot.docs.first;
-      final teamDocId = teamDoc.id;
+      for (final doc in allTeamsSnapshot.docs) {
+        final data = doc.data();
+        final rawName = data['TeamName']?.toString() ?? '';
+        final normalizedFirestoreName = rawName.toLowerCase().replaceAll(
+          RegExp(r'[\s\-]'),
+          '',
+        );
 
-      final homeDisplay = teamDoc.data()['Display'] ?? 'HOM';
-      final teamLogo = teamDoc.data()['TeamLogo'] ?? '';
+        if (normalizedFirestoreName.contains(normalizedInputName) ||
+            normalizedInputName.contains(normalizedFirestoreName)) {
+          matchedTeamDoc = doc;
+          break;
+        }
+      }
+
+      if (matchedTeamDoc == null) {
+        return [];
+      }
+
+      final teamData = matchedTeamDoc.data() as Map<String, dynamic>;
+      final docId = matchedTeamDoc.id;
+      final display = teamData['Display'] ?? 'HOM';
+      final teamLogo = teamData['TeamLogo'] ?? '';
 
       final fixturesSnapshot =
           await FirebaseFirestore.instance
               .collection('fixtures')
-              .doc(teamDocId)
+              .doc(docId)
               .collection('TeamFixtures')
               .get();
 
@@ -169,13 +159,77 @@ class FixtureService {
           );
         }
 
-        data['Display'] = homeDisplay;
+        data['Display'] = display;
         data['TeamLogo'] = teamLogo;
 
         return data;
       }).toList();
     } catch (e) {
-      print('Error fetching fixtures for $teamName: $e');
+      return [];
+    }
+  }
+
+  static Future<List<Map<String, dynamic>>> fetchResults(
+    String teamName,
+  ) async {
+    try {
+      final allTeamsSnapshot =
+          await FirebaseFirestore.instance.collection('results').get();
+
+      DocumentSnapshot? matchedTeamDoc;
+      final normalizedInputName = teamName.toLowerCase().replaceAll(
+        RegExp(r'[\s\-]'),
+        '',
+      );
+
+      for (final doc in allTeamsSnapshot.docs) {
+        final teamData = doc.data();
+        final rawName = teamData['TeamName']?.toString() ?? '';
+        final normalizedFirestoreName = rawName.toLowerCase().replaceAll(
+          RegExp(r'[\s\-]'),
+          '',
+        );
+
+        if (normalizedFirestoreName.contains(normalizedInputName) ||
+            normalizedInputName.contains(normalizedFirestoreName)) {
+          matchedTeamDoc = doc;
+          break;
+        }
+      }
+
+      if (matchedTeamDoc == null) {
+        return [];
+      }
+
+      final teamData = matchedTeamDoc.data() as Map<String, dynamic>;
+      final docId = matchedTeamDoc.id;
+
+      final display = teamData['Display'] ?? 'HOM';
+      final teamLogo = teamData['TeamLogo'] ?? '';
+
+      final resultsSnapshot =
+          await FirebaseFirestore.instance
+              .collection('results')
+              .doc(docId)
+              .collection('TeamResults')
+              .get();
+
+      return resultsSnapshot.docs.map((doc) {
+        final data = doc.data();
+
+        if (data['DateTime'] is Timestamp) {
+          final formatter = DateFormat('d MMM yyyy • hh:mm a');
+          data['DateTime'] = formatter.format(
+            (data['DateTime'] as Timestamp).toDate(),
+          );
+        }
+
+        data['Display'] = display;
+        data['TeamLogo'] = teamLogo;
+
+        return data;
+      }).toList();
+    } catch (e) {
       return [];
     }
   }

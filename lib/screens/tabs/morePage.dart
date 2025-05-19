@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:grad_project/screens/pages/fixturesResultsPage.dart';
 
 import 'package:grad_project/screens/pages/tablePage.dart';
 import 'package:grad_project/screens/pages/videosPage.dart';
@@ -117,7 +118,16 @@ class _MorePageState extends ConsumerState<MorePage> {
                   style: Theme.of(context).textTheme.bodyLarge,
                 ),
                 const SizedBox(height: 8),
-                ListItem(label: "Watch Live", onTap: () {}),
+                ListItem(
+                  label: "Fixtures & Results",
+                  onTap: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(
+                        builder: (ctx) => const FixturesResultsPage(),
+                      ),
+                    );
+                  },
+                ),
                 ListItem(
                   label: "Videos",
                   onTap: () {
