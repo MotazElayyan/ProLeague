@@ -124,6 +124,9 @@ class _ChatsState extends State<Chats> {
                       final msg = messages[index];
                       final isMe = msg['userId'] == currentUser.uid;
 
+                      final data = msg.data() as Map<String, dynamic>;
+                      final isSharedPost = data['postShared'] == true;
+
                       return Align(
                         alignment:
                             isMe ? Alignment.centerRight : Alignment.centerLeft,
@@ -145,10 +148,65 @@ class _ChatsState extends State<Chats> {
                                     ).colorScheme.primaryContainer,
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          child: Text(
-                            msg['text'],
-                            style: Theme.of(context).textTheme.bodyMedium,
-                          ),
+                          child:
+                              isSharedPost
+                                  ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '📢 Shared Post:',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      if ((data['postText'] ?? '')
+                                          .toString()
+                                          .isNotEmpty)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 4,
+                                          ),
+                                          child: Text(
+                                            data['postText'],
+                                            style:
+                                                Theme.of(
+                                                  context,
+                                                ).textTheme.bodyMedium,
+                                          ),
+                                        ),
+                                      if ((data['postImage'] ?? '')
+                                          .toString()
+                                          .isNotEmpty)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 8,
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                            child: Image.network(
+                                              data['postImage'],
+                                              height: 200,
+                                              width:
+                                                  MediaQuery.of(
+                                                    context,
+                                                  ).size.width *
+                                                  0.6,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  )
+                                  : Text(
+                                    data['text'] ?? '',
+                                    style:
+                                        Theme.of(context).textTheme.bodyMedium,
+                                  ),
                         ),
                       );
                     },

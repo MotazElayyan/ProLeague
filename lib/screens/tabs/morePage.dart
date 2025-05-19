@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:grad_project/screens/pages/fixturesResultsPage.dart';
 
 import 'package:grad_project/screens/pages/tablePage.dart';
 import 'package:grad_project/screens/pages/videosPage.dart';
-import 'package:grad_project/screens/signinOptions/allowNotifications.dart';
 import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
 import 'package:grad_project/core/providers/favoritesProvider.dart';
 import 'package:grad_project/teamsData/allTeamsScreen.dart';
@@ -13,6 +11,7 @@ import 'package:grad_project/teamsData/teamSheet.dart';
 import 'package:grad_project/core/widgets/buildDrawer.dart';
 import 'package:grad_project/teamsData/teamsList.dart';
 import 'package:grad_project/core/models/listItem.dart';
+import 'package:grad_project/screens/pages/fixturesResultsPage.dart';
 
 class MorePage extends ConsumerStatefulWidget {
   const MorePage({super.key});
@@ -90,7 +89,8 @@ class _MorePageState extends ConsumerState<MorePage> {
                             Expanded(
                               child: Text(
                                 teamData['name']!,
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: Theme.of(context).textTheme.bodyMedium!
+                                    .copyWith(fontWeight: FontWeight.bold),
                               ),
                             ),
                             TextButton(
@@ -103,7 +103,8 @@ class _MorePageState extends ConsumerState<MorePage> {
                               },
                               child: Text(
                                 "Edit",
-                                style: Theme.of(context).textTheme.bodyMedium,
+                                style: Theme.of(context).textTheme.bodyMedium!
+                                    .copyWith(fontWeight: FontWeight.bold),
                               ),
                             ),
                           ],
@@ -159,22 +160,6 @@ class _MorePageState extends ConsumerState<MorePage> {
                   onTap: () {
                     Navigator.of(context).push(
                       MaterialPageRoute(builder: (ctx) => const TablePage()),
-                    );
-                  },
-                ),
-                const Padding(
-                  padding: EdgeInsets.symmetric(vertical: 16.0),
-                  child: Divider(thickness: 1),
-                ),
-                Text("Settings:", style: Theme.of(context).textTheme.bodyLarge),
-                const SizedBox(height: 8),
-                ListItem(
-                  label: "Notifications",
-                  onTap: () {
-                    Navigator.of(context).push(
-                      MaterialPageRoute(
-                        builder: (ctx) => const AllowNotifications(),
-                      ),
                     );
                   },
                 ),

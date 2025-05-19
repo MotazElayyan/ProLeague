@@ -43,13 +43,6 @@ class _NewsPageState extends State<NewsPage> {
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                 ),
-                TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    'View All',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-                ),
               ],
             ),
             const SizedBox(height: 8),
@@ -63,13 +56,6 @@ class _NewsPageState extends State<NewsPage> {
                   child: Text(
                     'Recommendations',
                     style: Theme.of(context).textTheme.titleLarge,
-                  ),
-                ),
-                TextButton(
-                  onPressed: () {},
-                  child: Text(
-                    'View All',
-                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ),
               ],

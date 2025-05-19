@@ -21,7 +21,12 @@ class ListItem extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceBetween,
             children: [
-              Text(label, style: Theme.of(context).textTheme.bodyMedium),
+              Text(
+                label,
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyMedium!.copyWith(fontWeight: FontWeight.bold),
+              ),
               Icon(
                 Icons.arrow_forward_ios,
                 color: Theme.of(context).colorScheme.secondary,

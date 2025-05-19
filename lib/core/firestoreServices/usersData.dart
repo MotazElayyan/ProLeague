@@ -116,8 +116,45 @@ class UserProfileService {
         .doc(user.uid)
         .update(updatedData);
 
-    // Optionally update FirebaseAuth user data
     await user.updateDisplayName(username.trim());
     await user.verifyBeforeUpdateEmail(email.trim());
+  }
+}
+
+class PostService {
+  static Future<void> uploadPost({
+    required String text,
+    File? imageFile,
+  }) async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final userData =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+    String? imageUrl;
+    if (imageFile != null) {
+      final ref = FirebaseStorage.instance
+          .ref()
+          .child('post_images')
+          .child('${user.uid}_${DateTime.now().millisecondsSinceEpoch}.jpg');
+
+      await ref.putFile(imageFile);
+      imageUrl = await ref.getDownloadURL();
+    }
+
+    await FirebaseFirestore.instance.collection('posts').add({
+      'uid': user.uid,
+      'username': userData['username'],
+      'userImage': userData['image_url'],
+      'text': text,
+      'imageUrl': imageUrl,
+      'timestamp': Timestamp.now(),
+      'likes': [],
+      'shares': 0,
+    });
   }
 }

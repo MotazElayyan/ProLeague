@@ -1,7 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 
 import 'package:grad_project/screens/pages/allusersPage.dart';
 import 'package:grad_project/core/widgets/buildDrawer.dart';
+import 'package:grad_project/screens/pages/createPostPage.dart';
+import 'package:grad_project/core/widgets/postItem.dart';
 
 class CommunityPage extends StatefulWidget {
   const CommunityPage({super.key});
@@ -23,7 +26,11 @@ class _CommunityPageState extends State<CommunityPage> {
               Icons.add_circle_outline,
               color: Theme.of(context).colorScheme.secondary,
             ),
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (ctx) => const CreatePostPage()),
+              );
+            },
           ),
           IconButton(
             icon: Icon(
@@ -39,7 +46,33 @@ class _CommunityPageState extends State<CommunityPage> {
         ],
       ),
       drawer: BuildDrawer(),
-      body: const Center(child: Text('posts & more')),
+      body: StreamBuilder(
+        stream:
+            FirebaseFirestore.instance
+                .collection('posts')
+                .orderBy('timestamp', descending: true)
+                .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const Center(child: CircularProgressIndicator());
+          }
+
+          final posts = snapshot.data?.docs ?? [];
+
+          if (posts.isEmpty) {
+            return const Center(child: Text('No posts yet!'));
+          }
+
+          return ListView.builder(
+            padding: const EdgeInsets.all(12),
+            itemCount: posts.length,
+            itemBuilder: (context, index) {
+              final postData = posts[index].data();
+              return PostItem(postData: postData);
+            },
+          );
+        },
+      ),
     );
   }
 }
