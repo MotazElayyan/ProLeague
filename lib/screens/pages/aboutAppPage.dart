@@ -34,15 +34,10 @@ class _AboutAppPageState extends State<AboutAppPage> {
 
   @override
   Widget build(BuildContext context) {
-    final colorScheme = Theme.of(context).colorScheme;
-
     return Scaffold(
-      backgroundColor: colorScheme.primary,
+      backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        title: Text(
-          'About App',
-          style: Theme.of(context).textTheme.titleLarge,
-        ),
+        title: Text('About App', style: Theme.of(context).textTheme.titleLarge),
         centerTitle: true,
       ),
       body: SafeArea(
@@ -70,23 +65,23 @@ class _AboutAppPageState extends State<AboutAppPage> {
                             fontFamily: 'MaterialIcons',
                           ),
                           size: 100,
-                          color: colorScheme.secondary,
+                          color: Theme.of(context).colorScheme.secondary,
                         ),
                         const SizedBox(height: 32),
                         Text(
                           page['title']!,
-                          style: Theme.of(context).textTheme.headlineSmall?.copyWith(
-                                fontWeight: FontWeight.bold,
-                                color: colorScheme.secondary,
-                              ),
+                          style: Theme.of(
+                            context,
+                          ).textTheme.headlineSmall?.copyWith(
+                            fontWeight: FontWeight.bold,
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
                           textAlign: TextAlign.center,
                         ),
                         const SizedBox(height: 20),
                         Text(
                           page['subtitle']!,
-                          style: Theme.of(context).textTheme.bodyMedium?.copyWith(
-                                color: colorScheme.secondary,
-                              ),
+                          style: Theme.of(context).textTheme.bodyMedium,
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -106,9 +101,10 @@ class _AboutAppPageState extends State<AboutAppPage> {
                   width: _currentPage == index ? 14 : 10,
                   height: _currentPage == index ? 14 : 10,
                   decoration: BoxDecoration(
-                    color: _currentPage == index
-                        ? colorScheme.secondary
-                        : colorScheme.primaryContainer,
+                    color:
+                        _currentPage == index
+                            ? Theme.of(context).colorScheme.secondary
+                            : Theme.of(context).colorScheme.primaryContainer,
                     shape: BoxShape.circle,
                   ),
                 ),
