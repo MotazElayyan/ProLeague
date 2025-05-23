@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:flutter_social_button/flutter_social_button.dart';
 
 import 'package:grad_project/core/models/customTextField.dart';
 import 'package:grad_project/core/models/CustomButtons.dart';
@@ -72,6 +71,7 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: Stack(
           children: [
+            // خلفية الكرة الرمادية
             Opacity(
               opacity: 0.3,
               child: Align(
@@ -83,155 +83,119 @@ class _LoginPageState extends State<LoginPage> {
                 ),
               ),
             ),
-            SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                child: Column(
-                  children: [
-                    const SizedBox(height: 10),
-                    Image.asset(
-                      'assets/images/logo1.png',
-                      height: 159.5,
-                      width: 112.7,
-                    ),
-                    Text(
-                      'Sign Into your account',
-                      style: theme.textTheme.bodyLarge,
-                    ),
-                    const SizedBox(height: 20),
 
-                    Form(
-                      key: _formKey,
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          const SizedBox(height: 10),
-                          CustomTextField(
-                            controller: emailController,
-                            hintText: 'Example@gmail.com',
-                            label: 'Email Address',
-                            prefixIcon: Icons.email,
-                            keyboardType: TextInputType.emailAddress,
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your email';
-                              }
-                              if (!RegExp(
-                                r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
-                              ).hasMatch(value)) {
-                                return 'Please enter a valid email';
-                              }
-                              return null;
-                            },
-                          ),
-                          const SizedBox(height: 20),
-                          CustomTextField(
-                            controller: passwordController,
-                            hintText: '*********',
-                            label: 'Password',
-                            prefixIcon: Icons.key,
-                            obscureText: !_showPassword,
-                            suffixIcon: IconButton(
-                              icon: Icon(
-                                _showPassword
-                                    ? Icons.visibility
-                                    : Icons.visibility_off,
-                              ),
-                              onPressed: () {
-                                setState(() {
-                                  _showPassword = !_showPassword;
-                                });
+            // محاذاة المحتوى للنصف السفلي
+            Align(
+              alignment: Alignment.bottomCenter,
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 16.0,
+                    vertical: 30,
+                  ),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Image.asset(
+                        'assets/images/logo1.png',
+                        height: 159.5,
+                        width: 112.7,
+                      ),
+                      const SizedBox(height: 10),
+                      Text(
+                        'Sign Into your account',
+                        style: theme.textTheme.bodyLarge,
+                      ),
+                      const SizedBox(height: 20),
+
+                      Form(
+                        key: _formKey,
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            CustomTextField(
+                              controller: emailController,
+                              hintText: 'Example@gmail.com',
+                              label: 'Email Address',
+                              prefixIcon: Icons.email,
+                              keyboardType: TextInputType.emailAddress,
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your email';
+                                }
+                                if (!RegExp(
+                                  r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$',
+                                ).hasMatch(value)) {
+                                  return 'Please enter a valid email';
+                                }
+                                return null;
                               },
                             ),
-                            validator: (value) {
-                              if (value == null || value.isEmpty) {
-                                return 'Please enter your password';
-                              }
-                              if (!RegExp(
-                                r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$',
-                              ).hasMatch(value)) {
-                                return 'Please enter a valid password';
-                              }
-                              return null;
-                            },
-                          ),
-                        ],
+                            const SizedBox(height: 20),
+                            CustomTextField(
+                              controller: passwordController,
+                              hintText: '*********',
+                              label: 'Password',
+                              prefixIcon: Icons.key,
+                              obscureText: !_showPassword,
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  _showPassword
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                                onPressed: () {
+                                  setState(() {
+                                    _showPassword = !_showPassword;
+                                  });
+                                },
+                              ),
+                              validator: (value) {
+                                if (value == null || value.isEmpty) {
+                                  return 'Please enter your password';
+                                }
+                                return null;
+                              },
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
 
-                    const SizedBox(height: 10),
-                    Align(
-                      alignment: Alignment.centerRight,
-                      child: InkWell(
+                      const SizedBox(height: 10),
+                      Align(
+                        alignment: Alignment.centerRight,
+                        child: InkWell(
+                          onTap: () {
+                            Navigator.of(context).push(
+                              MaterialPageRoute(
+                                builder: (ctx) => ForgotPassword(),
+                              ),
+                            );
+                          },
+                          child: Text(
+                            'Forgot your password?',
+                            style: theme.textTheme.bodyMedium,
+                          ),
+                        ),
+                      ),
+
+                      const SizedBox(height: 20),
+                      _isLoading
+                          ? CircularProgressIndicator(
+                            color: theme.colorScheme.secondary,
+                          )
+                          : CustomElevatedButton(
+                            title: 'Log In',
+                            onPressed: _login,
+                          ),
+
+                      const SizedBox(height: 30),
+                      InkWell(
                         onTap: () {
                           Navigator.of(context).push(
-                            MaterialPageRoute(
-                              builder: (ctx) => ForgotPassword(),
-                            ),
+                            MaterialPageRoute(builder: (ctx) => SignupPage()),
                           );
                         },
-                        child: Text(
-                          'Forgot your password?',
-                          style: theme.textTheme.bodyMedium,
-                        ),
-                      ),
-                    ),
-
-                    const SizedBox(height: 20),
-                    _isLoading
-                        ? Center(
-                          child: CircularProgressIndicator(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        )
-                        : CustomElevatedButton(
-                          title: 'Log In',
-                          onPressed: _login,
-                        ),
-
-                    const SizedBox(height: 15),
-                    Text(
-                      '________________________ OR ________________________',
-                      style: theme.textTheme.bodyMedium,
-                    ),
-                    const SizedBox(height: 10),
-                    Text('Log In with...', style: theme.textTheme.bodyMedium),
-                    const SizedBox(height: 10),
-
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                      children: [
-                        SocialButtonItem(
-                          buttonType: ButtonType.facebook,
-                          onTap: () {},
-                        ),
-                        SocialButtonItem(
-                          buttonType: ButtonType.google,
-                          onTap: () {},
-                        ),
-                        SocialButtonItem(
-                          buttonType: ButtonType.twitter,
-                          onTap: () {},
-                        ),
-                      ],
-                    ),
-
-                    const SizedBox(height: 10),
-                    SocialButton(
-                      onTap: () {},
-                      icon: const Icon(Icons.apple),
-                      buttonColor: theme.colorScheme.primaryContainer,
-                      label: 'Sign in with Apple',
-                    ),
-
-                    const SizedBox(height: 10),
-                    InkWell(
-                      onTap: () {
-                        Navigator.of(context).push(
-                          MaterialPageRoute(builder: (ctx) => SignupPage()),
-                        );
-                      },
-                      child: Center(
                         child: Text.rich(
                           TextSpan(
                             children: [
@@ -245,11 +209,12 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ],
                           ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
-                    ),
-                    const SizedBox(height: 20),
-                  ],
+                      const SizedBox(height: 20),
+                    ],
+                  ),
                 ),
               ),
             ),

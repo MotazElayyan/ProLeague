@@ -126,6 +126,7 @@ class _ChatsState extends State<Chats> {
 
                       final data = msg.data() as Map<String, dynamic>;
                       final isSharedPost = data['postShared'] == true;
+                      final isSharedAward = data['awardShared'] == true;
 
                       return Align(
                         alignment:
@@ -155,7 +156,7 @@ class _ChatsState extends State<Chats> {
                                         CrossAxisAlignment.start,
                                     children: [
                                       Text(
-                                        '📢 Shared Post:',
+                                        ' Shared Post:',
                                         style: Theme.of(
                                           context,
                                         ).textTheme.bodyMedium?.copyWith(
@@ -190,6 +191,77 @@ class _ChatsState extends State<Chats> {
                                             ),
                                             child: Image.network(
                                               data['postImage'],
+                                              height: 200,
+                                              width:
+                                                  MediaQuery.of(
+                                                    context,
+                                                  ).size.width *
+                                                  0.6,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                    ],
+                                  )
+                                  : isSharedAward
+                                  ? Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        'Shared Award:',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium?.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                      if ((data['awardName'] ?? '')
+                                          .toString()
+                                          .isNotEmpty)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 4,
+                                          ),
+                                          child: Text(
+                                            '${data['awardName']}',
+                                            style:
+                                                Theme.of(
+                                                  context,
+                                                ).textTheme.bodyMedium,
+                                          ),
+                                        ),
+                                      if ((data['teamName'] ?? '')
+                                              .toString()
+                                              .isNotEmpty ||
+                                          (data['season'] ?? '')
+                                              .toString()
+                                              .isNotEmpty)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 2,
+                                          ),
+                                          child: Text(
+                                            'Team: ${data['teamName']} | Season: ${data['season']}',
+                                            style:
+                                                Theme.of(
+                                                  context,
+                                                ).textTheme.bodySmall,
+                                          ),
+                                        ),
+                                      if ((data['awardImage'] ?? '')
+                                          .toString()
+                                          .isNotEmpty)
+                                        Padding(
+                                          padding: const EdgeInsets.only(
+                                            top: 8,
+                                          ),
+                                          child: ClipRRect(
+                                            borderRadius: BorderRadius.circular(
+                                              10,
+                                            ),
+                                            child: Image.network(
+                                              data['awardImage'],
                                               height: 200,
                                               width:
                                                   MediaQuery.of(

@@ -62,7 +62,7 @@ class _HomePageState extends State<HomePage> {
                   const SizedBox(height: 8),
                   Text(
                     'Already have an account?',
-                    style: Theme.of(context).textTheme.bodyLarge,
+                    style: Theme.of(context).textTheme.bodyMedium,
                   ),
                   const SizedBox(height: 5),
                   CustomElevatedButton(

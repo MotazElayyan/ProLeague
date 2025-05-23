@@ -1,17 +1,12 @@
-import 'dart:io';
 import 'package:flutter/material.dart';
+import 'dart:io';
+
 import 'package:grad_project/core/models/customTextField.dart';
 import 'package:grad_project/core/models/CustomButtons.dart';
 import 'package:grad_project/screens/signinOptions/loginPage.dart';
 import 'package:grad_project/screens/signinOptions/verifyEmailPage.dart';
 import 'package:grad_project/core/widgets/imageInput.dart';
 import 'package:grad_project/core/firestoreServices/usersData.dart';
-
-enum UserRole { user, admin }
-
-extension UserRoleExtension on UserRole {
-  String get name => toString().split('.').last;
-}
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -33,13 +28,12 @@ class _SignupPageState extends State<SignupPage> {
   bool _showPassword1 = false;
   bool _showPassword2 = false;
   AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
-  UserRole? _selectedRole;
 
   Future<void> _signup() async {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
 
-    if (!isValid || _pickedImage == null || _selectedRole == null) {
+    if (!isValid || _pickedImage == null) {
       setState(() {
         _autovalidateMode = AutovalidateMode.onUserInteraction;
       });
@@ -58,7 +52,7 @@ class _SignupPageState extends State<SignupPage> {
       email: email.text,
       password: password.text,
       pickedImage: _pickedImage!,
-      role: _selectedRole!.name,
+      role: 'user', // default role
     );
 
     if (!mounted) return;
@@ -209,43 +203,6 @@ class _SignupPageState extends State<SignupPage> {
                             return 'Please confirm your password';
                           } else if (value != password.text) {
                             return 'Passwords do not match';
-                          }
-                          return null;
-                        },
-                      ),
-                      const SizedBox(height: 16),
-                      DropdownButtonFormField<UserRole>(
-                        value: _selectedRole,
-                        items:
-                            UserRole.values
-                                .map(
-                                  (role) => DropdownMenuItem(
-                                    value: role,
-                                    child: Text(
-                                      role.name,
-                                      style:
-                                          Theme.of(context).textTheme.bodyLarge,
-                                    ),
-                                  ),
-                                )
-                                .toList(),
-                        onChanged: (value) {
-                          setState(() {
-                            _selectedRole = value;
-                          });
-                        },
-                        decoration: InputDecoration(
-                          labelText: 'Select Role',
-                          prefixIcon: const Icon(Icons.security),
-                          border: const OutlineInputBorder(),
-                          fillColor:
-                              Theme.of(context).colorScheme.primaryContainer,
-                        ),
-                        dropdownColor:
-                            Theme.of(context).colorScheme.primaryContainer,
-                        validator: (value) {
-                          if (value == null) {
-                            return 'Please select a role';
                           }
                           return null;
                         },

@@ -13,11 +13,13 @@ class PostItem extends StatefulWidget {
 
 class _PostItemState extends State<PostItem> {
   late final String currentUserId;
+  bool hasReported = false;
 
   @override
   void initState() {
     super.initState();
     currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    _checkIfReported();
   }
 
   void _toggleLike(String postId, bool isLiked) async {
@@ -137,6 +139,22 @@ class _PostItemState extends State<PostItem> {
     );
   }
 
+  void _checkIfReported() async {
+    final reportDoc =
+        await FirebaseFirestore.instance
+            .collection('posts')
+            .doc(widget.postData['id'])
+            .collection('reports')
+            .doc(currentUserId)
+            .get();
+
+    if (mounted) {
+      setState(() {
+        hasReported = reportDoc.exists;
+      });
+    }
+  }
+
   String _getChatId(String uid1, String uid2) {
     final sorted = [uid1, uid2]..sort();
     return '${sorted[0]}_${sorted[1]}';
@@ -222,6 +240,7 @@ class _PostItemState extends State<PostItem> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
+                    // ❤️ Like
                     Row(
                       children: [
                         IconButton(
@@ -234,14 +253,101 @@ class _PostItemState extends State<PostItem> {
                         Text('${likes.length}'),
                       ],
                     ),
+
+                    // 💬 Comment
                     IconButton(
                       icon: const Icon(Icons.comment),
                       onPressed: () => _showCommentDialog(postId),
                     ),
+
+                    // 📤 Share
                     IconButton(
                       icon: const Icon(Icons.send),
                       onPressed: () => _shareToChat(context),
                     ),
+
+                    // 🗑️ Delete or 🚩 Report
+                    if (postData['uid'] == currentUserId)
+                      IconButton(
+                        icon: const Icon(Icons.delete),
+                        onPressed: () async {
+                          final confirm = await showDialog<bool>(
+                            context: context,
+                            builder:
+                                (ctx) => AlertDialog(
+                                  title: const Text('Confirm Delete'),
+                                  content: const Text(
+                                    'Are you sure you want to delete this post?',
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      child: const Text('Cancel'),
+                                      onPressed:
+                                          () => Navigator.of(ctx).pop(false),
+                                    ),
+                                    TextButton(
+                                      child: const Text('Delete'),
+                                      onPressed:
+                                          () => Navigator.of(ctx).pop(true),
+                                    ),
+                                  ],
+                                ),
+                          );
+
+                          if (confirm == true) {
+                            await FirebaseFirestore.instance
+                                .collection('posts')
+                                .doc(postId)
+                                .delete();
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Post deleted')),
+                            );
+                          }
+                        },
+                      )
+                    else
+                      IconButton(
+                        icon: Icon(
+                          hasReported ? Icons.flag : Icons.flag_outlined,
+                          color: hasReported ? Colors.orange : null,
+                        ),
+                        onPressed: () async {
+                          final reportRef = FirebaseFirestore.instance
+                              .collection('posts')
+                              .doc(postId)
+                              .collection('reports')
+                              .doc(currentUserId);
+
+                          if (hasReported) {
+                            // REMOVE report
+                            await reportRef.delete();
+                            if (mounted) {
+                              setState(() {
+                                hasReported = false;
+                              });
+                            }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(content: Text('Report removed')),
+                            );
+                          } else {
+                            // ADD report
+                            await reportRef.set({
+                              'reportedAt': Timestamp.now(),
+                              'userId': currentUserId,
+                            });
+                            if (mounted) {
+                              setState(() {
+                                hasReported = true;
+                              });
+                            }
+                            ScaffoldMessenger.of(context).showSnackBar(
+                              const SnackBar(
+                                content: Text('Post reported. Thank you!'),
+                              ),
+                            );
+                          }
+                        },
+                      ),
                   ],
                 ),
 
