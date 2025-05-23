@@ -67,7 +67,9 @@ class _CommunityPageState extends State<CommunityPage> {
             padding: const EdgeInsets.all(12),
             itemCount: posts.length,
             itemBuilder: (context, index) {
-              final postData = posts[index].data();
+              final doc = posts[index];
+              final postData = doc.data();
+              postData['id'] = doc.id;
               return PostItem(postData: postData);
             },
           );

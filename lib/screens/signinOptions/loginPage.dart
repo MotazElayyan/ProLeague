@@ -18,6 +18,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   bool _showPassword = false;
+  bool _isLoading = false;
 
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -25,6 +26,10 @@ class _LoginPageState extends State<LoginPage> {
   void _login() async {
     final email = emailController.text.trim();
     final password = passwordController.text;
+
+    setState(() {
+      _isLoading = true;
+    });
 
     try {
       await FirebaseAuth.instance.signInWithEmailAndPassword(
@@ -49,6 +54,12 @@ class _LoginPageState extends State<LoginPage> {
         context,
       ).showSnackBar(SnackBar(content: Text(message)));
     }
+
+    if (mounted) {
+      setState(() {
+        _isLoading = false;
+      });
+    }
   }
 
   @override
@@ -57,9 +68,7 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       backgroundColor: theme.colorScheme.primary,
-      appBar: AppBar(
-        title: const Text('Login'),
-      ),
+      appBar: AppBar(title: const Text('Login')),
       body: SafeArea(
         child: Stack(
           children: [
@@ -169,7 +178,16 @@ class _LoginPageState extends State<LoginPage> {
                     ),
 
                     const SizedBox(height: 20),
-                    CustomElevatedButton(title: 'Log In', onPressed: _login),
+                    _isLoading
+                        ? Center(
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.secondary,
+                          ),
+                        )
+                        : CustomElevatedButton(
+                          title: 'Log In',
+                          onPressed: _login,
+                        ),
 
                     const SizedBox(height: 15),
                     Text(

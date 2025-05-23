@@ -1,12 +1,17 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
-
 import 'package:grad_project/core/models/customTextField.dart';
 import 'package:grad_project/core/models/CustomButtons.dart';
 import 'package:grad_project/screens/signinOptions/loginPage.dart';
 import 'package:grad_project/screens/signinOptions/verifyEmailPage.dart';
 import 'package:grad_project/core/widgets/imageInput.dart';
 import 'package:grad_project/core/firestoreServices/usersData.dart';
+
+enum UserRole { user, admin }
+
+extension UserRoleExtension on UserRole {
+  String get name => toString().split('.').last;
+}
 
 class SignupPage extends StatefulWidget {
   const SignupPage({super.key});
@@ -28,15 +33,19 @@ class _SignupPageState extends State<SignupPage> {
   bool _showPassword1 = false;
   bool _showPassword2 = false;
   AutovalidateMode _autovalidateMode = AutovalidateMode.disabled;
+  UserRole? _selectedRole;
 
   Future<void> _signup() async {
     final isValid = _formKey.currentState!.validate();
     FocusScope.of(context).unfocus();
 
-    if (!isValid || _pickedImage == null) {
+    if (!isValid || _pickedImage == null || _selectedRole == null) {
       setState(() {
         _autovalidateMode = AutovalidateMode.onUserInteraction;
       });
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please complete all required fields.')),
+      );
       return;
     }
 
@@ -49,6 +58,7 @@ class _SignupPageState extends State<SignupPage> {
       email: email.text,
       password: password.text,
       pickedImage: _pickedImage!,
+      role: _selectedRole!.name,
     );
 
     if (!mounted) return;
@@ -81,15 +91,11 @@ class _SignupPageState extends State<SignupPage> {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-
     return Scaffold(
-      backgroundColor: theme.colorScheme.primary,
-      appBar: AppBar(
-        title: const Text('Signup'),
-      ),
+      backgroundColor: Theme.of(context).colorScheme.primary,
+      appBar: AppBar(title: const Text('Signup')),
       body: SafeArea(
-        top: true,  
+        top: true,
         child: Stack(
           children: [
             Positioned.fill(
@@ -172,9 +178,9 @@ class _SignupPageState extends State<SignupPage> {
                           if (value == null || value.isEmpty) {
                             return 'Please enter your password';
                           } else if (!RegExp(
-                            r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[a-zA-Z]).{8,}$',
+                            r'^(?=.*\d)(?=.*[a-z])(?=.*[A-Z]).{8,}$',
                           ).hasMatch(value)) {
-                            return 'Password must be at least 8 characters\nwith upper, lower case and a number';
+                            return 'Password must be at least 8 characters, with upper, lower case and a number';
                           }
                           return null;
                         },
@@ -207,10 +213,47 @@ class _SignupPageState extends State<SignupPage> {
                           return null;
                         },
                       ),
+                      const SizedBox(height: 16),
+                      DropdownButtonFormField<UserRole>(
+                        value: _selectedRole,
+                        items:
+                            UserRole.values
+                                .map(
+                                  (role) => DropdownMenuItem(
+                                    value: role,
+                                    child: Text(
+                                      role.name,
+                                      style:
+                                          Theme.of(context).textTheme.bodyLarge,
+                                    ),
+                                  ),
+                                )
+                                .toList(),
+                        onChanged: (value) {
+                          setState(() {
+                            _selectedRole = value;
+                          });
+                        },
+                        decoration: InputDecoration(
+                          labelText: 'Select Role',
+                          prefixIcon: const Icon(Icons.security),
+                          border: const OutlineInputBorder(),
+                          fillColor:
+                              Theme.of(context).colorScheme.primaryContainer,
+                        ),
+                        dropdownColor:
+                            Theme.of(context).colorScheme.primaryContainer,
+                        validator: (value) {
+                          if (value == null) {
+                            return 'Please select a role';
+                          }
+                          return null;
+                        },
+                      ),
                       const SizedBox(height: 24),
                       if (_isLoading)
                         CircularProgressIndicator(
-                          color: theme.colorScheme.secondary,
+                          color: Theme.of(context).colorScheme.secondary,
                         )
                       else
                         CustomElevatedButton(

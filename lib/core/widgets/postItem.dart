@@ -13,37 +13,26 @@ class PostItem extends StatefulWidget {
 
 class _PostItemState extends State<PostItem> {
   late final String currentUserId;
-  late bool isLiked;
-  late List likes;
 
   @override
   void initState() {
     super.initState();
     currentUserId = FirebaseAuth.instance.currentUser!.uid;
-    likes = widget.postData['likes'] ?? [];
-    isLiked = likes.contains(currentUserId);
   }
 
-  void _toggleLike() async {
-    final postId = widget.postData['id'];
+  void _toggleLike(String postId, bool isLiked) async {
     final postRef = FirebaseFirestore.instance.collection('posts').doc(postId);
-
-    setState(() {
-      isLiked = !isLiked;
-      isLiked ? likes.add(currentUserId) : likes.remove(currentUserId);
-    });
 
     await postRef.update({
       'likes':
           isLiked
-              ? FieldValue.arrayUnion([currentUserId])
-              : FieldValue.arrayRemove([currentUserId]),
+              ? FieldValue.arrayRemove([currentUserId])
+              : FieldValue.arrayUnion([currentUserId]),
     });
   }
 
-  void _showCommentDialog() {
+  void _showCommentDialog(String postId) {
     final controller = TextEditingController();
-    final postId = widget.postData['id'];
 
     showDialog(
       context: context,
@@ -64,6 +53,14 @@ class _PostItemState extends State<PostItem> {
               TextButton(
                 onPressed: () async {
                   if (controller.text.trim().isNotEmpty) {
+                    final userDoc =
+                        await FirebaseFirestore.instance
+                            .collection('users')
+                            .doc(currentUserId)
+                            .get();
+
+                    final userData = userDoc.data();
+
                     await FirebaseFirestore.instance
                         .collection('posts')
                         .doc(postId)
@@ -72,7 +69,10 @@ class _PostItemState extends State<PostItem> {
                           'text': controller.text.trim(),
                           'userId': currentUserId,
                           'timestamp': Timestamp.now(),
+                          'username': userData?['username'] ?? 'User',
+                          'userImage': userData?['image_url'] ?? '',
                         });
+
                     Navigator.of(ctx).pop();
                   }
                 },
@@ -105,7 +105,6 @@ class _PostItemState extends State<PostItem> {
                     title: Text(username),
                     onTap: () async {
                       final chatId = _getChatId(currentUserId, uid);
-
                       await FirebaseFirestore.instance
                           .collection('messages')
                           .doc(chatId)
@@ -145,81 +144,170 @@ class _PostItemState extends State<PostItem> {
 
   @override
   Widget build(BuildContext context) {
-    final username = widget.postData['username'] ?? 'Unknown';
-    final userImage = widget.postData['userImage'] ?? '';
-    final text = widget.postData['text'] ?? '';
-    final postImage = widget.postData['imageUrl'];
-    final timestamp = widget.postData['timestamp']?.toDate();
+    final postId = widget.postData['id'];
+    final postRef = FirebaseFirestore.instance.collection('posts').doc(postId);
 
-    return Card(
-      color: Theme.of(context).colorScheme.primaryContainer,
-      margin: const EdgeInsets.symmetric(vertical: 8),
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-      elevation: 3,
-      child: Padding(
-        padding: const EdgeInsets.all(12),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Row(
+    return StreamBuilder<DocumentSnapshot>(
+      stream: postRef.snapshots(),
+      builder: (context, snapshot) {
+        if (!snapshot.hasData) {
+          return const Center(child: CircularProgressIndicator());
+        }
+
+        final rawData = snapshot.data!.data();
+        if (rawData == null) return const SizedBox();
+
+        final postData = rawData as Map<String, dynamic>;
+        final likes = postData['likes'] ?? [];
+        final isLiked = likes.contains(currentUserId);
+        final username = postData['username'] ?? 'Unknown';
+        final userImage = postData['userImage'] ?? '';
+        final text = postData['text'] ?? '';
+        final postImage = postData['imageUrl'];
+        final timestamp = postData['timestamp']?.toDate();
+
+        return Card(
+          color: Theme.of(context).colorScheme.primaryContainer,
+          margin: const EdgeInsets.symmetric(vertical: 8),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(12),
+          ),
+          elevation: 3,
+          child: Padding(
+            padding: const EdgeInsets.all(12),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                CircleAvatar(
-                  backgroundImage: NetworkImage(userImage),
-                  radius: 22,
-                ),
-                const SizedBox(width: 10),
-                Text(username, style: Theme.of(context).textTheme.bodyLarge),
-                const Spacer(),
-                if (timestamp != null)
-                  Text(
-                    '${timestamp.day}/${timestamp.month} ${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}',
-                    style: Theme.of(context).textTheme.bodyMedium,
-                  ),
-              ],
-            ),
-            const SizedBox(height: 10),
-            if (text.isNotEmpty)
-              Text(text, style: Theme.of(context).textTheme.bodyLarge),
-            const SizedBox(height: 8),
-            if (postImage != null)
-              ClipRRect(
-                borderRadius: BorderRadius.circular(10),
-                child: Image.network(
-                  postImage,
-                  height: 250,
-                  width: double.infinity,
-                  fit: BoxFit.cover,
-                ),
-              ),
-            const SizedBox(height: 8),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceAround,
-              children: [
+                // Header
                 Row(
                   children: [
-                    IconButton(
-                      icon: Icon(
-                        isLiked ? Icons.favorite : Icons.favorite_border,
-                        color: isLiked ? Colors.red : Colors.grey,
-                      ),
-                      onPressed: _toggleLike,
+                    CircleAvatar(
+                      backgroundImage: NetworkImage(userImage),
+                      radius: 22,
                     ),
-                    Text('${likes.length}'),
+                    const SizedBox(width: 10),
+                    Text(
+                      username,
+                      style: Theme.of(context).textTheme.bodyLarge,
+                    ),
+                    const Spacer(),
+                    if (timestamp != null)
+                      Text(
+                        '${timestamp.day}/${timestamp.month} ${timestamp.hour}:${timestamp.minute.toString().padLeft(2, '0')}',
+                        style: Theme.of(context).textTheme.bodyMedium,
+                      ),
                   ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.comment),
-                  onPressed: _showCommentDialog,
+                const SizedBox(height: 10),
+
+                // Post text
+                if (text.isNotEmpty)
+                  Text(text, style: Theme.of(context).textTheme.bodyLarge),
+                const SizedBox(height: 8),
+
+                // Image
+                if (postImage != null)
+                  ClipRRect(
+                    borderRadius: BorderRadius.circular(10),
+                    child: Image.network(
+                      postImage,
+                      height: 250,
+                      width: double.infinity,
+                      fit: BoxFit.cover,
+                    ),
+                  ),
+                const SizedBox(height: 8),
+
+                // Like / Comment / Share Buttons
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    Row(
+                      children: [
+                        IconButton(
+                          icon: Icon(
+                            isLiked ? Icons.favorite : Icons.favorite_border,
+                            color: isLiked ? Colors.red : Colors.grey,
+                          ),
+                          onPressed: () => _toggleLike(postId, isLiked),
+                        ),
+                        Text('${likes.length}'),
+                      ],
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.comment),
+                      onPressed: () => _showCommentDialog(postId),
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.send),
+                      onPressed: () => _shareToChat(context),
+                    ),
+                  ],
                 ),
-                IconButton(
-                  icon: const Icon(Icons.send),
-                  onPressed: () => _shareToChat(context),
+
+                // Comments List
+                StreamBuilder<QuerySnapshot>(
+                  stream:
+                      FirebaseFirestore.instance
+                          .collection('posts')
+                          .doc(postId)
+                          .collection('comments')
+                          .orderBy('timestamp', descending: true)
+                          .snapshots(),
+                  builder: (context, snapshot) {
+                    if (!snapshot.hasData) return const SizedBox();
+                    final comments = snapshot.data!.docs;
+
+                    return ListView.builder(
+                      shrinkWrap: true,
+                      physics: const NeverScrollableScrollPhysics(),
+                      itemCount: comments.length,
+                      itemBuilder: (context, index) {
+                        final comment =
+                            comments[index].data() as Map<String, dynamic>;
+                        return Padding(
+                          padding: const EdgeInsets.symmetric(
+                            vertical: 4.0,
+                            horizontal: 8,
+                          ),
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              CircleAvatar(
+                                radius: 14,
+                                backgroundImage: NetworkImage(
+                                  comment['userImage'] ?? '',
+                                ),
+                              ),
+                              const SizedBox(width: 8),
+                              Expanded(
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      comment['username'] ?? 'User',
+                                      style: Theme.of(
+                                        context,
+                                      ).textTheme.bodyMedium!.copyWith(
+                                        fontWeight: FontWeight.bold,
+                                      ),
+                                    ),
+                                    Text(comment['text'] ?? ''),
+                                  ],
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      },
+                    );
+                  },
                 ),
               ],
             ),
-          ],
-        ),
-      ),
+          ),
+        );
+      },
     );
   }
 }

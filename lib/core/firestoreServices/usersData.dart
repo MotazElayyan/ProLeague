@@ -9,6 +9,7 @@ class UserSignupService {
     required String email,
     required String password,
     required File pickedImage,
+    required String role,
   }) async {
     try {
       final userCredential = await FirebaseAuth.instance
@@ -33,7 +34,9 @@ class UserSignupService {
           .set({
             'username': username.trim(),
             'email': email.trim(),
+            'role': role,
             'image_url': imageUrl,
+            'created_at': Timestamp.now(),
           });
 
       await userCredential.user!.updateDisplayName(username.trim());

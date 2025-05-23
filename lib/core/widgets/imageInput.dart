@@ -37,40 +37,68 @@ class _ImageInputState extends State<ImageInput> {
     return Column(
       children: [
         CircleAvatar(
-          radius: 100,
-          backgroundColor: Colors.grey,
+          radius: 80,
+          backgroundColor: Colors.grey.shade300,
           foregroundImage:
               _selectedImageFile != null
                   ? FileImage(_selectedImageFile!)
                   : null,
+          child:
+              _selectedImageFile == null
+                  ? Icon(
+                    Icons.person,
+                    size: 80,
+                    color: Theme.of(context).colorScheme.secondary,
+                  )
+                  : null,
         ),
         const SizedBox(height: 10),
-        Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            TextButton.icon(
-              onPressed: () => _selectImage(ImageSource.gallery),
-              icon: Icon(
-                Icons.photo,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              label: Text(
-                'Gallery',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+        PopupMenuButton<String>(
+          onSelected: (value) {
+            if (value == 'gallery') {
+              _selectImage(ImageSource.gallery);
+            } else if (value == 'camera') {
+              _selectImage(ImageSource.camera);
+            }
+          },
+          itemBuilder:
+              (context) => [
+                const PopupMenuItem(
+                  value: 'gallery',
+                  child: Row(
+                    children: [
+                      Icon(Icons.photo),
+                      SizedBox(width: 8),
+                      Text('Gallery'),
+                    ],
+                  ),
+                ),
+                const PopupMenuItem(
+                  value: 'camera',
+                  child: Row(
+                    children: [
+                      Icon(Icons.camera_alt),
+                      SizedBox(width: 8),
+                      Text('Camera'),
+                    ],
+                  ),
+                ),
+              ],
+          child: Container(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.primaryContainer,
+              borderRadius: BorderRadius.circular(30),
             ),
-            TextButton.icon(
-              onPressed: () => _selectImage(ImageSource.camera),
-              icon: Icon(
-                Icons.camera_alt,
-                color: Theme.of(context).colorScheme.secondary,
-              ),
-              label: Text(
-                'Camera',
-                style: Theme.of(context).textTheme.bodyMedium,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: const [
+                Icon(Icons.add_a_photo),
+                SizedBox(width: 8),
+                Text('Select Image'),
+              ],
             ),
-          ],
+          ),
         ),
       ],
     );
