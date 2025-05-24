@@ -295,12 +295,33 @@ class _PostItemState extends State<PostItem> {
                           );
 
                           if (confirm == true) {
-                            await FirebaseFirestore.instance
+                            final postDocRef = FirebaseFirestore.instance
                                 .collection('posts')
-                                .doc(postId)
-                                .delete();
+                                .doc(postId);
+
+                            final commentsSnapshot =
+                                await postDocRef.collection('comments').get();
+                            for (var doc in commentsSnapshot.docs) {
+                              await doc.reference.delete();
+                            }
+
+                            final reportsSnapshot =
+                                await FirebaseFirestore.instance
+                                    .collection('reports')
+                                    .where('postId', isEqualTo: postId)
+                                    .get();
+                            for (var report in reportsSnapshot.docs) {
+                              await report.reference.delete();
+                            }
+
+                            await postDocRef.delete();
+
                             ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(content: Text('Post deleted')),
+                              const SnackBar(
+                                content: Text(
+                                  'Post and all related data deleted',
+                                ),
+                              ),
                             );
                           }
                         },
@@ -312,40 +333,122 @@ class _PostItemState extends State<PostItem> {
                           color: hasReported ? Colors.orange : null,
                         ),
                         onPressed: () async {
-                          final reportRef = FirebaseFirestore.instance
-                              .collection('posts')
-                              .doc(postId)
-                              .collection('reports')
-                              .doc(currentUserId);
-
                           if (hasReported) {
-                            // REMOVE report
-                            await reportRef.delete();
+                            final reportDocRef = FirebaseFirestore.instance
+                                .collection('reports')
+                                .doc('${postId}_$currentUserId');
+
+                            await reportDocRef.delete();
+
                             if (mounted) {
                               setState(() {
                                 hasReported = false;
                               });
                             }
+
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Report removed')),
                             );
-                          } else {
-                            // ADD report
-                            await reportRef.set({
-                              'reportedAt': Timestamp.now(),
-                              'userId': currentUserId,
-                            });
-                            if (mounted) {
-                              setState(() {
-                                hasReported = true;
-                              });
-                            }
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text('Post reported. Thank you!'),
-                              ),
-                            );
+                            return;
                           }
+
+                          final TextEditingController reasonController =
+                              TextEditingController();
+
+                          await showDialog(
+                            context: context,
+                            builder:
+                                (ctx) => AlertDialog(
+                                  title: Text(
+                                    'Report Post',
+                                    style:
+                                        Theme.of(context).textTheme.titleLarge,
+                                  ),
+                                  content: TextField(
+                                    controller: reasonController,
+                                    decoration: InputDecoration(
+                                      labelText: 'Reason for reporting',
+                                      hintText:
+                                          'Describe the issue with this post',
+                                    ),
+                                    maxLines: 3,
+                                  ),
+                                  actions: [
+                                    TextButton(
+                                      onPressed: () => Navigator.of(ctx).pop(),
+                                      child: Text(
+                                        'Cancel',
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.bodyMedium,
+                                      ),
+                                    ),
+                                    TextButton(
+                                      onPressed: () async {
+                                        final reason =
+                                            reasonController.text.trim();
+                                        if (reason.isEmpty) {
+                                          ScaffoldMessenger.of(
+                                            context,
+                                          ).showSnackBar(
+                                            const SnackBar(
+                                              content: Text(
+                                                'Please provide a reason.',
+                                              ),
+                                            ),
+                                          );
+                                          return;
+                                        }
+
+                                        final reportDocRef = FirebaseFirestore
+                                            .instance
+                                            .collection('reports')
+                                            .doc('${postId}_$currentUserId');
+
+                                        await reportDocRef.set({
+                                          'reportedAt': Timestamp.now(),
+                                          'userId': currentUserId,
+                                          'postId': postId,
+                                          'postText':
+                                              widget.postData['text'] ?? '',
+                                          'postImage':
+                                              widget.postData['imageUrl'] ?? '',
+                                          'postOwnerId':
+                                              widget.postData['uid'] ?? '',
+                                          'reason': reason,
+                                        });
+
+                                        if (mounted) {
+                                          setState(() {
+                                            hasReported = true;
+                                          });
+                                        }
+
+                                        Navigator.of(ctx).pop();
+
+                                        ScaffoldMessenger.of(
+                                          context,
+                                        ).showSnackBar(
+                                          const SnackBar(
+                                            content: Text(
+                                              'Post reported. Thank you!',
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                      child: Text(
+                                        'Submit',
+                                        style: Theme.of(
+                                          context,
+                                        ).textTheme.bodyMedium!.copyWith(
+                                          fontWeight: FontWeight.bold,
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                          );
                         },
                       ),
                   ],

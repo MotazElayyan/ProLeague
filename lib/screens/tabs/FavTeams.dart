@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:grad_project/core/models/resultsCarouselSlider.dart';
 import 'package:intl/intl.dart';
 
 import 'package:grad_project/core/widgets/buildDrawer.dart';
 import 'package:grad_project/core/models/fixturesCarouselSlider.dart';
+import 'package:grad_project/core/models/resultsCarouselSlider.dart';
 import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
 import 'package:grad_project/core/providers/favoritesProvider.dart';
 import 'package:grad_project/core/firestoreServices/fetchTeamData.dart';
@@ -18,7 +18,13 @@ class FavTeamsScreen extends ConsumerStatefulWidget {
 }
 
 class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
+  bool _isLoading = false;
+
   Future<List<Map<String, dynamic>>> fetchFixtures(String teamName) async {
+    setState(() {
+      _isLoading = true;
+    });
+
     try {
       final teamSnapshot =
           await FirebaseFirestore.instance
@@ -53,6 +59,10 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
 
         data['Display'] = homeDisplay;
         data['TeamLogo'] = teamLogo;
+
+        setState(() {
+          _isLoading = false;
+        });
 
         return data;
       }).toList();
@@ -109,98 +119,112 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
         body: TabBarView(
           physics: const BouncingScrollPhysics(),
           children: [
-            // --- Fixtures Tab ---
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-              child:
-                  selectedTeams.isEmpty
-                      ? Center(
-                        child: Text(
-                          'No favorite teams selected.',
-                          style: Theme.of(context).textTheme.bodyLarge,
-                        ),
-                      )
-                      : ListView.builder(
-                        itemCount: selectedTeams.length,
-                        itemBuilder: (context, index) {
-                          final teamName = selectedTeams.elementAt(index);
+            // Fixtures Tab
+            _isLoading
+                ? Center(
+                  child: CircularProgressIndicator(
+                    color: Theme.of(context).colorScheme.secondary,
+                  ),
+                )
+                : Padding(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 12,
+                    vertical: 10,
+                  ),
+                  child:
+                      selectedTeams.isEmpty
+                          ? Center(
+                            child: Text(
+                              'No favorite teams selected.',
+                              style: Theme.of(context).textTheme.bodyLarge,
+                            ),
+                          )
+                          : ListView.builder(
+                            itemCount: selectedTeams.length,
+                            itemBuilder: (context, index) {
+                              final teamName = selectedTeams.elementAt(index);
 
-                          return FutureBuilder<List<Map<String, dynamic>>>(
-                            future: FixtureService.fetchFixtures(teamName),
-                            builder: (context, snapshot) {
-                              if (snapshot.connectionState ==
-                                  ConnectionState.waiting) {
-                                return const Padding(
-                                  padding: EdgeInsets.symmetric(vertical: 12),
-                                  child: Center(
-                                    child: CircularProgressIndicator(),
-                                  ),
-                                );
-                              }
-
-                              if (!snapshot.hasData || snapshot.data!.isEmpty) {
-                                return Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 12,
-                                  ),
-                                  child: Center(
-                                    child: Text(
-                                      'No upcoming matches for $teamName',
-                                      style: Theme.of(
-                                        context,
-                                      ).textTheme.bodyMedium?.copyWith(
-                                        color:
-                                            Theme.of(context).colorScheme.error,
+                              return FutureBuilder<List<Map<String, dynamic>>>(
+                                future: FixtureService.fetchFixtures(teamName),
+                                builder: (context, snapshot) {
+                                  if (snapshot.connectionState ==
+                                      ConnectionState.waiting) {
+                                    return const Padding(
+                                      padding: EdgeInsets.symmetric(
+                                        vertical: 12,
                                       ),
-                                    ),
-                                  ),
-                                );
-                              }
+                                      child: Center(
+                                        child: CircularProgressIndicator(),
+                                      ),
+                                    );
+                                  }
 
-                              final fixtures = snapshot.data!;
-                              return Card(
-                                margin: const EdgeInsets.symmetric(
-                                  vertical: 12,
-                                ),
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(16),
-                                ),
-                                elevation: 4,
-                                color:
-                                    Theme.of(
-                                      context,
-                                    ).colorScheme.primaryContainer,
-                                child: Padding(
-                                  padding: const EdgeInsets.all(16),
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    children: [
-                                      Text(
-                                        teamName,
-                                        style: Theme.of(
-                                          context,
-                                        ).textTheme.titleMedium?.copyWith(
-                                          fontWeight: FontWeight.bold,
-                                          color:
-                                              Theme.of(
-                                                context,
-                                              ).colorScheme.secondary,
+                                  if (!snapshot.hasData ||
+                                      snapshot.data!.isEmpty) {
+                                    return Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                        vertical: 12,
+                                      ),
+                                      child: Center(
+                                        child: Text(
+                                          'No upcoming matches for $teamName',
+                                          style: Theme.of(
+                                            context,
+                                          ).textTheme.bodyMedium?.copyWith(
+                                            color:
+                                                Theme.of(
+                                                  context,
+                                                ).colorScheme.error,
+                                          ),
                                         ),
                                       ),
-                                      const SizedBox(height: 12),
-                                      FixturesCarouselSlider(
-                                        fixtures: fixtures,
+                                    );
+                                  }
+
+                                  final fixtures = snapshot.data!;
+                                  return Card(
+                                    margin: const EdgeInsets.symmetric(
+                                      vertical: 12,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(16),
+                                    ),
+                                    elevation: 4,
+                                    color:
+                                        Theme.of(
+                                          context,
+                                        ).colorScheme.primaryContainer,
+                                    child: Padding(
+                                      padding: const EdgeInsets.all(16),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            teamName,
+                                            style: Theme.of(
+                                              context,
+                                            ).textTheme.titleMedium?.copyWith(
+                                              fontWeight: FontWeight.bold,
+                                              color:
+                                                  Theme.of(
+                                                    context,
+                                                  ).colorScheme.secondary,
+                                            ),
+                                          ),
+                                          const SizedBox(height: 12),
+                                          FixturesCarouselSlider(
+                                            fixtures: fixtures,
+                                          ),
+                                        ],
                                       ),
-                                    ],
-                                  ),
-                                ),
+                                    ),
+                                  );
+                                },
                               );
                             },
-                          );
-                        },
-                      ),
-            ),
+                          ),
+                ),
 
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),

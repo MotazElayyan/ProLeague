@@ -52,7 +52,7 @@ class _SignupPageState extends State<SignupPage> {
       email: email.text,
       password: password.text,
       pickedImage: _pickedImage!,
-      role: 'user', // default role
+      role: 'user', 
     );
 
     if (!mounted) return;

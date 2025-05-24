@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -5,6 +6,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:grad_project/core/providers/themeProvider.dart';
 import 'package:grad_project/screens/pages/aboutAppPage.dart';
 import 'package:grad_project/screens/pages/privacyPolicyPage.dart';
+import 'package:grad_project/screens/pages/reportsPage.dart';
 import 'package:grad_project/screens/signinOptions/HomePage.dart';
 import 'package:grad_project/screens/pages/profilePage.dart';
 
@@ -16,6 +18,31 @@ class BuildDrawer extends ConsumerStatefulWidget {
 }
 
 class _BuildDrawerState extends ConsumerState<BuildDrawer> {
+  String? userRole;
+
+  @override
+  void initState() {
+    super.initState();
+    _loadUserRole();
+  }
+
+  Future<void> _loadUserRole() async {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user == null) return;
+
+    final doc =
+        await FirebaseFirestore.instance
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
+    if (mounted) {
+      setState(() {
+        userRole = doc.data()?['role'] ?? 'user';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final themeMode = ref.watch(themeModeProvider);
@@ -65,7 +92,7 @@ class _BuildDrawerState extends ConsumerState<BuildDrawer> {
                 color: Theme.of(context).colorScheme.secondary,
               ),
             ),
-            onTap: () async {
+            onTap: () {
               Navigator.of(
                 context,
               ).push(MaterialPageRoute(builder: (ctx) => PrivacyPolicyPage()));
@@ -83,12 +110,32 @@ class _BuildDrawerState extends ConsumerState<BuildDrawer> {
                 color: Theme.of(context).colorScheme.secondary,
               ),
             ),
-            onTap: () async {
+            onTap: () {
               Navigator.of(
                 context,
               ).push(MaterialPageRoute(builder: (ctx) => AboutAppPage()));
             },
           ),
+          if (userRole == 'admin')
+            ListTile(
+              leading: Icon(
+                Icons.report_gmailerrorred,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              title: Text(
+                'Reports',
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  fontSize: 18,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (ctx) => const ReportsPage()),
+                );
+              },
+            ),
+
           ListTile(
             leading: const Icon(
               Icons.logout,

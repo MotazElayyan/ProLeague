@@ -33,14 +33,14 @@ class RecommendationNewsItem extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(
-                          newsItem.category,
-                          style: Theme.of(
-                            context,
-                          ).textTheme.bodyLarge!.copyWith(
-                            color: Theme.of(context).colorScheme.secondary,
-                          ),
-                        ),
+                        // Text(
+                        //   newsItem.category,
+                        //   style: Theme.of(
+                        //     context,
+                        //   ).textTheme.bodyLarge!.copyWith(
+                        //     color: Theme.of(context).colorScheme.secondary,
+                        //   ),
+                        // ),
                         const SizedBox(height: 8),
                         Text(
                           newsItem.title,
