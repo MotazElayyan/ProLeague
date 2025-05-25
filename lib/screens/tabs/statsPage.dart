@@ -187,7 +187,7 @@ class _StatsPageState extends State<StatsPage> {
                                       () => Navigator.push(
                                         context,
                                         MaterialPageRoute(
-                                          builder: (_) => const TeamsGoals(),
+                                          builder: (ctx) => const TeamsGoals(),
                                         ),
                                       ),
                                 ),
@@ -207,7 +207,7 @@ class _StatsPageState extends State<StatsPage> {
                                         context,
                                         MaterialPageRoute(
                                           builder:
-                                              (_) => const TeamsCleanSheets(),
+                                              (ctx) => const TeamsCleanSheets(),
                                         ),
                                       ),
                                 ),

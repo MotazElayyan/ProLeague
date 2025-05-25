@@ -123,7 +123,6 @@ class _PlayerAwardsScreenState extends State<PlayerAwardsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Banner Image (Award Picture)
                     Stack(
                       children: [
                         ClipRRect(
