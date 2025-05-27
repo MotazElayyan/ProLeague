@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -70,6 +71,26 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
       print('Error in fetchFixtures: $e');
       return [];
     }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _logFavTeamsPageAnalytics();
+  }
+
+  Future<void> _logFavTeamsPageAnalytics() async {
+    String screenName = 'FavoriteTeamsScreen';
+
+    await FirebaseAnalytics.instance.logScreenView(
+      screenName: screenName,
+      screenClass: screenName,
+    );
+
+    await FirebaseFirestore.instance
+        .collection('dashboard_metrics')
+        .doc('screen_views')
+        .set({screenName: FieldValue.increment(1)}, SetOptions(merge: true));
   }
 
   @override
@@ -149,12 +170,17 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
                                 builder: (context, snapshot) {
                                   if (snapshot.connectionState ==
                                       ConnectionState.waiting) {
-                                    return const Padding(
+                                    return Padding(
                                       padding: EdgeInsets.symmetric(
                                         vertical: 12,
                                       ),
                                       child: Center(
-                                        child: CircularProgressIndicator(),
+                                        child: CircularProgressIndicator(
+                                          color:
+                                              Theme.of(
+                                                context,
+                                              ).colorScheme.secondary,
+                                        ),
                                       ),
                                     );
                                   }
@@ -191,9 +217,7 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
                                     ),
                                     elevation: 4,
                                     color:
-                                        Theme.of(
-                                          context,
-                                        ).colorScheme.primaryContainer,
+                                        Theme.of(context).colorScheme.tertiary,
                                     child: Padding(
                                       padding: const EdgeInsets.all(16),
                                       child: Column(
@@ -245,10 +269,15 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
                             builder: (context, snapshot) {
                               if (snapshot.connectionState ==
                                   ConnectionState.waiting) {
-                                return const Padding(
+                                return Padding(
                                   padding: EdgeInsets.symmetric(vertical: 12),
                                   child: Center(
-                                    child: CircularProgressIndicator(),
+                                    child: CircularProgressIndicator(
+                                      color:
+                                          Theme.of(
+                                            context,
+                                          ).colorScheme.secondary,
+                                    ),
                                   ),
                                 );
                               }
@@ -281,10 +310,7 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
                                   borderRadius: BorderRadius.circular(16),
                                 ),
                                 elevation: 4,
-                                color:
-                                    Theme.of(
-                                      context,
-                                    ).colorScheme.primaryContainer,
+                                color: Theme.of(context).colorScheme.tertiary,
                                 child: Padding(
                                   padding: const EdgeInsets.all(16),
                                   child: Column(

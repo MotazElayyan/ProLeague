@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:grad_project/core/firestoreServices/fetchTeamData.dart';
@@ -18,6 +19,21 @@ class _FixturesResultsPageState extends State<FixturesResultsPage> {
   void initState() {
     super.initState();
     _allTeamNames = _fetchAllTeamNames();
+    _logFixturesAndResultsPageAnalytics();
+  }
+
+  Future<void> _logFixturesAndResultsPageAnalytics() async {
+    String screenName = 'Fixtures&ResultsPage';
+
+    await FirebaseAnalytics.instance.logScreenView(
+      screenName: screenName,
+      screenClass: screenName,
+    );
+
+    await FirebaseFirestore.instance
+        .collection('dashboard_metrics')
+        .doc('screen_views')
+        .set({screenName: FieldValue.increment(1)}, SetOptions(merge: true));
   }
 
   Future<List<String>> _fetchAllTeamNames() async {

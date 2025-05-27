@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:cached_network_image/cached_network_image.dart';
@@ -17,6 +18,21 @@ class _VideosPageState extends State<VideosPage> {
   void initState() {
     super.initState();
     _videosFuture = fetchVideos();
+    _logVideosPageAnalytics();
+  }
+
+  Future<void> _logVideosPageAnalytics() async {
+    String screenName = 'VideosPage';
+
+    await FirebaseAnalytics.instance.logScreenView(
+      screenName: screenName,
+      screenClass: screenName,
+    );
+
+    await FirebaseFirestore.instance
+        .collection('dashboard_metrics')
+        .doc('screen_views')
+        .set({screenName: FieldValue.increment(1)}, SetOptions(merge: true));
   }
 
   Future<List<Map<String, dynamic>>> fetchVideos() async {

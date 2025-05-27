@@ -34,7 +34,7 @@ class ResultsCarouselSlider extends StatelessWidget {
             return Container(
               margin: const EdgeInsets.symmetric(horizontal: 6),
               decoration: BoxDecoration(
-                color: Theme.of(context).colorScheme.tertiary,
+                color: Theme.of(context).colorScheme.primaryContainer,
                 borderRadius: BorderRadius.circular(20),
               ),
               padding: const EdgeInsets.all(12),

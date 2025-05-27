@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -11,6 +12,26 @@ class TablePage extends StatefulWidget {
 }
 
 class _TablePageState extends State<TablePage> {
+  @override
+  void initState() {
+    super.initState();
+    _logTablePageAnalytics();
+  }
+
+  Future<void> _logTablePageAnalytics() async {
+    String screenName = 'TablePage';
+
+    await FirebaseAnalytics.instance.logScreenView(
+      screenName: screenName,
+      screenClass: screenName,
+    );
+
+    await FirebaseFirestore.instance
+        .collection('dashboard_metrics')
+        .doc('screen_views')
+        .set({screenName: FieldValue.increment(1)}, SetOptions(merge: true));
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -70,7 +91,7 @@ class _TablePageState extends State<TablePage> {
 
                   Color? bgColor;
                   if (rank == 1) {
-                    bgColor = const Color(0xFFFFD700); 
+                    bgColor = const Color(0xFFFFD700);
                   } else if (rank == 2) {
                     bgColor = const Color(0xFFC0C0C0);
                   } else if (rank == 3) {

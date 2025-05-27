@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'firebase_options.dart';
 
 import 'package:grad_project/screens/pages/splashScreen.dart';
@@ -12,8 +13,7 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await FirebaseMessaging.instance.requestPermission();
-
-  runApp(ProviderScope(child: App()));
+  runApp(const ProviderScope(child: App()));
 }
 
 class App extends ConsumerWidget {
@@ -22,12 +22,17 @@ class App extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final themeMode = ref.watch(themeModeProvider);
+    final FirebaseAnalytics analytics = FirebaseAnalytics.instance;
 
     return MaterialApp(
+      debugShowCheckedModeBanner: false,
+      title: 'Pro League',
       theme: lightTheme,
       darkTheme: darkTheme,
       themeMode: themeMode,
-      home: SplashScreen(),
+      navigatorObservers: [FirebaseAnalyticsObserver(analytics: analytics)],
+      home:
+          SplashScreen(), 
     );
   }
 }

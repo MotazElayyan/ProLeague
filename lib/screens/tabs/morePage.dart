@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -21,6 +23,26 @@ class MorePage extends ConsumerStatefulWidget {
 }
 
 class _MorePageState extends ConsumerState<MorePage> {
+  @override
+  void initState() {
+    super.initState();
+    _logMorePageAnalytics();
+  }
+
+  Future<void> _logMorePageAnalytics() async {
+    String screenName = 'CommunityPage';
+
+    await FirebaseAnalytics.instance.logScreenView(
+      screenName: screenName,
+      screenClass: screenName,
+    );
+
+    await FirebaseFirestore.instance
+        .collection('dashboard_metrics')
+        .doc('screen_views')
+        .set({screenName: FieldValue.increment(1)}, SetOptions(merge: true));
+  }
+
   @override
   Widget build(BuildContext context) {
     final selectedTeams = ref.watch(favoriteTeamsProvider);
@@ -171,6 +193,7 @@ class _MorePageState extends ConsumerState<MorePage> {
                 const SizedBox(height: 8),
                 ListItem(label: "Contact Us", onTap: () {}),
                 ListItem(label: "Send Email", onTap: () {}),
+                ListItem(label: "Development Team", onTap: () {}),
               ],
             ),
           ),

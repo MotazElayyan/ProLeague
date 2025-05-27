@@ -2,12 +2,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:grad_project/admin/analytics.dart';
 
 import 'package:grad_project/core/providers/themeProvider.dart';
 import 'package:grad_project/screens/pages/aboutAppPage.dart';
 import 'package:grad_project/screens/pages/fAQsPage.dart';
 import 'package:grad_project/screens/pages/privacyPolicyPage.dart';
-import 'package:grad_project/screens/pages/reportsPage.dart';
+import 'package:grad_project/admin/reportsPage.dart';
 import 'package:grad_project/screens/signinOptions/HomePage.dart';
 import 'package:grad_project/screens/pages/profilePage.dart';
 
@@ -138,30 +139,48 @@ class _BuildDrawerState extends ConsumerState<BuildDrawer> {
                     ).push(MaterialPageRoute(builder: (ctx) => FAQPage()));
                   },
                 ),
-                if (userRole == 'admin')
-                  ListTile(
-                    leading: Icon(
-                      Icons.report_gmailerrorred,
-                      color: Theme.of(context).colorScheme.secondary,
-                    ),
-                    title: Text(
-                      'Reports',
-                      style: Theme.of(context).textTheme.bodyLarge!.copyWith(
-                        fontSize: 18,
-                        color: Theme.of(context).colorScheme.secondary,
-                      ),
-                    ),
-                    onTap: () {
-                      Navigator.of(context).push(
-                        MaterialPageRoute(
-                          builder: (ctx) => const ReportsPage(),
-                        ),
-                      );
-                    },
-                  ),
               ],
             ),
           ),
+          Divider(color: Theme.of(context).colorScheme.secondary),
+          if (userRole == 'admin')
+            ListTile(
+              leading: Icon(
+                Icons.report_gmailerrorred,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              title: Text(
+                'Reports',
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  fontSize: 18,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (ctx) => const ReportsPage()),
+                );
+              },
+            ),
+          if (userRole == 'admin')
+            ListTile(
+              leading: Icon(
+                Icons.analytics_outlined,
+                color: Theme.of(context).colorScheme.secondary,
+              ),
+              title: Text(
+                'Analytics',
+                style: Theme.of(context).textTheme.bodyLarge!.copyWith(
+                  fontSize: 18,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
+              ),
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (ctx) => AnalyticsDashboard()),
+                );
+              },
+            ),
           Divider(color: Theme.of(context).colorScheme.secondary),
           ListTile(
             leading: const Icon(

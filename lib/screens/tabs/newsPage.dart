@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 
 import 'package:grad_project/core/models/newsCarouselSlider.dart';
@@ -19,6 +21,21 @@ class _NewsPageState extends State<NewsPage> {
   void initState() {
     super.initState();
     _newsFuture = getNews();
+    _logNewsPageAnalytics();
+  }
+
+  Future<void> _logNewsPageAnalytics() async {
+    const screenName = 'NewsPage';
+
+    await FirebaseAnalytics.instance.logScreenView(
+      screenName: screenName,
+      screenClass: screenName,
+    );
+
+    await FirebaseFirestore.instance
+        .collection('dashboard_metrics')
+        .doc('screen_views')
+        .set({screenName: FieldValue.increment(1)}, SetOptions(merge: true));
   }
 
   @override

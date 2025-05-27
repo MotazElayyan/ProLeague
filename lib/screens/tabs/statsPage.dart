@@ -1,3 +1,4 @@
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
@@ -26,6 +27,21 @@ class _StatsPageState extends State<StatsPage> {
   void initState() {
     super.initState();
     fetchTopStats();
+    _logStatsPageAnalytics();
+  }
+
+  Future<void> _logStatsPageAnalytics() async {
+    String screenName = 'StatsPage';
+
+    await FirebaseAnalytics.instance.logScreenView(
+      screenName: screenName,
+      screenClass: screenName,
+    );
+
+    await FirebaseFirestore.instance
+        .collection('dashboard_metrics')
+        .doc('screen_views')
+        .set({screenName: FieldValue.increment(1)}, SetOptions(merge: true));
   }
 
   Future<void> fetchTopStats() async {

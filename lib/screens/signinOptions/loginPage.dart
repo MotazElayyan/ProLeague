@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
@@ -59,6 +61,13 @@ class _LoginPageState extends State<LoginPage> {
         _isLoading = false;
       });
     }
+
+    await FirebaseAnalytics.instance.logLogin(loginMethod: 'email');
+
+    await FirebaseFirestore.instance
+        .collection('dashboard_metrics')
+        .doc('user_signins')
+        .set({'count': FieldValue.increment(1)}, SetOptions(merge: true));
   }
 
   @override

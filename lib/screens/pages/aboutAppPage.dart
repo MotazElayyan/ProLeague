@@ -1,3 +1,5 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 
 class AboutAppPage extends StatefulWidget {
@@ -10,6 +12,26 @@ class AboutAppPage extends StatefulWidget {
 class _AboutAppPageState extends State<AboutAppPage> {
   final PageController _controller = PageController();
   int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _logAboutAppPageAnalytics();
+  }
+
+  Future<void> _logAboutAppPageAnalytics() async {
+    String screenName = 'AboutAppPage';
+
+    await FirebaseAnalytics.instance.logScreenView(
+      screenName: screenName,
+      screenClass: screenName,
+    );
+
+    await FirebaseFirestore.instance
+        .collection('dashboard_metrics')
+        .doc('screen_views')
+        .set({screenName: FieldValue.increment(1)}, SetOptions(merge: true));
+  }
 
   final List<Map<String, String>> pages = [
     {
