@@ -66,23 +66,6 @@ class _CustomCarouselSliderState extends State<CustomCarouselSlider> {
                             ),
                       ),
                       Positioned(
-                        top: 10,
-                        left: 20,
-                        child: DecoratedBox(
-                          decoration: BoxDecoration(
-                            color: Theme.of(context).colorScheme.primary,
-                            borderRadius: BorderRadius.circular(16.0),
-                          ),
-                          child: Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(
-                              item.category,
-                              style: Theme.of(context).textTheme.bodyMedium,
-                            ),
-                          ),
-                        ),
-                      ),
-                      Positioned(
                         bottom: 0.0,
                         left: 0.0,
                         right: 0.0,

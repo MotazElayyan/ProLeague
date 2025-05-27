@@ -59,18 +59,22 @@ class _AnalyticsDashboardState extends State<AnalyticsDashboard> {
         padding: const EdgeInsets.all(20),
         child: Row(
           children: [
-            const Icon(LucideIcons.logIn, size: 36),
+            Icon(
+              LucideIcons.logIn,
+              size: 36,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
             const SizedBox(width: 16),
             Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
+                Text(
                   'Total Sign-ins',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
                 Text(
                   '$signInCount',
-                  style: Theme.of(context).textTheme.headlineMedium,
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
               ],
             ),
@@ -82,6 +86,7 @@ class _AnalyticsDashboardState extends State<AnalyticsDashboard> {
 
   Widget buildScreenViewsCard(BuildContext context) {
     return Card(
+      color: Theme.of(context).colorScheme.primaryContainer,
       elevation: 3,
       margin: const EdgeInsets.symmetric(vertical: 12),
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -90,13 +95,17 @@ class _AnalyticsDashboardState extends State<AnalyticsDashboard> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Row(
+            Row(
               children: [
-                Icon(LucideIcons.layoutDashboard, size: 24),
+                Icon(
+                  LucideIcons.layoutDashboard,
+                  size: 24,
+                  color: Theme.of(context).colorScheme.secondary,
+                ),
                 SizedBox(width: 10),
                 Text(
                   'Most Viewed Screens',
-                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
               ],
             ),
