@@ -142,6 +142,7 @@ class _BuildDrawerState extends ConsumerState<BuildDrawer> {
               ],
             ),
           ),
+          if (userRole == 'admin')
           Divider(color: Theme.of(context).colorScheme.secondary),
           if (userRole == 'admin')
             ListTile(
