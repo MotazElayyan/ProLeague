@@ -193,7 +193,7 @@ class _MorePageState extends ConsumerState<MorePage> {
                 const SizedBox(height: 8),
                 ListItem(label: "Contact Us", onTap: () {}),
                 ListItem(label: "Send Email", onTap: () {}),
-                ListItem(label: "Development Team", onTap: () {}),
+                //ListItem(label: "Development Team", onTap: () {}),
               ],
             ),
           ),

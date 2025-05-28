@@ -97,8 +97,10 @@ class _TablePageState extends State<TablePage> {
                   } else if (rank == 3) {
                     bgColor = const Color(0xFFCD7F32);
                   } else if (rank > teams.length - 4) {
-                    final shade = 100 + ((rank - (teams.length - 4)) * 100);
-                    bgColor = Colors.red[shade.clamp(100, 400)];
+                    final redShades = [600, 700, 800, 900];
+                    final indexFromBottom = rank - (teams.length - 4);
+                    final shadeIndex = (indexFromBottom - 1).clamp(0, 3);
+                    bgColor = Colors.red[redShades[shadeIndex]];
                   }
 
                   return teamRow(context, team, rank, backgroundColor: bgColor);

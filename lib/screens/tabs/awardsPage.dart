@@ -12,7 +12,7 @@ class AwardsTab extends StatelessWidget {
     return ListView(
       padding: const EdgeInsets.all(16.0),
       children: [
-        Text('Awards:', style: Theme.of(context).textTheme.titleLarge),
+        Text('2024/2025 Awards:', style: Theme.of(context).textTheme.bodyLarge),
         const SizedBox(height: 20),
         AwardButton(
           imagePath: 'assets/images/soccerplayer.png',

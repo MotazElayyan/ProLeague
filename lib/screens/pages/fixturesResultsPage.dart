@@ -113,7 +113,7 @@ class _FixturesResultsPageState extends State<FixturesResultsPage> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                           elevation: 4,
-                          color: Theme.of(context).colorScheme.primaryContainer,
+                          color: Theme.of(context).colorScheme.tertiary,
                           child: Padding(
                             padding: const EdgeInsets.all(16),
                             child: Column(
@@ -187,7 +187,7 @@ class _FixturesResultsPageState extends State<FixturesResultsPage> {
                             borderRadius: BorderRadius.circular(16),
                           ),
                           elevation: 4,
-                          color: Theme.of(context).colorScheme.primaryContainer,
+                          color: Theme.of(context).colorScheme.tertiary,
                           child: Padding(
                             padding: const EdgeInsets.all(16),
                             child: Column(

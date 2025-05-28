@@ -145,7 +145,7 @@ class _StatsPageState extends State<StatsPage> {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            '2024/2025 Top Stats',
+                            '2024/2025 Top Stats:',
                             style: Theme.of(context).textTheme.bodyLarge,
                           ),
                           const SizedBox(height: 20),
