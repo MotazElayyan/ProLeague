@@ -76,7 +76,10 @@ class _LoginPageState extends State<LoginPage> {
 
     return Scaffold(
       backgroundColor: theme.colorScheme.primary,
-      appBar: AppBar(title: const Text('Login')),
+      appBar: AppBar(
+        title: const Text('Login'),
+        backgroundColor: theme.colorScheme.primary,
+      ),
       body: SafeArea(
         child: Stack(
           children: [

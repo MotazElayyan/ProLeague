@@ -1,8 +1,5 @@
-import 'package:firebase_analytics/firebase_analytics.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:intl/intl.dart';
 
 import 'package:grad_project/core/widgets/buildDrawer.dart';
 import 'package:grad_project/core/models/fixturesCarouselSlider.dart';
@@ -10,6 +7,7 @@ import 'package:grad_project/core/models/resultsCarouselSlider.dart';
 import 'package:grad_project/screens/signinOptions/chooseFavTeam.dart';
 import 'package:grad_project/core/providers/favoritesProvider.dart';
 import 'package:grad_project/core/firestoreServices/fetchTeamData.dart';
+import 'package:grad_project/core/firestoreServices/analyticsSrevice.dart';
 
 class FavTeamsScreen extends ConsumerStatefulWidget {
   const FavTeamsScreen({super.key});
@@ -21,76 +19,10 @@ class FavTeamsScreen extends ConsumerStatefulWidget {
 class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
   bool _isLoading = false;
 
-  Future<List<Map<String, dynamic>>> fetchFixtures(String teamName) async {
-    setState(() {
-      _isLoading = true;
-    });
-
-    try {
-      final teamSnapshot =
-          await FirebaseFirestore.instance
-              .collection('fixtures')
-              .where('TeamName', isEqualTo: teamName)
-              .get();
-
-      if (teamSnapshot.docs.isEmpty) return [];
-
-      final teamDoc = teamSnapshot.docs.first;
-      final teamDocId = teamDoc.id;
-
-      final homeDisplay = teamDoc.data()['Display'] ?? 'HOM';
-      final teamLogo = teamDoc.data()['TeamLogo'] ?? '';
-
-      final teamFixturesSnapshot =
-          await FirebaseFirestore.instance
-              .collection('fixtures')
-              .doc(teamDocId)
-              .collection('TeamFixtures')
-              .get();
-
-      return teamFixturesSnapshot.docs.map((doc) {
-        final data = doc.data();
-
-        if (data['DateTime'] is Timestamp) {
-          final formatter = DateFormat('d MMM yyyy • hh:mm a');
-          data['DateTime'] = formatter.format(
-            (data['DateTime'] as Timestamp).toDate(),
-          );
-        }
-
-        data['Display'] = homeDisplay;
-        data['TeamLogo'] = teamLogo;
-
-        setState(() {
-          _isLoading = false;
-        });
-
-        return data;
-      }).toList();
-    } catch (e) {
-      print('Error in fetchFixtures: $e');
-      return [];
-    }
-  }
-
   @override
   void initState() {
     super.initState();
-    _logFavTeamsPageAnalytics();
-  }
-
-  Future<void> _logFavTeamsPageAnalytics() async {
-    String screenName = 'FavoriteTeamsScreen';
-
-    await FirebaseAnalytics.instance.logScreenView(
-      screenName: screenName,
-      screenClass: screenName,
-    );
-
-    await FirebaseFirestore.instance
-        .collection('dashboard_metrics')
-        .doc('screen_views')
-        .set({screenName: FieldValue.increment(1)}, SetOptions(merge: true));
+    AnalyticsService.logScreenView('FavoriteTeamsScreen');
   }
 
   @override
@@ -250,6 +182,7 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
                           ),
                 ),
 
+            // Results Tab
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               child:

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+
+import 'package:grad_project/core/firestoreServices/communityServices.dart';
 
 class PostItem extends StatefulWidget {
   final Map<String, dynamic> postData;
@@ -12,25 +13,22 @@ class PostItem extends StatefulWidget {
 }
 
 class _PostItemState extends State<PostItem> {
+  final PostServices _postService = PostServices();
   late final String currentUserId;
   bool hasReported = false;
 
   @override
   void initState() {
     super.initState();
-    currentUserId = FirebaseAuth.instance.currentUser!.uid;
+    currentUserId = _postService.currentUserId;
     _checkIfReported();
   }
 
-  void _toggleLike(String postId, bool isLiked) async {
-    final postRef = FirebaseFirestore.instance.collection('posts').doc(postId);
-
-    await postRef.update({
-      'likes':
-          isLiked
-              ? FieldValue.arrayRemove([currentUserId])
-              : FieldValue.arrayUnion([currentUserId]),
-    });
+  void _checkIfReported() async {
+    final reported = await _postService.hasUserReported(widget.postData['id']);
+    if (mounted) {
+      setState(() => hasReported = reported);
+    }
   }
 
   void _showCommentDialog(String postId) {
@@ -55,27 +53,15 @@ class _PostItemState extends State<PostItem> {
               TextButton(
                 onPressed: () async {
                   if (controller.text.trim().isNotEmpty) {
-                    final userDoc =
-                        await FirebaseFirestore.instance
-                            .collection('users')
-                            .doc(currentUserId)
-                            .get();
-
-                    final userData = userDoc.data();
-
-                    await FirebaseFirestore.instance
-                        .collection('posts')
-                        .doc(postId)
-                        .collection('comments')
-                        .add({
-                          'text': controller.text.trim(),
-                          'userId': currentUserId,
-                          'timestamp': Timestamp.now(),
-                          'username': userData?['username'] ?? 'User',
-                          'userImage': userData?['image_url'] ?? '',
-                        });
-
-                    Navigator.of(ctx).pop();
+                    final userData = await _postService.getUserData();
+                    if (userData != null) {
+                      await _postService.addComment(
+                        postId,
+                        controller.text,
+                        userData,
+                      );
+                      Navigator.of(ctx).pop();
+                    }
                   }
                 },
                 child: Text(
@@ -89,45 +75,25 @@ class _PostItemState extends State<PostItem> {
   }
 
   void _shareToChat(BuildContext context) async {
-    final usersSnapshot =
-        await FirebaseFirestore.instance.collection('users').get();
+    final users = await _postService.getAllUsers();
 
     showModalBottomSheet(
+      backgroundColor: Theme.of(context).colorScheme.primaryContainer,
       context: context,
       builder:
           (ctx) => ListView(
             children:
-                usersSnapshot.docs.where((doc) => doc.id != currentUserId).map((
-                  user,
-                ) {
+                users.where((doc) => doc.id != currentUserId).map((user) {
                   final uid = user.id;
                   final username = user['username'] ?? 'User';
-
                   return ListTile(
                     title: Text(username),
                     onTap: () async {
                       final chatId = _getChatId(currentUserId, uid);
-                      await FirebaseFirestore.instance
-                          .collection('messages')
-                          .doc(chatId)
-                          .collection('chat')
-                          .add({
-                            'postShared': true,
-                            'postText': widget.postData['text'] ?? '',
-                            'postImage': widget.postData['imageUrl'] ?? '',
-                            'createdAt': Timestamp.now(),
-                            'userId': currentUserId,
-                            'username':
-                                FirebaseAuth
-                                    .instance
-                                    .currentUser
-                                    ?.displayName ??
-                                'Me',
-                            'profileImage':
-                                FirebaseAuth.instance.currentUser?.photoURL ??
-                                '',
-                          });
-
+                      await _postService.sharePostToChat(
+                        chatId: chatId,
+                        postData: widget.postData,
+                      );
                       Navigator.of(context).pop();
                       ScaffoldMessenger.of(context).showSnackBar(
                         const SnackBar(content: Text('Post shared to chat')),
@@ -139,22 +105,6 @@ class _PostItemState extends State<PostItem> {
     );
   }
 
-  void _checkIfReported() async {
-    final reportDoc =
-        await FirebaseFirestore.instance
-            .collection('posts')
-            .doc(widget.postData['id'])
-            .collection('reports')
-            .doc(currentUserId)
-            .get();
-
-    if (mounted) {
-      setState(() {
-        hasReported = reportDoc.exists;
-      });
-    }
-  }
-
   String _getChatId(String uid1, String uid2) {
     final sorted = [uid1, uid2]..sort();
     return '${sorted[0]}_${sorted[1]}';
@@ -163,19 +113,16 @@ class _PostItemState extends State<PostItem> {
   @override
   Widget build(BuildContext context) {
     final postId = widget.postData['id'];
-    final postRef = FirebaseFirestore.instance.collection('posts').doc(postId);
 
     return StreamBuilder<DocumentSnapshot>(
-      stream: postRef.snapshots(),
+      stream: _postService.postStream(postId),
       builder: (context, snapshot) {
-        if (!snapshot.hasData) {
+        if (!snapshot.hasData)
           return const Center(child: CircularProgressIndicator());
-        }
 
-        final rawData = snapshot.data!.data();
-        if (rawData == null) return const SizedBox();
+        final postData = snapshot.data!.data() as Map<String, dynamic>?;
+        if (postData == null) return const SizedBox();
 
-        final postData = rawData as Map<String, dynamic>;
         final likes = postData['likes'] ?? [];
         final isLiked = likes.contains(currentUserId);
         final username = postData['username'] ?? 'Unknown';
@@ -196,7 +143,6 @@ class _PostItemState extends State<PostItem> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                // Header
                 Row(
                   children: [
                     CircleAvatar(
@@ -217,30 +163,24 @@ class _PostItemState extends State<PostItem> {
                   ],
                 ),
                 const SizedBox(height: 10),
-
-                // Post text
                 if (text.isNotEmpty)
                   Text(text, style: Theme.of(context).textTheme.bodyLarge),
-                const SizedBox(height: 8),
-
-                // Image
                 if (postImage != null)
-                  ClipRRect(
-                    borderRadius: BorderRadius.circular(10),
-                    child: Image.network(
-                      postImage,
-                      height: 250,
-                      width: double.infinity,
-                      fit: BoxFit.cover,
+                  Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 8),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(10),
+                      child: Image.network(
+                        postImage,
+                        height: 250,
+                        width: double.infinity,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
-                const SizedBox(height: 8),
-
-                // Like / Comment / Share Buttons
                 Row(
                   mainAxisAlignment: MainAxisAlignment.spaceAround,
                   children: [
-                    // ❤️ Like
                     Row(
                       children: [
                         IconButton(
@@ -248,25 +188,20 @@ class _PostItemState extends State<PostItem> {
                             isLiked ? Icons.favorite : Icons.favorite_border,
                             color: isLiked ? Colors.red : Colors.grey,
                           ),
-                          onPressed: () => _toggleLike(postId, isLiked),
+                          onPressed:
+                              () => _postService.toggleLike(postId, isLiked),
                         ),
                         Text('${likes.length}'),
                       ],
                     ),
-
-                    // 💬 Comment
                     IconButton(
                       icon: const Icon(Icons.comment),
                       onPressed: () => _showCommentDialog(postId),
                     ),
-
-                    // 📤 Share
                     IconButton(
                       icon: const Icon(Icons.send),
                       onPressed: () => _shareToChat(context),
                     ),
-
-                    // 🗑️ Delete or 🚩 Report
                     if (postData['uid'] == currentUserId)
                       IconButton(
                         icon: const Icon(Icons.delete),
@@ -293,36 +228,17 @@ class _PostItemState extends State<PostItem> {
                                   ],
                                 ),
                           );
-
                           if (confirm == true) {
-                            final postDocRef = FirebaseFirestore.instance
-                                .collection('posts')
-                                .doc(postId);
-
-                            final commentsSnapshot =
-                                await postDocRef.collection('comments').get();
-                            for (var doc in commentsSnapshot.docs) {
-                              await doc.reference.delete();
-                            }
-
-                            final reportsSnapshot =
-                                await FirebaseFirestore.instance
-                                    .collection('reports')
-                                    .where('postId', isEqualTo: postId)
-                                    .get();
-                            for (var report in reportsSnapshot.docs) {
-                              await report.reference.delete();
-                            }
-
-                            await postDocRef.delete();
-
-                            ScaffoldMessenger.of(context).showSnackBar(
-                              const SnackBar(
-                                content: Text(
-                                  'Post and all related data deleted',
+                            await _postService.deletePostAndRelated(postId);
+                            if (mounted) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                  content: Text(
+                                    'Post and all related data deleted',
+                                  ),
                                 ),
-                              ),
-                            );
+                              );
+                            }
                           }
                         },
                       )
@@ -334,31 +250,22 @@ class _PostItemState extends State<PostItem> {
                         ),
                         onPressed: () async {
                           if (hasReported) {
-                            final reportDocRef = FirebaseFirestore.instance
-                                .collection('reports')
-                                .doc('${postId}_$currentUserId');
-
-                            await reportDocRef.delete();
-
-                            if (mounted) {
-                              setState(() {
-                                hasReported = false;
-                              });
-                            }
-
+                            await _postService.removeReport(postId);
+                            if (mounted) setState(() => hasReported = false);
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(content: Text('Report removed')),
                             );
                             return;
                           }
-
-                          final TextEditingController reasonController =
-                              TextEditingController();
-
+                          final reasonController = TextEditingController();
                           await showDialog(
                             context: context,
                             builder:
                                 (ctx) => AlertDialog(
+                                  backgroundColor:
+                                      Theme.of(
+                                        context,
+                                      ).colorScheme.primaryContainer,
                                   title: Text(
                                     'Report Post',
                                     style:
@@ -366,7 +273,7 @@ class _PostItemState extends State<PostItem> {
                                   ),
                                   content: TextField(
                                     controller: reasonController,
-                                    decoration: InputDecoration(
+                                    decoration: const InputDecoration(
                                       labelText: 'Reason for reporting',
                                       hintText:
                                           'Describe the issue with this post',
@@ -388,54 +295,25 @@ class _PostItemState extends State<PostItem> {
                                       onPressed: () async {
                                         final reason =
                                             reasonController.text.trim();
-                                        if (reason.isEmpty) {
+                                        if (reason.isNotEmpty) {
+                                          await _postService.submitReport(
+                                            postId: postId,
+                                            reason: reason,
+                                            postData: widget.postData,
+                                          );
+                                          if (mounted)
+                                            setState(() => hasReported = true);
+                                          Navigator.of(ctx).pop();
                                           ScaffoldMessenger.of(
                                             context,
                                           ).showSnackBar(
                                             const SnackBar(
                                               content: Text(
-                                                'Please provide a reason.',
+                                                'Post reported. Thank you!',
                                               ),
                                             ),
                                           );
-                                          return;
                                         }
-
-                                        final reportDocRef = FirebaseFirestore
-                                            .instance
-                                            .collection('reports')
-                                            .doc('${postId}_$currentUserId');
-
-                                        await reportDocRef.set({
-                                          'reportedAt': Timestamp.now(),
-                                          'userId': currentUserId,
-                                          'postId': postId,
-                                          'postText':
-                                              widget.postData['text'] ?? '',
-                                          'postImage':
-                                              widget.postData['imageUrl'] ?? '',
-                                          'postOwnerId':
-                                              widget.postData['uid'] ?? '',
-                                          'reason': reason,
-                                        });
-
-                                        if (mounted) {
-                                          setState(() {
-                                            hasReported = true;
-                                          });
-                                        }
-
-                                        Navigator.of(ctx).pop();
-
-                                        ScaffoldMessenger.of(
-                                          context,
-                                        ).showSnackBar(
-                                          const SnackBar(
-                                            content: Text(
-                                              'Post reported. Thank you!',
-                                            ),
-                                          ),
-                                        );
                                       },
                                       child: Text(
                                         'Submit',
@@ -453,20 +331,11 @@ class _PostItemState extends State<PostItem> {
                       ),
                   ],
                 ),
-
-                // Comments List
                 StreamBuilder<QuerySnapshot>(
-                  stream:
-                      FirebaseFirestore.instance
-                          .collection('posts')
-                          .doc(postId)
-                          .collection('comments')
-                          .orderBy('timestamp', descending: true)
-                          .snapshots(),
+                  stream: _postService.commentStream(postId),
                   builder: (context, snapshot) {
                     if (!snapshot.hasData) return const SizedBox();
                     final comments = snapshot.data!.docs;
-
                     return ListView.builder(
                       shrinkWrap: true,
                       physics: const NeverScrollableScrollPhysics(),

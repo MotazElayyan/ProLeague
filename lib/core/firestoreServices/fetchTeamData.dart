@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:intl/intl.dart';
 
 import 'package:grad_project/core/firestoreServices/firestoreHelper.dart';
@@ -55,7 +56,6 @@ class TeamService {
         );
 
         if (normalizedName.contains(cleanedInput)) {
-
           final membersSnapshot =
               await doc.reference.collection('Members').get();
 
@@ -232,5 +232,25 @@ class FixtureService {
     } catch (e) {
       return [];
     }
+  }
+}
+
+class FavoriteService {
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  Future<void> saveUserFavorites(List<String> selectedTeams) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('User not logged in');
+
+    final userDoc = await _firestore.collection('users').doc(user.uid).get();
+    final username = userDoc.data()?['username'] ?? 'Unknown';
+
+    await _firestore.collection('favorite_teams').doc(user.uid).set({
+      'userId': user.uid,
+      'username': username,
+      'teams': selectedTeams,
+      'timestamp': FieldValue.serverTimestamp(),
+    });
   }
 }

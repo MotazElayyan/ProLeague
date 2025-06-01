@@ -52,7 +52,7 @@ class _SignupPageState extends State<SignupPage> {
       email: email.text,
       password: password.text,
       pickedImage: _pickedImage!,
-      role: 'user', 
+      role: 'user',
     );
 
     if (!mounted) return;
@@ -87,7 +87,10 @@ class _SignupPageState extends State<SignupPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBar(title: const Text('Signup')),
+      appBar: AppBar(
+        title: const Text('Signup'),
+        backgroundColor: Theme.of(context).colorScheme.primary,
+      ),
       body: SafeArea(
         top: true,
         child: Stack(

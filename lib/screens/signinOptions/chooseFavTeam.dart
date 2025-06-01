@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 
 import 'package:grad_project/core/models/CustomButtons.dart';
 import 'package:grad_project/core/providers/favoritesProvider.dart';
 import 'package:grad_project/teamsData/teamsList.dart';
 import 'package:grad_project/core/widgets/tabs.dart';
+import 'package:grad_project/core/firestoreServices/fetchTeamData.dart';
 
 class ChooseFavTeam extends ConsumerStatefulWidget {
   const ChooseFavTeam({super.key});
@@ -29,37 +28,14 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
   }
 
   Future<void> saveFavorites() async {
-    final user = FirebaseAuth.instance.currentUser;
-    if (user == null) {
-      ScaffoldMessenger.of(
-        context,
-      ).showSnackBar(const SnackBar(content: Text('User not logged in')));
-      return;
-    }
+    final selectedTeams = ref.read(favoriteTeamsProvider);
 
     setState(() {
       _isSaving = true;
     });
 
-    final selectedTeams = ref.read(favoriteTeamsProvider);
-
     try {
-      final userDoc =
-          await FirebaseFirestore.instance
-              .collection('users')
-              .doc(user.uid)
-              .get();
-      final username = userDoc.data()?['username'] ?? 'Unknown';
-
-      await FirebaseFirestore.instance
-          .collection('favorite_teams')
-          .doc(user.uid)
-          .set({
-            'userId': user.uid,
-            'username': username,
-            'teams': selectedTeams.toList(),
-            'timestamp': FieldValue.serverTimestamp(),
-          });
+      await FavoriteService().saveUserFavorites(selectedTeams.toList());
       _start();
     } catch (e) {
       ScaffoldMessenger.of(
@@ -129,7 +105,7 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
                           ),
                           boxShadow: [
                             if (isSelected)
-                              BoxShadow(
+                              const BoxShadow(
                                 color: Colors.white,
                                 blurRadius: 10,
                                 spreadRadius: 2,
@@ -145,12 +121,8 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
                                 child: Image.network(
                                   team['image']!,
                                   fit: BoxFit.contain,
-                                  loadingBuilder: (
-                                    context,
-                                    child,
-                                    loadingProgress,
-                                  ) {
-                                    if (loadingProgress == null) return child;
+                                  loadingBuilder: (context, child, progress) {
+                                    if (progress == null) return child;
                                     return const Center(
                                       child: CircularProgressIndicator(),
                                     );
