@@ -123,8 +123,13 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
                                   fit: BoxFit.contain,
                                   loadingBuilder: (context, child, progress) {
                                     if (progress == null) return child;
-                                    return const Center(
-                                      child: CircularProgressIndicator(),
+                                    return Center(
+                                      child: CircularProgressIndicator(
+                                        color:
+                                            Theme.of(
+                                              context,
+                                            ).colorScheme.secondary,
+                                      ),
                                     );
                                   },
                                   errorBuilder:
