@@ -118,7 +118,6 @@ class _TeamAwardsScreenState extends State<TeamAwardsScreen> {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    // Banner Image
                     Stack(
                       children: [
                         ClipRRect(
@@ -138,7 +137,6 @@ class _TeamAwardsScreenState extends State<TeamAwardsScreen> {
                                     const Icon(Icons.image_not_supported),
                           ),
                         ),
-                        // Team Logo top right
                         Positioned(
                           top: 8,
                           right: 8,

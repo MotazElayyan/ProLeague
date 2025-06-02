@@ -117,8 +117,13 @@ class _PostItemState extends State<PostItem> {
     return StreamBuilder<DocumentSnapshot>(
       stream: _postService.postStream(postId),
       builder: (context, snapshot) {
-        if (!snapshot.hasData)
-          return const Center(child: CircularProgressIndicator());
+        if (!snapshot.hasData) {
+          return Center(
+            child: CircularProgressIndicator(
+              color: Theme.of(context).colorScheme.secondary,
+            ),
+          );
+        }
 
         final postData = snapshot.data!.data() as Map<String, dynamic>?;
         if (postData == null) return const SizedBox();
@@ -210,18 +215,38 @@ class _PostItemState extends State<PostItem> {
                             context: context,
                             builder:
                                 (ctx) => AlertDialog(
-                                  title: const Text('Confirm Delete'),
+                                  title: Text(
+                                    'Confirm Delete',
+                                    style:
+                                        Theme.of(context).textTheme.titleLarge,
+                                  ),
                                   content: const Text(
                                     'Are you sure you want to delete this post?',
                                   ),
+                                  backgroundColor:
+                                      Theme.of(
+                                        context,
+                                      ).colorScheme.primaryContainer,
                                   actions: [
                                     TextButton(
-                                      child: const Text('Cancel'),
+                                      child: Text(
+                                        'Cancel',
+                                        style:
+                                            Theme.of(
+                                              context,
+                                            ).textTheme.bodyMedium,
+                                      ),
                                       onPressed:
                                           () => Navigator.of(ctx).pop(false),
                                     ),
                                     TextButton(
-                                      child: const Text('Delete'),
+                                      child: Text(
+                                        'Delete',
+                                        style: Theme.of(context)
+                                            .textTheme
+                                            .bodyMedium!
+                                            .copyWith(color: Colors.red),
+                                      ),
                                       onPressed:
                                           () => Navigator.of(ctx).pop(true),
                                     ),
@@ -301,8 +326,9 @@ class _PostItemState extends State<PostItem> {
                                             reason: reason,
                                             postData: widget.postData,
                                           );
-                                          if (mounted)
+                                          if (mounted) {
                                             setState(() => hasReported = true);
+                                          }
                                           Navigator.of(ctx).pop();
                                           ScaffoldMessenger.of(
                                             context,

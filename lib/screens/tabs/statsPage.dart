@@ -183,7 +183,7 @@ class _StatsPageState extends State<StatsPage> {
                                     () => Navigator.push(
                                       context,
                                       MaterialPageRoute(
-                                        builder: (_) => const PlayersAssists(),
+                                        builder: (ctx) => const PlayersAssists(),
                                       ),
                                     ),
                               ),

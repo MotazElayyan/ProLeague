@@ -148,12 +148,13 @@ class _TeamsCleanSheetsState extends State<TeamsCleanSheets> {
                   } else {
                     final team = teams[index - 2];
                     Color? rowColor;
-                    if (index == 2)
+                    if (index == 2) {
                       rowColor = const Color(0xFFFFD700);
-                    else if (index == 3)
+                    } else if (index == 3) {
                       rowColor = const Color(0xFFC0C0C0);
-                    else if (index == 4)
+                    } else if (index == 4) {
                       rowColor = const Color(0xFFCD7F32);
+                    }
 
                     return TweenAnimationBuilder<Offset>(
                       tween: Tween(

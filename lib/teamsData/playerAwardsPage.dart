@@ -170,7 +170,6 @@ class _PlayerAwardsScreenState extends State<PlayerAwardsScreen> {
                           ),
                           const SizedBox(width: 16),
 
-                          // Info
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,

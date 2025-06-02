@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+
 import 'package:grad_project/core/models/customTextField.dart';
 import 'package:grad_project/screens/signinOptions/loginPage.dart';
 
@@ -15,9 +16,9 @@ class _ChangePasswordState extends State<ChangePassword> {
   bool _showPassword2 = false;
   bool _showCurrentPassword = false;
 
+  final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _currentPasswordController =
       TextEditingController();
-  final TextEditingController _newPasswordController = TextEditingController();
   final TextEditingController _confirmPasswordController =
       TextEditingController();
 
@@ -62,7 +63,6 @@ class _ChangePasswordState extends State<ChangePassword> {
         return;
       }
 
-      // Reauthenticate user with current password
       final credential = EmailAuthProvider.credential(
         email: email,
         password: currentPassword,
@@ -97,24 +97,21 @@ class _ChangePasswordState extends State<ChangePassword> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
+      appBar: AppBar(backgroundColor: Theme.of(context).colorScheme.primary),
       body: Center(
         child: Container(
           margin: const EdgeInsets.symmetric(horizontal: 30),
-          padding: const EdgeInsets.all(25),
+          padding: EdgeInsets.all(25),
           decoration: BoxDecoration(
-            color: const Color(0xFFA998F4),
+            color: Theme.of(context).colorScheme.primaryContainer,
             borderRadius: BorderRadius.circular(30),
           ),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Text(
+              Text(
                 "Create New Password",
-                style: TextStyle(
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.white,
-                ),
+                style: Theme.of(context).textTheme.titleLarge,
               ),
               const SizedBox(height: 20),
               Image.asset("assets/images/change_password.jpg", height: 130),
@@ -198,15 +195,15 @@ class _ChangePasswordState extends State<ChangePassword> {
                 child: ElevatedButton(
                   onPressed: _changePassword,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: const Color(0xFF1E174D),
+                    backgroundColor: Theme.of(context).colorScheme.primary,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20),
                     ),
                     padding: const EdgeInsets.symmetric(vertical: 14),
                   ),
-                  child: const Text(
+                  child: Text(
                     "Save Changes",
-                    style: TextStyle(fontSize: 16),
+                    style: Theme.of(context).textTheme.bodyLarge,
                   ),
                 ),
               ),

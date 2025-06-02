@@ -77,33 +77,30 @@ class _ForgotPasswordState extends State<ForgotPassword> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
+      appBar: AppBar(backgroundColor: Theme.of(context).colorScheme.primary),
       body: Center(
         child: Padding(
           padding: const EdgeInsets.symmetric(horizontal: 24.0),
           child: Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
-              color: const Color(0xFFE4E3ED), // Light grey box
+              color: Theme.of(context).colorScheme.primaryContainer,
               borderRadius: BorderRadius.circular(25),
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Text(
-                  'Forgot Password',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E174D),
-                  ),
+                  'Retrieve Your Password',
+                  style: Theme.of(context).textTheme.titleLarge,
                 ),
                 const SizedBox(height: 10),
                 Image.asset('assets/images/forgot_password.jpg', height: 180),
                 const SizedBox(height: 15),
-                const Text(
+                Text(
                   "Please Enter Your Email Address to recieve a Verfication Code",
                   textAlign: TextAlign.center,
-                  style: TextStyle(color: Color(0xFF1E174D), fontSize: 14),
+                  style: Theme.of(context).textTheme.bodyMedium,
                 ),
                 const SizedBox(height: 20),
                 Align(
@@ -119,6 +116,7 @@ class _ForgotPasswordState extends State<ForgotPassword> {
                 CustomElevatedButton(
                   title: 'Reset My Password',
                   onPressed: _resetPassword,
+                  color: Theme.of(context).colorScheme.primary,
                 ),
               ],
             ),

@@ -72,7 +72,6 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
         body: TabBarView(
           physics: const BouncingScrollPhysics(),
           children: [
-            // Fixtures Tab
             _isLoading
                 ? Center(
                   child: CircularProgressIndicator(
@@ -182,7 +181,6 @@ class _FavTeamsScreenState extends ConsumerState<FavTeamsScreen> {
                           ),
                 ),
 
-            // Results Tab
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
               child:

@@ -61,7 +61,7 @@ class _CommunityPageState extends State<CommunityPage> {
             onPressed: () {
               Navigator.push(
                 context,
-                MaterialPageRoute(builder: (_) => const Users()),
+                MaterialPageRoute(builder: (ctx) => const Users()),
               );
             },
           ),

@@ -182,21 +182,21 @@ class _PlayersGoalsState extends State<PlayersGoals> {
 
                     Color? rowColor;
                     if (index == 2) {
-                      rowColor = const Color(0xFFFFD700); // Gold
+                      rowColor = const Color(0xFFFFD700); 
                     } else if (index == 3) {
-                      rowColor = const Color(0xFFC0C0C0); // Silver
+                      rowColor = const Color(0xFFC0C0C0); 
                     } else if (index == 4) {
-                      rowColor = const Color(0xFFCD7F32); // Bronze
+                      rowColor = const Color(0xFFCD7F32); 
                     }
 
                     return TweenAnimationBuilder<Offset>(
                       tween: Tween<Offset>(
-                        begin: const Offset(-1, 0), // Slide from left
-                        end: Offset.zero, // to position
+                        begin: const Offset(-1, 0),
+                        end: Offset.zero, 
                       ),
                       duration: Duration(
                         milliseconds: 300 + (index * 50),
-                      ), // Staggered effect
+                      ),
                       curve: Curves.easeOut,
                       builder: (context, offset, child) {
                         return Transform.translate(

@@ -66,8 +66,10 @@ class _AllowNotificationsState extends State<AllowNotifications> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
       appBar: AppBar(
-        title: Text('Notifications',
-            style: Theme.of(context).textTheme.titleLarge),
+        title: Text(
+          'Notifications',
+          style: Theme.of(context).textTheme.titleLarge,
+        ),
       ),
       body: SafeArea(
         child: Padding(
@@ -85,29 +87,28 @@ class _AllowNotificationsState extends State<AllowNotifications> {
               Text(
                 'Would You Like To Receive\nNotifications From This App?',
                 textAlign: TextAlign.center,
-                style: Theme.of(context)
-                    .textTheme
-                    .bodyLarge!
-                    .copyWith(fontSize: 25),
+                style: Theme.of(
+                  context,
+                ).textTheme.bodyLarge!.copyWith(fontSize: 25),
               ),
               const SizedBox(height: 30),
               Row(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   _isProcessing
-                      ? const SizedBox(
-                          width: 200,
-                          height: 48,
-                          child: Center(
-                            child: CircularProgressIndicator(
-                              color: Colors.white,
-                            ),
+                      ? SizedBox(
+                        width: 200,
+                        height: 48,
+                        child: Center(
+                          child: CircularProgressIndicator(
+                            color: Theme.of(context).colorScheme.secondary,
                           ),
-                        )
-                      : CustomElevatedButton(
-                          title: 'Yes, Send Notifications',
-                          onPressed: _handleAllowNotifications,
                         ),
+                      )
+                      : CustomElevatedButton(
+                        title: 'Yes, Send Notifications',
+                        onPressed: _handleAllowNotifications,
+                      ),
                   const SizedBox(width: 10),
                   TextButton(
                     onPressed: _isProcessing ? null : _handleDenyNotifications,

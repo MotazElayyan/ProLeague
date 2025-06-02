@@ -96,7 +96,10 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
                         duration: const Duration(milliseconds: 300),
                         curve: Curves.easeInOut,
                         decoration: BoxDecoration(
-                          color: isSelected ? Colors.white : Colors.white24,
+                          color:
+                              isSelected
+                                  ? Theme.of(context).colorScheme.tertiary
+                                  : Colors.white24,
                           borderRadius: BorderRadius.circular(16),
                           border: Border.all(
                             color:
@@ -105,7 +108,7 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
                           ),
                           boxShadow: [
                             if (isSelected)
-                              const BoxShadow(
+                              BoxShadow(
                                 color: Colors.white,
                                 blurRadius: 10,
                                 spreadRadius: 2,
@@ -142,10 +145,7 @@ class _ChooseFavTeamState extends ConsumerState<ChooseFavTeam> {
                             Text(
                               team['name']!,
                               textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontWeight: FontWeight.bold,
-                              ),
+                              style: Theme.of(context).textTheme.bodyLarge,
                             ),
                             const SizedBox(height: 8),
                           ],
