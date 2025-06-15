@@ -83,7 +83,6 @@ class _LoginPageState extends State<LoginPage> {
       body: SafeArea(
         child: Stack(
           children: [
-            // خلفية الكرة الرمادية
             Opacity(
               opacity: 0.3,
               child: Align(
@@ -96,7 +95,6 @@ class _LoginPageState extends State<LoginPage> {
               ),
             ),
 
-            // محاذاة المحتوى للنصف السفلي
             Align(
               alignment: Alignment.bottomCenter,
               child: SingleChildScrollView(

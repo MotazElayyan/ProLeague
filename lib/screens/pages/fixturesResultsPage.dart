@@ -68,12 +68,15 @@ class _FixturesResultsPageState extends State<FixturesResultsPage> {
         body: TabBarView(
           physics: const BouncingScrollPhysics(),
           children: [
-            // --- Fixtures Tab ---
             FutureBuilder<List<String>>(
               future: _allTeamNames,
               builder: (context, snapshot) {
                 if (snapshot.connectionState == ConnectionState.waiting) {
-                  return const Center(child: CircularProgressIndicator());
+                  return Center(
+                    child: CircularProgressIndicator(
+                      color: Theme.of(context).colorScheme.secondary,
+                    ),
+                  );
                 }
 
                 if (!snapshot.hasData || snapshot.data!.isEmpty) {
@@ -142,7 +145,6 @@ class _FixturesResultsPageState extends State<FixturesResultsPage> {
               },
             ),
 
-            // --- Results Tab ---
             FutureBuilder<List<String>>(
               future: _allTeamNames,
               builder: (context, snapshot) {

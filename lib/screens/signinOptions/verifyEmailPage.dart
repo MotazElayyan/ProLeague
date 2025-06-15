@@ -37,14 +37,16 @@ class _VerifyEmailPageState extends State<VerifyEmailPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.primary,
-      appBar: AppBar(
-        title: const Text('Verify Email'),
-      ),
+      appBar: AppBar(title: const Text('Verify Email')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(Icons.email, size: 100, color: Colors.white),
+            Icon(
+              Icons.email,
+              size: 100,
+              color: Theme.of(context).colorScheme.secondary,
+            ),
             const SizedBox(height: 20),
             Text(
               'A verification email has been sent to your email.\nPlease verify to continue.',

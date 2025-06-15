@@ -17,7 +17,7 @@ void main() async {
   await FirebaseAppCheck.instance.activate(
     androidProvider: AndroidProvider.playIntegrity,
   );
-
+  
   runApp(const ProviderScope(child: App()));
 }
 

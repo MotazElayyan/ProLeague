@@ -41,13 +41,11 @@ class FixturesCarouselSlider extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceAround,
                     children: [
-                      // Home team
                       _buildTeamColumn(
                         context,
                         label: homeDisplay,
                         logoUrl: homeLogo,
                       ),
-                      // Match time & stadium
                       Column(
                         children: [
                           Container(
@@ -80,7 +78,6 @@ class FixturesCarouselSlider extends StatelessWidget {
                           ),
                         ],
                       ),
-                      // Away team
                       _buildTeamColumn(
                         context,
                         label: awayDisplay,
